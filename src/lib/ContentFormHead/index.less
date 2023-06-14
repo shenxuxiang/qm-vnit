@@ -1,0 +1,29 @@
+.qm-content-form-head {
+  margin: 0 0 24px 0;
+  padding: 24px 24px 0;
+  background: #fff;
+  border-radius: 6px;
+
+  .qm-content-form-head-row {
+    transition: height 0.2s ease;
+  }
+  .qm-content-form-head-row .ant-form-item-label {
+    min-width: 80px;
+  }
+
+  .qm-content-form-head-row > .ant-col {
+    padding: 4px 8px;
+  }
+  .qm-content-form-head-button-group {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+  .icon {
+    transition: transform 0.3s ease !important;
+    &.expand {
+      transform: rotate(180deg);
+    }
+  }
+}
