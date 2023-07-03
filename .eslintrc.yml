@@ -26,6 +26,7 @@ rules:
   max-nested-callbacks: [0]
   no-implicit-coercion: [0]
   react/no-children-prop: [0]
+  react/no-unescaped-entities: [0]
   prefer-promise-reject-errors: [0]
   '@typescript-eslint/no-this-alias': [0]
   '@typescript-eslint/prefer-for-of': [0]

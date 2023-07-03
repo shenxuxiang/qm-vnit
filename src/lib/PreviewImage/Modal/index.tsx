@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useCallback, useState, useRef } from 'react';
-import Portal from '@/components/Portal';
-import classes from './index.module.less';
+import Portal from '@/utils/portal';
+import './index.less';
 
 function Modal(props: any) {
   const [visible, setVisible] = useState(false);
@@ -35,14 +35,10 @@ function Modal(props: any) {
           ref={maskRef}
           onClick={handleCloseModal}
           style={{ display: 'none' }}
-          className={`${classes.modalMask}${visible ? ' ' + classes.open : ''}`}
+          className={`qm-vnit-modal-mask${visible ? ' open' : ''}`}
         />
       )}
-      <div
-        ref={contentRef}
-        style={{ display: 'none' }}
-        className={`${classes.modalContent}${visible ? ' ' + classes.open : ''}`}
-      >
+      <div ref={contentRef} style={{ display: 'none' }} className={`qm-vnit-modal-content${visible ? ' open' : ''}`}>
         {children}
       </div>
     </Portal>

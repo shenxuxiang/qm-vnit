@@ -1,8 +1,8 @@
 import React, { memo, useMemo, useState, useRef, useCallback } from 'react';
 import { Tooltip } from 'antd';
 import { DeleteOutlined, EyeOutlined, PictureOutlined, CloseOutlined } from '@ant-design/icons';
-import classes from './index.module.less';
-import Portal from '@/components/Portal';
+import Portal from '@/utils/portal';
+import './index.less';
 
 /**
  * 视频预览功能组件
@@ -79,23 +79,23 @@ function Video(props: any) {
 
   if (file.status === 'uploading') {
     return (
-      <div style={wrapperStyle} className={classes.wrapper}>
-        <div className={classes.loading}>文件上传中</div>
-        <div className={classes.progress_bar}>
-          <span className={classes.progress} style={{ width: `${file.percent}%` }} />
+      <div style={wrapperStyle} className="qm-vnit-uploadvideo-video-wrapper">
+        <div className="qm-vnit-uploadvideo-video-loading">文件上传中</div>
+        <div className="qm-vnit-uploadvideo-video-progress-bar">
+          <span className="qm-vnit-uploadvideo-video-progress" style={{ width: `${file.percent}%` }} />
         </div>
       </div>
     );
   } else if (file.status === 'error') {
     return (
       <Tooltip title="上传错误">
-        <div style={wrapperStyle} className={`${classes.wrapper} ${classes.error}`}>
-          <div className={classes.file_picture}>
+        <div style={wrapperStyle} className="qm-vnit-uploadvideo-video-wrapper qm-vnit-uploadvideo-video-error">
+          <div className="qm-vnit-uploadvideo-video-file-picture">
             <PictureOutlined />
           </div>
-          <div className={classes.filename}>{file.name}</div>
-          <div className={classes.preview}>
-            <DeleteOutlined className={classes.preview_icon} onClick={handleDeleteFile} />
+          <div className="qm-vnit-uploadvideo-video-filename">{file.name}</div>
+          <div className="qm-vnit-uploadvideo-video-preview">
+            <DeleteOutlined className="qm-vnit-uploadvideo-video-preview-icon" onClick={handleDeleteFile} />
           </div>
         </div>
       </Tooltip>
@@ -103,18 +103,28 @@ function Video(props: any) {
   }
 
   return (
-    <div style={wrapperStyle} className={classes.wrapper}>
-      <video muted preload="auto" ref={videoRef} className={classes.video} onCanPlay={handleVideoCanPlay}>
+    <div style={wrapperStyle} className="qm-vnit-uploadvideo-video-wrapper">
+      <video
+        muted
+        preload="auto"
+        ref={videoRef}
+        className="qm-vnit-uploadvideo-video-player"
+        onCanPlay={handleVideoCanPlay}
+      >
         <source type={type} src={videoSrc} />
       </video>
-      <div className={classes.preview}>
-        <EyeOutlined className={classes.preview_icon} onClick={handlePreviewVideo} />
-        {disabled ? null : <DeleteOutlined className={classes.preview_icon} onClick={handleDeleteFile} />}
+      <div className="qm-vnit-uploadvideo-video-preview">
+        <EyeOutlined className="qm-vnit-uploadvideo-video-preview-icon" onClick={handlePreviewVideo} />
+        {disabled ? null : (
+          <DeleteOutlined className="qm-vnit-uploadvideo-video-preview-icon" onClick={handleDeleteFile} />
+        )}
       </div>
       {isFirstDisplayPreviewModal.current && !showPreviewModal ? null : (
         <Portal>
           <div
-            className={`${classes.preview_box}${showPreviewModal ? ' ' + classes.show : ''}`}
+            className={`qm-vnit-uploadvideo-video-preview-box${
+              showPreviewModal ? ' qm-vnit-uploadvideo-video-show' : ''
+            }`}
             onClick={handleClosePreviewVideo}
           >
             <video
@@ -123,12 +133,13 @@ function Video(props: any) {
               autoPlay
               preload="auto"
               ref={previewVideoRef}
-              className={classes.preview_video}
               style={previewVideoStyle.current}
+              onClick={(event: any) => event.stopPropagation()}
+              className="qm-vnit-uploadvideo-video-preview-player"
             >
               <source type={type} src={videoSrc} />
             </video>
-            <span className={classes.closeIcon}>
+            <span className="qm-vnit-uploadvideo-video-close-icon">
               <CloseOutlined />
             </span>
           </div>

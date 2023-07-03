@@ -1,0 +1,109 @@
+.qm-vnit-uploadaudio-audio-wrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  padding: 10px;
+  box-sizing: border-box;
+  user-select: none;
+  overflow: hidden;
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+}
+.qm-vnit-uploadaudio-audio-loading {
+  margin: 30px 0 16px;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
+  text-align: center;
+  line-height: 1;
+}
+.qm-vnit-uploadaudio-audio-progress-bar {
+  width: 84px;
+  margin: auto;
+  height: 2px;
+  background: rgba(0, 0, 0, 0.2);
+}
+.qm-vnit-uploadaudio-audio-progress {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: 2px;
+  background: #1677ff;
+}
+.qm-vnit-uploadaudio-audio-file-picture {
+  font-size: 30px;
+  padding: 0;
+  text-align: center;
+  color: #1677ff;
+}
+.qm-vnit-uploadaudio-audio-filename {
+  width: 70px;
+  padding: 0 5px;
+  overflow: hidden;
+  color: #1677ff;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.qm-vnit-uploadaudio-audio-preview {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.4);
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+  cursor: pointer;
+}
+.qm-vnit-uploadaudio-audio-preview-icon {
+  font-size: 18px;
+  & + & {
+    margin-left: 10px;
+  }
+}
+.qm-vnit-uploadaudio-audio-wrapper:hover .qm-vnit-uploadaudio-audio-preview {
+  opacity: 1;
+  transition: opacity 0.3s ease 0.1s;
+}
+.qm-vnit-uploadaudio-audio-preview-audio-box {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 9999;
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &.show {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+.qm-vnit-uploadaudio-audio-wrapper.error {
+  border-color: #ff4d4f;
+  color: #ff4d4f;
+}
+.qm-vnit-uploadaudio-audio-wrapper.error .qm-vnit-uploadaudio-audio-file-picture {
+  color: #ff4d4f;
+}
+.qm-vnit-uploadaudio-audio-wrapper.error .qm-vnit-uploadaudio-audio-filename {
+  color: #ff4d4f;
+}
+.qm-vnit-uploadaudio-audio-close-icon {
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  padding: 10px;
+  font-size: 24px;
+  color: #fff;
+  cursor: pointer;
+}

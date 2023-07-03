@@ -13,6 +13,7 @@ export const menuItems = [
   { key: 'upload-video', label: 'UploadVideo 视频上传' },
   { key: 'upload-audio', label: 'UploadAudio 音频上传' },
   { key: 'upload-image', label: 'UploadImage 图片上传' },
+  { key: 'icon', label: 'Icon 图标' },
 ];
 
 function Router() {
@@ -68,6 +69,10 @@ function Router() {
             {
               path: `/library/upload-image`,
               element: React.createElement(LazyLoader(() => import('../pages/library/upload-image'))),
+            },
+            {
+              path: `/library/icon`,
+              element: React.createElement(LazyLoader(() => import('../pages/library/icon'))),
             },
           ],
         },

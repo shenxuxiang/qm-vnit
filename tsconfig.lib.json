@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
+    "outDir": "es",
+    "rootDir": "src/lib",
     "declaration": true,
     "emitDeclarationOnly": true,
-    "declarationDir": "lib",
     "strict": true,
     "allowJs": true,
     "checkJs": true,
@@ -24,9 +25,10 @@
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "baseUrl": "./",
     "paths": {
-      "@/*": [ "./src/*" ]
-    }
+      "@": [ "src" ]
+    },
   },
-  "include": ["src/lib/index.ts", "src/vite-env.d.ts"],
+  "include": [ "src/lib", "src/utils", "src/global.d.ts" ]
 }

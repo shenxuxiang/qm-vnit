@@ -1,10 +1,9 @@
-import ContentFormHead from './ContentFormHead';
-import ContentFormPage from './ContentFormPage';
-import ModelTree from './ModelTree';
-import PreviewImage from './PreviewImage';
-import UploadAudio from './UploadAudio';
-import UploadFile from './UploadFile';
-import UploadImage from './UploadImage';
-import UploadVideo from './UploadVideo';
-
-export { ContentFormHead, ContentFormPage, ModelTree, PreviewImage, UploadAudio, UploadFile, UploadImage, UploadVideo };
+export { default as ContentFormHead } from './ContentFormHead';
+export { default as ContentFormPage } from './ContentFormPage';
+export { default as ModelTree } from './ModelTree';
+export { default as PreviewImage } from './PreviewImage';
+export { default as UploadAudio } from './UploadAudio';
+export { default as UploadFile } from './UploadFile';
+export { default as UploadImage } from './UploadImage';
+export { default as UploadVideo } from './UploadVideo';
+export { default as Icon } from './Icon';

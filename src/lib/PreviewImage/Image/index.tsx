@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
-import imgURL from './default.gif';
+import imgURL from '../../assets/images/default.svg';
 import intersectionImage from './intersection';
 
 type IProps = {

@@ -2,9 +2,9 @@ import React, { memo, useEffect, useRef } from 'react';
 import Modal from './Modal';
 import Img from './Image';
 import Spin from './Spin';
+import Icon from '@/lib/Icon';
 import useReducer from '@/utils/useReducer';
-import classes from './index.module.less';
-import './font/iconfont.css';
+import './index.less';
 
 // 缩略图中每一个图片的宽度
 const ITEM_WIDTH = 120;
@@ -270,41 +270,42 @@ function PreviewImage(props: IProps) {
   return (
     <Modal open={open}>
       <div style={{ width: '100%', height: '100%' }}>
-        <div className={classes.head}>
+        <div className="qm-preview-image-head">
           {/* Y 轴镜像 */}
-          <i
-            className={`qm-iconfont qm-icon-swap-outline ${classes.operationIcon} ${classes.rotate90}`}
-            onClick={handleMirrorY}
-          />
+          <Icon name="swap-outline" onClick={handleMirrorY} className="qm-preview-image-operation-icon rotate90" />
           {/* X 轴镜像 */}
-          <i className={`qm-iconfont qm-icon-swap-outline ${classes.operationIcon}`} onClick={handleMirrorX} />
+          <Icon name="swap-outline" onClick={handleMirrorX} className="qm-preview-image-operation-icon" />
           {/* 逆时针旋转 90deg */}
-          <i className={`qm-iconfont qm-icon-rotate-left ${classes.operationIcon}`} onClick={handleRotateLeft} />
+          <Icon name="rotate-left" onClick={handleRotateLeft} className="qm-preview-image-operation-icon" />
           {/* 顺时针旋转 90deg */}
-          <i className={`qm-iconfont qm-icon-rotate-right ${classes.operationIcon}`} onClick={handleRotateRight} />
+          <Icon name="rotate-right" onClick={handleRotateRight} className="qm-preview-image-operation-icon" />
           {/* 缩小 */}
-          <i className={`qm-iconfont qm-icon-minus-circle ${classes.operationIcon}`} onClick={handleScaleMinus} />
+          <Icon name="minus-circle" onClick={handleScaleMinus} className="qm-preview-image-operation-icon" />
           {/* 放大 */}
-          <i className={`qm-iconfont qm-icon-plus-circle ${classes.operationIcon}`} onClick={handleScalePlus} />
+          <Icon
+            name="plus-circle"
+            onClick={handleScalePlus}
+            className="qm-iconfont qm-icon-plus-circle qm-preview-image-operation-icon"
+          />
           {/* 关闭预览弹框 */}
-          <i className={`qm-iconfont qm-icon-close ${classes.operationIcon}`} onClick={onClose} />
+          <Icon name="close" onClick={onClose} className="qm-iconfont qm-icon-close qm-preview-image-operation-icon" />
         </div>
-        <div className={classes.body}>
+        <div className="qm-preview-image-body">
           {/* 上一张 */}
           <div
             onClick={handlePrevItem}
-            className={`${classes.prevButton}${currentIndex === 0 ? ' ' + classes.disabled : ''}`}
+            className={`qm-preview-image-prev-button${currentIndex === 0 ? ' disabled' : ''}`}
           >
-            <i className="qm-iconfont qm-icon-arrow-left-bold" style={{ fontSize: 60 }} />
+            <Icon name="arrow-left-bold" style={{ fontSize: 60 }} />
           </div>
           <Spin spinning={spinning}>
             {/* 图片预览部分 */}
-            <div className={classes.bodyContent}>
+            <div className="qm-preview-image-body-content">
               <img
                 ref={imgRef}
                 alt="预览图片"
                 src={imageURL}
-                className={classes.previewImg}
+                className="qm-preview-image-preview-img"
                 style={{ transform: 'scale(1, 1) rotateZ(0)' }}
               />
             </div>
@@ -312,14 +313,14 @@ function PreviewImage(props: IProps) {
           {/* 下一张 */}
           <div
             onClick={handleNextItem}
-            className={`${classes.nextButton}${currentIndex >= totalSizeRef.current - 1 ? ' ' + classes.disabled : ''}`}
+            className={`qm-preview-image-next-button${currentIndex >= totalSizeRef.current - 1 ? ' disabled' : ''}`}
           >
-            <i className="qm-iconfont qm-icon-arrow-right-bold" style={{ fontSize: 60 }} />
+            <Icon name="arrow-right-bold" style={{ fontSize: 60 }} />
           </div>
         </div>
         {/* 底部滑块 */}
         <div
-          className={classes.foot}
+          className="qm-preview-image-foot"
           style={{
             width: previewImgs?.length * ITEM_WIDTH + 68,
             maxWidth: pageSize * ITEM_WIDTH + 68,
@@ -327,26 +328,23 @@ function PreviewImage(props: IProps) {
         >
           {/* 上一页 */}
           <div
-            className={`${classes.footPrevButton}${isStartPage ? ' ' + classes.disabled : ''}`}
             onClick={handlePrevPage}
+            className={`qm-preview-image-foot-prev-button${isStartPage ? ' disabled' : ''}`}
           >
-            <i className="qm-iconfont qm-icon-arrow-left-bold" style={{ fontSize: 30 }} />
+            <Icon name="arrow-left-bold" style={{ fontSize: 30 }} />
           </div>
           {/* 下一页 */}
-          <div
-            onClick={handleNextPage}
-            className={`${classes.footNextButton}${isEndPage ? ' ' + classes.disabled : ''}`}
-          >
-            <i className="qm-iconfont qm-icon-arrow-right-bold" style={{ fontSize: 30 }} />
+          <div onClick={handleNextPage} className={`qm-preview-image-foot-next-button${isEndPage ? ' disabled' : ''}`}>
+            <Icon name="arrow-right-bold" style={{ fontSize: 30 }} />
           </div>
           {/* 滑块 */}
-          <div className={classes.footSlider} ref={sliderWrapperRef}>
-            <ul className={classes.footSliderList} ref={sliderRef}>
+          <div className="qm-preview-image-foot-slider" ref={sliderWrapperRef}>
+            <ul className="qm-preview-image-foot-slider-list" ref={sliderRef}>
               {previewImgs.map((url: string, index: number) => (
                 <li
                   key={`${url}~${index}`}
                   onClick={() => handleChangeIndex(index)}
-                  className={`${classes.footSliderListItem}${currentIndex === index ? ' ' + classes.active : ''}`}
+                  className={`qm-preview-image-foot-slider-list-item${currentIndex === index ? ' active' : ''}`}
                 >
                   <Img src={url} alt="pic" />
                 </li>

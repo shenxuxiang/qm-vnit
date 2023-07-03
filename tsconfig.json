@@ -22,10 +22,10 @@
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "baseUrl": "./",
     "paths": {
-      "@/*": [ "./src/*" ]
-    }
+      "@": [ "src" ]
+    },
   },
-  "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": ["src"]
 }

@@ -1,5 +1,5 @@
 import React, { memo, useMemo, useState, useLayoutEffect } from 'react';
-import styles from './index.module.less';
+import './index.less';
 
 interface IProps {
   children?: React.ReactNode;
@@ -22,12 +22,12 @@ function Spin(props: IProps) {
 
   const renderDot = useMemo(
     () => (
-      <div className={styles.aitSpin}>
-        <div className={styles.aitSpinDot}>
-          <div className={styles.aitSpinDotItem} />
-          <div className={styles.aitSpinDotItem} />
-          <div className={styles.aitSpinDotItem} />
-          <div className={styles.aitSpinDotItem} />
+      <div className="qm-vnit-ait-spin">
+        <div className="qm-vnit-ait-spin-dot">
+          <div className="qm-vnit-ait-spin-dot-item" />
+          <div className="qm-vnit-ait-spin-dot-item" />
+          <div className="qm-vnit-ait-spin-dot-item" />
+          <div className="qm-vnit-ait-spin-dot-item" />
         </div>
       </div>
     ),
@@ -38,12 +38,12 @@ function Spin(props: IProps) {
   if (children == null) return isClosed ? null : renderDot;
 
   return (
-    <div className={styles.aitSpinBox}>
-      <div className={`${styles.aitSpinSpinning}${isClosed ? ` ${styles.hide}` : ''}`}>
-        <div className={styles.aitSpinSpinningCenter}>{renderDot}</div>
+    <div className="qm-vnit-ait-spin-box">
+      <div className={`qm-vnit-ait-spin-spinning${isClosed ? ' hide' : ''}`}>
+        <div className="qm-vnit-ait-spin-spinning-center">{renderDot}</div>
       </div>
 
-      <div className={`${styles.aitSpinContainer}${isClosed ? '' : ` ${styles.aitSpinMask}`}`}>{children}</div>
+      <div className={`qm-vnit-ait-spin-container${isClosed ? '' : ' qm-vnit-ait-spin-mask'}`}>{children}</div>
     </div>
   );
 }

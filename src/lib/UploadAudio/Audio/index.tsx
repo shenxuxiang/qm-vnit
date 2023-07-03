@@ -1,8 +1,8 @@
 import React, { memo, useMemo, useState, useRef, useCallback } from 'react';
 import { Tooltip } from 'antd';
 import { EyeOutlined, DeleteOutlined, CloseOutlined, PictureOutlined, PlayCircleOutlined } from '@ant-design/icons';
-import classes from './index.module.less';
-import Portal from '@/components/Portal';
+import Portal from '@/utils/portal';
+import './index.less';
 
 /**
  * 音频预览功能组件
@@ -63,23 +63,23 @@ function Audio(props: any) {
 
   if (file.status === 'uploading') {
     return (
-      <div style={wrapperStyle} className={classes.wrapper}>
-        <div className={classes.loading}>文件上传中</div>
-        <div className={classes.progress_bar}>
-          <span className={classes.progress} style={{ width: `${file.percent}%` }} />
+      <div style={wrapperStyle} className="qm-vnit-uploadaudio-audio-wrapper">
+        <div className="qm-vnit-uploadaudio-audio-loading">文件上传中</div>
+        <div className="qm-vnit-uploadaudio-audio-progress-bar">
+          <span className="qm-vnit-uploadaudio-audio-progress" style={{ width: `${file.percent}%` }} />
         </div>
       </div>
     );
   } else if (file.status === 'error') {
     return (
       <Tooltip title="上传错误">
-        <div style={wrapperStyle} className={`${classes.wrapper} ${classes.error}`}>
-          <div className={classes.file_picture}>
+        <div style={wrapperStyle} className="qm-vnit-uploadaudio-audio-wrapper qm-vnit-uploadaudio-audio-error">
+          <div className="qm-vnit-uploadaudio-audio-file-picture">
             <PictureOutlined />
           </div>
-          <div className={classes.filename}>{file.name}</div>
-          <div className={classes.preview}>
-            <DeleteOutlined className={classes.preview_icon} onClick={handleDeleteFile} />
+          <div className="qm-vnit-uploadaudio-audio-filename">{file.name}</div>
+          <div className="qm-vnit-uploadaudio-audio-preview">
+            <DeleteOutlined className="qm-vnit-uploadaudio-audio-preview-icon" onClick={handleDeleteFile} />
           </div>
         </div>
       </Tooltip>
@@ -87,25 +87,27 @@ function Audio(props: any) {
   }
 
   return (
-    <div style={wrapperStyle} className={classes.wrapper}>
-      <div className={classes.file_picture}>
+    <div style={wrapperStyle} className="qm-vnit-uploadaudio-audio-wrapper">
+      <div className="qm-vnit-uploadaudio-audio-file-picture">
         <PlayCircleOutlined disabled={disabled} />
       </div>
-      <div className={classes.filename}>{file.name}</div>
-      <div className={classes.preview}>
-        <EyeOutlined className={classes.preview_icon} onClick={handlePreviewAudio} />
-        {disabled ? null : <DeleteOutlined className={classes.preview_icon} onClick={handleDeleteFile} />}
+      <div className="qm-vnit-uploadaudio-audio-filename">{file.name}</div>
+      <div className="qm-vnit-uploadaudio-audio-preview">
+        <EyeOutlined className="qm-vnit-uploadaudio-audio-preview-icon" onClick={handlePreviewAudio} />
+        {disabled ? null : (
+          <DeleteOutlined className="qm-vnit-uploadaudio-audio-preview-icon" onClick={handleDeleteFile} />
+        )}
       </div>
       {isFirstDisplayPreviewModal.current && !showPreviewModal ? null : (
         <Portal>
           <div
-            className={`${classes.preview_audio_box}${showPreviewModal ? ' ' + classes.show : ''}`}
+            className={`qm-vnit-uploadaudio-audio-preview-audio-box${showPreviewModal ? ' show' : ''}`}
             onClick={handleClosePreviewAudio}
           >
             <audio controls autoPlay preload="auto" ref={previewAudioRef}>
               <source type={type} src={audioSrc} />
             </audio>
-            <span className={classes.closeIcon}>
+            <span className="qm-vnit-uploadaudio-audio-close-icon">
               <CloseOutlined />
             </span>
           </div>
