@@ -16,7 +16,6 @@ function cleanOutputDir(cb) {
   try {
     fs.rmSync(path.resolve(context, 'lib'), { force: true, recursive: true });
     fs.rmSync(path.resolve(context, 'es'), { force: true, recursive: true });
-    fs.rmSync(path.resolve(context, 'dts'), { force: true, recursive: true });
     cb();
   } catch(error) {
     cb(error);
@@ -31,6 +30,30 @@ async function buildEs() {
 // 打包构建 commonjs 模块
 function buildLib () {
   return gulp.src([ 'es/**/*.js' ])
+    .pipe(through(
+      { objectMode: true },
+      function(chunk, encode, callback) {
+        if (/\.(png|jpe?g|gif|webp|svg)\.js$/.test(chunk.path)) return callback(null, chunk);
+
+        let contents = chunk.contents.toString();
+        if (/import {(.+)} from (['"])@ant-design\/icons\2/.test(contents)) {
+          const values = RegExp.$1;
+          const reg = /\b(\w+)\b/g;
+          const result = [];
+          while (reg.test(values)) {
+            result.push(RegExp.$1);
+          }
+
+          let context = '';
+          result.forEach(item => context += `import ${item} from '@ant-design/icons/${item}';`);
+
+          contents = contents.replace(/import .* from (['"])@ant-design\/icons\1;/, context);
+          chunk.contents = Buffer.from(contents);
+        }
+
+        callback(null, chunk);
+      }
+    ))
     .pipe(babel({ configFile: './babel.config.lib.cjs' }))
     .pipe(gulp.src([ 'es/**/*.d.ts' ]))
     .pipe(gulp.dest('./lib'));
