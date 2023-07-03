@@ -5,8 +5,7 @@ import _findIndexInstanceProperty from '@babel/runtime-corejs3/core-js-stable/in
 import _spliceInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/splice';
 import _filterInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/filter';
 import React, { memo, useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import UploadOutlined from '@ant-design/icons/UploadOutlined';
-import PlusOutlined from '@ant-design/icons/PlusOutlined';
+import { UploadOutlined, PlusOutlined } from '@ant-design/icons';
 import { message, Button, Upload } from 'antd';
 
 /**

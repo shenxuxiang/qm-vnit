@@ -14,7 +14,7 @@ import _mapInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance
 import _URL from '@babel/runtime-corejs3/core-js-stable/url';
 import _spliceInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/splice';
 import React, { memo, useState, useRef, useEffect, useCallback } from 'react';
-import PlusOutlined from '@ant-design/icons/PlusOutlined';
+import { PlusOutlined } from '@ant-design/icons';
 import { message, Upload } from 'antd';
 import PreviewImage from '../PreviewImage/index.js';
 

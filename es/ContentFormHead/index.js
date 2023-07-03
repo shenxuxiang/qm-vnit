@@ -11,7 +11,7 @@ import _filterInstanceProperty from '@babel/runtime-corejs3/core-js-stable/insta
 import _mapInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/map';
 import React, { memo, useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { Form, Select, Row, Col, Button, Cascader, DatePicker, Input } from 'antd';
-import DownOutlined from '@ant-design/icons/DownOutlined';
+import { DownOutlined } from '@ant-design/icons';
 import { throttle } from '../utils/index.js';
 import './index.css';
 

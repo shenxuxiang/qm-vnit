@@ -7,7 +7,7 @@ import _findIndexInstanceProperty from '@babel/runtime-corejs3/core-js-stable/in
 import _spliceInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/splice';
 import _filterInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/filter';
 import React, { memo, useState, useRef, useEffect, useCallback } from 'react';
-import PlusOutlined from '@ant-design/icons/PlusOutlined';
+import { PlusOutlined } from '@ant-design/icons';
 import { message, Upload } from 'antd';
 import Audio from './Audio/index.js';
 

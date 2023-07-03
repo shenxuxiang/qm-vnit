@@ -13,11 +13,7 @@ import _Object$getOwnPropertyDescriptor from '@babel/runtime-corejs3/core-js-sta
 import _Object$getOwnPropertyDescriptors from '@babel/runtime-corejs3/core-js-stable/object/get-own-property-descriptors';
 import React, { memo, useState, useRef, useMemo, useCallback } from 'react';
 import { Tooltip } from 'antd';
-import EyeOutlined from '@ant-design/icons/EyeOutlined';
-import DeleteOutlined from '@ant-design/icons/DeleteOutlined';
-import CloseOutlined from '@ant-design/icons/CloseOutlined';
-import PictureOutlined from '@ant-design/icons/PictureOutlined';
-import PlayCircleOutlined from '@ant-design/icons/PlayCircleOutlined';
+import { PictureOutlined, DeleteOutlined, PlayCircleOutlined, EyeOutlined, CloseOutlined } from '@ant-design/icons';
 import Portal from '../../utils/portal.js';
 import './index.css';
 

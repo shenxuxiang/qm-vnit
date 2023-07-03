@@ -9,7 +9,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import replaceLessToCss from './rollup-plugin-less2css.js';
-import divisionAntDesignIcons from './rollup-plugin-division-ant-design-icons.js';
+// import divisionAntDesignIcons from './rollup-plugin-division-ant-design-icons.js';
 
 const context = fileURLToPath(new URL('../', import.meta.url));
 const extensions = [ '.tsx', '.ts', '.jsx', '.js', '.mjs', '.cjs' ];
@@ -31,7 +31,7 @@ const inputOptions = {
     // encode image to base64
     image(),
     replaceLessToCss(),
-    divisionAntDesignIcons(),
+    // divisionAntDesignIcons(),
   ]
 };
 
@@ -49,12 +49,12 @@ export default async function build () {
     await bundle.write(outputOptions);
   } catch (error) {
     const msg = error.stack.replace(/^\b/mg, '   ');
-    console.log('\n');
-    console.log(chalk.red(msg));
-    console.log('\n');
+    process.stdout.write('\n');
+    process.stdout.write(chalk.red(msg));
+    process.stdout.write('\n');
     throw error;
   }
 
   await bundle.close();
-  console.log(chalk.green('rollup 打包成功\n'));
+  process.stdout.write(chalk.green('rollup 打包成功\n'));
 }
