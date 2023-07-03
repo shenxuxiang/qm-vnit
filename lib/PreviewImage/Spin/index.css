@@ -1,0 +1,98 @@
+.qm-vnit-ait-spin {
+  display: inline-block;
+  position: relative;
+  width: 30px;
+  height: 30px;
+}
+.qm-vnit-ait-spin-dot {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-content: space-between;
+  width: 30px;
+  height: 30px;
+  -webkit-animation: dotAnimation 1.2s linear infinite;
+          animation: dotAnimation 1.2s linear infinite;
+}
+.qm-vnit-ait-spin-dot-item {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0.5;
+  -webkit-animation: dotItemAnimation 1s linear alternate infinite;
+          animation: dotItemAnimation 1s linear alternate infinite;
+}
+.qm-vnit-ait-spin-dot-item:nth-child(2n) {
+  margin-left: 4px;
+}
+.qm-vnit-ait-spin-dot-item:nth-child(2) {
+  -webkit-animation-delay: 0.8s;
+          animation-delay: 0.8s;
+}
+.qm-vnit-ait-spin-sot-item:nth-child(3) {
+  -webkit-animation-delay: 1.2s;
+          animation-delay: 1.2s;
+}
+.qm-vnit-ait-spin-dot-item:nth-child(4) {
+  -webkit-animation-delay: 0.4s;
+          animation-delay: 0.4s;
+}
+@-webkit-keyframes dotAnimation {
+  to {
+    transform: rotateZ(360deg);
+  }
+}
+@keyframes dotAnimation {
+  to {
+    transform: rotateZ(360deg);
+  }
+}
+@-webkit-keyframes dotItemAnimation {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes dotItemAnimation {
+  to {
+    opacity: 1;
+  }
+}
+.qm-vnit-ait-spin-box {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.qm-vnit-ait-spin-spinning {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  visibility: visible;
+  opacity: 1;
+  transition: all 0.3s ease;
+}
+.qm-vnit-ait-spin-spinning.hide {
+  visibility: hidden;
+  opacity: 0;
+}
+.qm-vnit-ait-spin-spinning-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+.qm-vnit-ait-spin-container {
+  height: 100%;
+  transition: opacity 0.3s ease;
+}
+.qm-vnit-ait-spin-mask {
+  clear: both;
+  opacity: 0.3;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  pointer-events: none;
+}
