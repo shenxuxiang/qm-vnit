@@ -1,9 +1,10 @@
-import React, { memo, useCallback, useEffect } from 'react';
-import classes from './index.module.less';
-import useReducer from '@/utils/useReducer';
 import { Menu, Layout } from 'antd';
 import { menuItems } from '@/routers';
+import classes from './index.module.less';
+import useReducer from '@/utils/useReducer';
+import React, { memo, useCallback, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+
 const { Sider, Content } = Layout;
 
 function initialState() {

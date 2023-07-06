@@ -72,6 +72,7 @@ function Example() {
 
   return (
     <Card style={{ margin: '20px 0 60px' }}>
+      <p style={{ margin: '0 0 20px' }}>案例一</p>
       <div style={{ padding: '0 0 20px', background: '#fff' }}>
         <Button onClick={() => setOpen(true)}>预览</Button>
         <PreviewImage index={0} open={open} imgs={imgs} pageSize={9} onClose={() => setOpen(false)} />

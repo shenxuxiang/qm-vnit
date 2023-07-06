@@ -7,6 +7,9 @@ import Routers from '@/routers';
 import React from 'react';
 import './index.less';
 import '@/mock/mock';
+import dayjs from 'dayjs';
+import 'dayjs/locale/zh-cn';
+dayjs.locale('zh-cn');
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 

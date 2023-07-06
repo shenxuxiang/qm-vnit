@@ -51,18 +51,19 @@ function Page() {
 
   return (
     <Card style={{ margin: '20px 0 60px' }}>
+      <p style={{ margin: '0 0 20px' }}>案例二（指定列数）</p>
+      <Button.Group>
+        <Button type={cols === 2 ? 'primary' : 'default'} onClick={() => setCols(2)}>
+          2列
+        </Button>
+        <Button type={cols === 3 ? 'primary' : 'default'} onClick={() => setCols(3)}>
+          3列
+        </Button>
+        <Button type={cols === 4 ? 'primary' : 'default'} onClick={() => setCols(4)}>
+          4列
+        </Button>
+      </Button.Group>
       <div style={{ padding: '20px', background: '#f8f8f8' }}>
-        <Button.Group>
-          <Button type={cols === 2 ? 'primary' : 'default'} onClick={() => setCols(2)}>
-            2
-          </Button>
-          <Button type={cols === 3 ? 'primary' : 'default'} onClick={() => setCols(3)}>
-            3
-          </Button>
-          <Button type={cols === 4 ? 'primary' : 'default'} onClick={() => setCols(4)}>
-            4
-          </Button>
-        </Button.Group>
         <ContentFormHead
           cols={cols}
           showExportButton

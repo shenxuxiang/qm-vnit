@@ -10,6 +10,7 @@ function Example() {
 
   return (
     <Card style={{ margin: '20px 0 60px' }}>
+      <p style={{ margin: '0 0 20px' }}>案例一（默认上传音频格式的文件）</p>
       <div style={{ padding: '0 0 20px', background: '#fff' }}>
         <UploadAudio action="/upload/file" onChange={onChange} accept="*" />
       </div>

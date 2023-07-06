@@ -1,25 +1,35 @@
-import React, { memo } from 'react';
-import classes from '../index.module.less';
 import { Table } from 'antd';
 import Example1 from './Example1';
 import Example2 from './Example2';
+import React, { memo } from 'react';
+import MarkdownCode from '@/components/MarkdownCode';
 import { TABLE_HEADER } from '@/pages/library/constants';
+
+const header = `
+  ## UploadImage 图片上传控件
+  图片上传控件，支持同时上传多个图片，支持预览
+`;
+
+const usage = `
+  ### 何时使用
+  可单独使用，也可以嵌套在 FormItem 表单控件中使用（无需再次封装）
+`;
+
+const notes = `
+  ### 开发者注意事项
+  对于一般无需用户登录凭证的可以直接使用，如需登陆凭证可以通过 headers 传递给组件
+`;
 
 function Page() {
   return (
-    <section className={classes.module}>
-      <h1 className={classes.module_title}>UploadImage 图片上传控件</h1>
-      <p className={classes.module_subtitle}>图片上传控件，支持同时上传多个图片，支持预览</p>
-
-      <h1 className={classes.module_notice_title}>何时使用</h1>
-      <p className={classes.module_subtitle}>可单独使用，也可以嵌套在 FormItem 表单控件中使用（无需再次封装）</p>
-
-      <h1 className={classes.module_notice_title}>开发者注意事项</h1>
-      <p className={classes.module_subtitle}>
-        对于一般无需用户登录凭证的可以直接使用，如需登陆凭证可以通过 headers 传递给组件
-      </p>
-
-      <h1 className={classes.module_notice_title}>代码演示</h1>
+    <section style={{ padding: '20px 20px 20px 60px' }}>
+      <MarkdownCode code={header} hasExpandButton={false} defaultExpand />
+      <br />
+      <MarkdownCode code={usage} hasExpandButton={false} defaultExpand />
+      <br />
+      <MarkdownCode code={notes} hasExpandButton={false} defaultExpand />
+      <br />
+      <MarkdownCode code="### 代码演示" hasExpandButton={false} defaultExpand />
 
       <Example1 />
       <Example2 />

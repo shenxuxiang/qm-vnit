@@ -1,30 +1,43 @@
-import React, { memo } from 'react';
-import classes from '../index.module.less';
 import { Table } from 'antd';
 import Example1 from './Example1';
 import Example2 from './Example2';
 import Example3 from './Example3';
-import { TABLE_HEADER } from '@/pages/library/constants';
+import React, { memo } from 'react';
 import MarkdownCode from '@/components/MarkdownCode';
+import { TABLE_HEADER } from '@/pages/library/constants';
+
+const header = `
+  ## ContentFormPage 表格页面
+  提供数据查询、表格展示、分页的完整功能。
+`;
+
+const usage = `
+  ### 何时使用
+  只要涉及到表格数据的展示都可以使用，只需要开发者传递一个获取数据的异步方法(requestDataSource)即可使用。
+
+  必要时，开发者可以传递 customResponse 属性，当 requestDataSource() 完成时会见返回值传递给 customResponse() 方法，
+
+  customResponse() 方法执行完成后，将返回的值传递给组件并进行展示。
+
+`;
+
+const notes = `
+  ### 开发者注意事项
+  为方便开发开箱即用，组件提供了 customResponse 属性，开发者可以通过该属性根据返回的数据结构返回组件所需要的内容
+
+  查询功能则是使用的 ContentFormHead 组件实现
+`;
 
 function Page() {
   return (
-    <section className={classes.module}>
-      <h1 className={classes.module_title}>ContentFormPage 表格页面</h1>
-      <p className={classes.module_subtitle}>提供数据查询、表格展示、分页的完整功能。</p>
-
-      <h1 className={classes.module_notice_title}>何时使用</h1>
-      <p className={classes.module_subtitle}>
-        只要涉及到表格数据的展示都可以使用，只需要开发者传递一个获取数据的接口即可使用
-      </p>
-
-      <h1 className={classes.module_notice_title}>开发者注意事项</h1>
-      <p className={classes.module_subtitle}>
-        为方便开发开箱即用，组件提供了 customResponse 属性，开发者可以通过该属性根据返回的数据结构返回组件所需要的内容
-      </p>
-      <p className={classes.module_subtitle}>查询功能则是使用的 ContentFormHead 组件实现</p>
-
-      <h1 className={classes.module_notice_title}>代码演示</h1>
+    <section style={{ padding: '20px 20px 20px 60px' }}>
+      <MarkdownCode code={header} hasExpandButton={false} defaultExpand />
+      <br />
+      <MarkdownCode code={usage} hasExpandButton={false} defaultExpand />
+      <br />
+      <MarkdownCode code={notes} hasExpandButton={false} defaultExpand />
+      <br />
+      <MarkdownCode code="### 代码演示" hasExpandButton={false} defaultExpand />
 
       <Example1 />
       <Example2 />

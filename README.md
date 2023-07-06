@@ -7,3 +7,5 @@
 # npm run build:analyse
 打包生产构建并分析各个模块
 
+# npm run build-lib
+打包 qm-vnit 库

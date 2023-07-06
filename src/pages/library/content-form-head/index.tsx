@@ -1,28 +1,36 @@
-import React, { memo } from 'react';
-import classes from '../index.module.less';
 import { Table } from 'antd';
 import Example1 from './Example1';
 import Example2 from './Example2';
 import Example3 from './Example3';
+import React, { memo } from 'react';
+import MarkdownCode from '@/components/MarkdownCode';
 import { TABLE_HEADER } from '@/pages/library/constants';
+
+const header = `
+  ## ContentFormHead 表头查询功能
+  为页面、表单等提供查询功能
+`;
+
+const usage = `
+  ### 何时使用
+  表头查询既可以作为页头，作为页面的表格数据的查询功能，也可以作为某个表格数据的查询功能
+`;
+
+const notes = `
+  ### 开发者注意事项
+  在不传入 cols 参数的情况下，**ContentFormHead** 会根据屏幕的宽度自动调节（一行可以放置几列）
+`;
 
 function Page() {
   return (
-    <section className={classes.module}>
-      <h1 className={classes.module_title}>ContentFormHead 表头查询功能</h1>
-      <p className={classes.module_subtitle}>为页面、表单等提供查询功能</p>
-
-      <h1 className={classes.module_notice_title}>何时使用</h1>
-      <p className={classes.module_subtitle}>
-        表头查询既可以作为页头，作为页面的表格数据的查询功能，也可以作为某个表格数据的查询功能
-      </p>
-
-      <h1 className={classes.module_notice_title}>开发者注意事项</h1>
-      <p className={classes.module_subtitle}>
-        在不传入 cols 参数的情况下，**ContentFormHead** 会根据屏幕的宽度自动调节（一行可以放置几列）
-      </p>
-
-      <h1 className={classes.module_notice_title}>代码演示</h1>
+    <section style={{ padding: '20px 20px 20px 60px' }}>
+      <MarkdownCode code={header} hasExpandButton={false} defaultExpand />
+      <br />
+      <MarkdownCode code={usage} hasExpandButton={false} defaultExpand />
+      <br />
+      <MarkdownCode code={notes} hasExpandButton={false} defaultExpand />
+      <br />
+      <MarkdownCode code="### 代码演示" hasExpandButton={false} defaultExpand />
 
       <Example1 />
       <Example2 />

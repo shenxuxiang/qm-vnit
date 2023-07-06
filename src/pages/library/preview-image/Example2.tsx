@@ -35,6 +35,7 @@ function Example() {
 
   return (
     <Card style={{ margin: '20px 0 60px' }}>
+      <p style={{ margin: '0 0 20px' }}>案例二</p>
       <div style={{ padding: '0 0 20px', background: '#fff' }}>
         <Button onClick={() => setOpen(true)}>高清图预览</Button>
         <p>开发者在调试时可以将 network 中的网络速度调整为 Fast 3G 来查看demo</p>

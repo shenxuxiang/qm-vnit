@@ -16,10 +16,11 @@ type MarkdownProps = {
   code: any;
   mode?: 'light' | 'dark';
   defaultExpand?: boolean;
+  hasExpandButton?: boolean;
 };
 
 function Markdown(props: MarkdownProps) {
-  const { code, mode = 'light', defaultExpand = false } = props;
+  const { code, mode = 'light', defaultExpand = false, hasExpandButton = true } = props;
   const [expand, setExpand] = useState(defaultExpand);
 
   const handleClickExpand = () => {
@@ -52,12 +53,14 @@ function Markdown(props: MarkdownProps) {
   return (
     <div className={classes.x}>
       {expand && <ReactMarkdown children={code} remarkPlugins={[remarkGfm]} components={components} />}
-      <p className={classes.expand_button}>
-        <Button type="link" onClick={handleClickExpand}>
-          {expand ? '收起' : '展开'} code{' '}
-          <DownOutlined className={`${classes.icon}${expand ? ' ' + classes.expand : ''}`} />
-        </Button>
-      </p>
+      {hasExpandButton && (
+        <p className={classes.expand_button}>
+          <Button type="link" onClick={handleClickExpand}>
+            {expand ? '收起' : '展开'} code{' '}
+            <DownOutlined className={`${classes.icon}${expand ? ' ' + classes.expand : ''}`} />
+          </Button>
+        </p>
+      )}
     </div>
   );
 }

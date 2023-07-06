@@ -10,6 +10,7 @@ function Example() {
 
   return (
     <Card style={{ margin: '20px 0 60px' }}>
+      <p style={{ margin: '0 0 20px' }}>案例二（使用自带的图片预览）</p>
       <div style={{ padding: '0 0 20px', background: '#fff' }}>
         <UploadImage action="/upload/file" onChange={onChange} />
       </div>

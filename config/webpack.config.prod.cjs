@@ -78,7 +78,7 @@ module.exports = {
             }
           },
           {
-            test: /\.(png|jpe?g|gif|bmp|webp)$/,
+            test: /\.(png|jpe?g|gif|bmp|webp|svg)$/,
             include: path.resolve('src'),
             type: 'asset',
             generator: {
@@ -215,11 +215,11 @@ module.exports = {
               }
             ]
           },
-          {
-            test: /\.svg$/,
-            include: path.resolve('src'),
-            loader: '@svgr/webpack',
-          },
+          // {
+          //   test: /\.svg$/,
+          //   include: path.resolve('src'),
+          //   loader: '@svgr/webpack',
+          // },
         ]
       }
     ]

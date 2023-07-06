@@ -1,29 +1,39 @@
-import React, { memo } from 'react';
-import classes from '../index.module.less';
 import { Table } from 'antd';
 import Example1 from './Example1';
 import Example2 from './Example2';
-import { TABLE_HEADER } from '@/pages/library/constants';
+import React, { memo } from 'react';
 import MarkdownCode from '@/components/MarkdownCode';
+import { TABLE_HEADER } from '@/pages/library/constants';
+
+const header = `
+  ## PreviewImage 图片预览
+  支持多张图片翻页预览的功能，并支持放大、镜像、旋转 等功能。
+`;
+
+const usage = `
+  ### 何时使用
+  再任何你需要预览图片的地方都可以使用
+`;
+
+const notes = `
+  ### 开发者注意事项
+  支持一般模式的图片预览，这里的一般模式值得是图片大小不超过 50M。对于超过限制的，我们提供了另一套高清渲染逻辑。
+
+  对于高清渲染逻辑来说，开发者需要提供一个高清图的列表（imgs）、一个缩略图的列表（previewImgs），
+
+  当用户进行操作时及时响应用户操作，待高清图展示完成后再切换成高清图
+`;
 
 function Page() {
   return (
-    <section className={classes.module}>
-      <h1 className={classes.module_title}>PreviewImage 图片预览</h1>
-      <p className={classes.module_subtitle}>支持多张图片翻页预览的功能，并支持放大、镜像、旋转 等功能。</p>
-
-      <h1 className={classes.module_notice_title}>何时使用</h1>
-      <p className={classes.module_subtitle}>再任何你需要预览图片的地方都可以使用</p>
-
-      <h1 className={classes.module_notice_title}>开发者注意事项</h1>
-      <p className={classes.module_subtitle}>
-        支持一般模式的图片预览，这里的一般模式值得是图片大小不超过 50M。对于超过限制的，我们提供了另一套高清渲染逻辑。
-      </p>
-      <p className={classes.module_subtitle}>
-        对于高清渲染逻辑来说，开发者需要提供一个高清图的列表（imgs）、一个缩略图的列表（previewImgs），当用户进行操作时及时响应用户操作，待高清图展示完成后再切换成高清图
-      </p>
-
-      <h1 className={classes.module_notice_title}>代码演示</h1>
+    <section style={{ padding: '20px 20px 20px 60px' }}>
+      <MarkdownCode code={header} hasExpandButton={false} defaultExpand />
+      <br />
+      <MarkdownCode code={usage} hasExpandButton={false} defaultExpand />
+      <br />
+      <MarkdownCode code={notes} hasExpandButton={false} defaultExpand />
+      <br />
+      <MarkdownCode code="### 代码演示" hasExpandButton={false} defaultExpand />
 
       <Example1 />
       <Example2 />

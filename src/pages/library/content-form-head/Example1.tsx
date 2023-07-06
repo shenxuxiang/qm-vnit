@@ -46,6 +46,7 @@ function Example() {
 
   return (
     <Card style={{ margin: '20px 0 60px' }}>
+      <p style={{ margin: '0 0 20px' }}>案例一</p>
       <div style={{ padding: '20px', background: '#f8f8f8' }}>
         <ContentFormHead
           queryList={queryList}

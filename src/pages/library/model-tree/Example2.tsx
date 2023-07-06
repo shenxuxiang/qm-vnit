@@ -100,6 +100,7 @@ function Example() {
 
   return (
     <Card style={{ margin: '20px 0 60px' }}>
+      <p style={{ margin: '0 0 20px' }}>案例二（组合节点不支持勾选）</p>
       <div style={{ padding: '0 0 20px', background: '#fff' }}>
         <ModelTree checkable treeData={treeData} onChange={handleChange} formatData={formatData} />
       </div>
