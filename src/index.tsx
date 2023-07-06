@@ -15,7 +15,7 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 
 root.render(
   <ConfigProvider locale={zhCN}>
-    <Router history={history as any}>
+    <Router history={history as any} basename="qm-vnit">
       <Routers />
     </Router>
   </ConfigProvider>,
