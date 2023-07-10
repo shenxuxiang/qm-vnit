@@ -9,7 +9,7 @@ pipeline {
       causeString: 'Triggered building qm-vnit in $ref',
       // 定义变量
       genericVariables: [
-        [ key: 'ref', value: '$.ref', regexpFilter: 'refs/heads' ],
+        [ key: 'ref', value: '$.ref', regexpFilter: 'refs/heads/' ],
         [ key: 'commit_message', value: '$.head_commit.message' ],
         [ key: 'modified', value: '$head_commit.modified' ],
       ],
