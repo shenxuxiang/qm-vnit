@@ -4,42 +4,38 @@ pipeline {
   agent any
 
   triggers {
-    GenericTrigger(
+    GenericTrigger (
       // 构建标题
       causeString: 'Triggered building qm-vnit in $ref',
       // 定义变量
       genericVariables: [
         [ key: 'ref', value: '$.ref', regexpFilter: 'refs/heads/' ],
         [ key: 'commit_message', value: '$.head_commit.message' ],
-        [ key: 'modified', value: '$head_commit.modified' ],
+        [ key: 'modified', value: '$.head_commit.modified' ],
       ],
       // 与 git webhook 中定义的 payload-url 一样
-      token: 'qm-vnit',
+      token: 'qmvnit',
       // 要匹配的内容
       regexpFilterText: '$ref;$ref;$commit_message',
       // 匹配的正则表达四
-      regexpFilterExpression: '^preview;' + BRANCH_NAME + ';build ',
-      printContributedVariables: true,
-      // 是否打印 webhook 请求返回的 response body
-      printPostContent: true,
-      slientResponse: false,
+      regexpFilterExpression: '^preview;' + BRANCH_NAME + ';build: '
     )
   }
 
   stages {
-    stage ('output variables defined by generic-webhook-trigger plugin') {
+    stage('output variables defined by generic-webhook-trigger plugin') {
       steps {
         script {
-          println("ref: ${ref}");
+          echo "ref: ${ref}";
 
-          println("commit_message: ${commit_message}");
+          echo "commit_message: ${commit_message}";
 
-          println("modified: ${modified}");
+          echo "modified: ${modified}";
         }
       }
     }
 
-    stage ('declare hasInstall variables') {
+    stage('declare hasInstall variables') {
       steps {
         script {
           def json = new JsonSlurper();
@@ -52,13 +48,13 @@ pipeline {
               break;
             }
           }
-          println(hasInstall);
+          echo "hasInstall: ${hasInstall}";
           env.hasInstall = true;
         }
       }
     }
 
-    stage ('building') {
+    stage('building') {
       steps {
         script {
           def dt = new Date();
@@ -66,22 +62,19 @@ pipeline {
 
           dingtalk(
             robot: '4ca66784-8955-4dd2-aa78-8294f71cbaac',
-            type: 'text',
+            type: 'TEXT',
             text: [
-              "qm-vnit is building...",
-              "${GIT_COMMIT}",
-              "branch name: ${GIT_BRANCH}",
-              "build start at ${timestamp}",
+              "qm-vnit is building",
+              "分支: ${GIT_BRANCH}",
+              "时间: ${timestamp}",
+              "\n"
             ],
-            at: [
-              "${GIT_COMMITTER_NAME}",
-            ]
+            at: [ "${GIT_COMMITTER_NAME}" ]
           );
 
-          '''
-            if test [ "${env.hasInstall}" == true ];
-              then
-                yarn install;
+          sh '''
+            if [ "${hasInstall}" == true ]; then
+              yarn install;
             fi
 
             npm run build;
@@ -90,6 +83,9 @@ pipeline {
 
             mv ./build /usr/share/nginx/www;
           '''
+
+          def current = new Date();
+          env.build_duration = (current.getTime() - dt.getTime()) / 1000;
         }
       }
     }
@@ -103,16 +99,15 @@ pipeline {
 
         dingtalk(
           robot: '4ca66784-8955-4dd2-aa78-8294f71cbaac',
-          type: 'text',
+          type: 'TEXT',
           text: [
             "qm-vnit is build successed",
-            "${GIT_COMMIT}",
-            "branch name: ${GIT_BRANCH}",
-            "build start at ${timestamp}",
+            "分支: ${GIT_BRANCH}",
+            "时间： ${timestamp}",
+            "耗时： ${build_duration}",
+            "\n"
           ],
-          at: [
-            "${GIT_COMMITTER_NAME}",
-          ]
+          at: [ "${GIT_COMMITTER_NAME}" ]
         );
       }
     }
@@ -124,16 +119,14 @@ pipeline {
 
         dingtalk(
           robot: '4ca66784-8955-4dd2-aa78-8294f71cbaac',
-          type: 'text',
+          type: 'TEXT',
           text: [
             "qm-vnit is build failed",
-            "${GIT_COMMIT}",
-            "branch name: ${GIT_BRANCH}",
-            "build start at ${timestamp}",
+            "分支: ${GIT_BRANCH}",
+            "时间：${timestamp}",
+            "\n"
           ],
-          at: [
-            "${GIT_COMMITTER_NAME}",
-          ]
+          at: [  "${GIT_COMMITTER_NAME}" ]
         );
       }
     }

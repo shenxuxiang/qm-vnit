@@ -1,6 +1,6 @@
 {
   "name": "qm-vnit",
-  "version": "1.0.0-beta3",
+  "version": "1.0.0-beta6",
   "main": "./src/index.tsx",
   "contributors": [
     "shenxuxiang"
