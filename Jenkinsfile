@@ -66,7 +66,7 @@ pipeline {
             text: [
               "qm-vnit is building",
               "分支: ${GIT_BRANCH}",
-              "时间: ${timestamp}",
+              "时间：${timestamp}",
               "\n"
             ],
             at: [ "${GIT_COMMITTER_NAME}" ]
@@ -84,8 +84,8 @@ pipeline {
             mv ./build /usr/share/nginx/www;
           '''
 
-          def current = new Date();
-          env.build_duration = (current.getTime() - dt.getTime()) / 1000;
+          def currentTime = new Date();
+          env.build_duration = (currentTime.getTime() - dt.getTime()) / 1000;
         }
       }
     }
@@ -103,8 +103,8 @@ pipeline {
           text: [
             "qm-vnit is build successed",
             "分支: ${GIT_BRANCH}",
-            "时间： ${timestamp}",
-            "耗时： ${build_duration}",
+            "时间：${timestamp}",
+            "耗时：${build_duration}",
             "\n"
           ],
           at: [ "${GIT_COMMITTER_NAME}" ]
