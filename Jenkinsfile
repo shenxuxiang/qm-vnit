@@ -43,13 +43,13 @@ pipeline {
           def hasInstall = false;
 
           for (file in modifiedFiles) {
-            if (file.contains('package.json')) {
+            if (file == 'package.json') {
               hasInstall = true;
               break;
             }
           }
           echo "hasInstall: ${hasInstall}";
-          env.hasInstall = true;
+          env.hasInstall = hasInstall;
         }
       }
     }
