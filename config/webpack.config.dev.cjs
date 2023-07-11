@@ -193,11 +193,6 @@ module.exports = {
               }
             ]
           },
-          // {
-          //   test: /\.svg$/,
-          //   include: path.resolve('src'),
-          //   loader: '@svgr/webpack',
-          // },
         ]
       }
     ]
