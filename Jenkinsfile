@@ -104,7 +104,7 @@ pipeline {
             "qm-vnit is build successed",
             "分支: ${GIT_BRANCH}",
             "时间：${timestamp}",
-            "耗时：${build_duration}",
+            "耗时：${build_duration} s",
             "\n"
           ],
           at: [ "${GIT_COMMITTER_NAME}" ]
