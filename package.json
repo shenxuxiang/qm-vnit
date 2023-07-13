@@ -15,6 +15,7 @@
     "UI component",
     "UI"
   ],
+  "repository": "https://github.com/shenxuxiang/qm-vnit",
   "description": "React antd ui library",
   "type": "module",
   "scripts": {
