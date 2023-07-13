@@ -1,6 +1,6 @@
 {
   "name": "qm-vnit",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "main": "./lib/index.js",
   "module": "./es/index.js",
   "types": "./lib/index.js",
