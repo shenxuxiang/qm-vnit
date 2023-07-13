@@ -12,6 +12,7 @@
     "UI component",
     "UI"
   ],
+  "repository": "https://github.com/shenxuxiang/qm-vnit",
   "description": "React antd ui library",
   "type": "module",
   "scripts": {
@@ -41,6 +42,7 @@
     "axios": "^1.4.0",
     "history": "^5.3.0",
     "mockjs": "^1.1.0",
+    "qm-vnit": "^1.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-markdown": "8.0.2",
