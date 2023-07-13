@@ -4,12 +4,11 @@ const env = require('../env.json');
 const { DefinePlugin } = require('webpack');
 const HtmlPlugin = require('html-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
-const CaseSensitivePlugin = require('case-sensitive-paths-webpack-plugin');
 const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 
-if (fs.existsSync('../env.development.json')) Object.assign(env, require('../env.development.json'));
+if (fs.existsSync(path.resolve('env.development.json'))) Object.assign(env, require('../env.development.json'));
 const { PUBLIC_PATH } = env;
 
 module.exports = {
