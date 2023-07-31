@@ -2,7 +2,7 @@ import React, { memo, useMemo } from 'react';
 import MarkdownCode from '@/components/MarkdownCode';
 import { ContentFormPage } from '@/lib';
 import dayjs from 'dayjs';
-import { Card } from 'antd';
+import { Card, Button } from 'antd';
 import { getTableList } from '@/models/index';
 
 function Example() {
@@ -57,11 +57,21 @@ function Example() {
     [],
   );
 
+  const extraNodesInsertHeader = useMemo(() => {
+    return <Button style={{ marginLeft: 8 }}>自定义</Button>;
+  }, []);
+
   return (
     <Card style={{ margin: '20px 0 60px' }}>
       <p style={{ margin: '0 0 20px' }}>案例一</p>
       <div style={{ padding: '0 0 20px', background: '#f8f8f8' }}>
-        <ContentFormPage rowKey="id" hasSearchFunction columns={columns as any} requestDataSource={getTableList} />
+        <ContentFormPage
+          rowKey="id"
+          hasSearchFunction
+          columns={columns as any}
+          requestDataSource={getTableList}
+          extraNodesInsertHeader={extraNodesInsertHeader}
+        />
       </div>
       <MarkdownCode code={code} />
     </Card>
@@ -75,6 +85,7 @@ const code = `
 import React, { memo, useMemo } from 'react';
 import { ContentFormPage } from 'qm-vnit';
 import dayjs from 'dayjs';
+import { Button } from 'antd';
 import { getTableList } from '@/models/index';
 
 function Example() {
@@ -122,6 +133,10 @@ function Example() {
     },
   ], []);
 
+  const extraNodesInsertHeader = useMemo(() => {
+    return <Button style={{ marginLeft: 8 }}>自定义</Button>
+  }, []);
+
   return (
     <div style={{ padding: '0 0 20px', background: '#f8f8f8' }}>
       <ContentFormPage
@@ -129,6 +144,7 @@ function Example() {
         hasSearchFunction
         columns={columns as any}
         requestDataSource={getTableList}
+        extraNodesInsertHeader={extraNodesInsertHeader}
       />
     </div>
   );

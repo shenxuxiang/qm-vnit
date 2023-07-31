@@ -1,7 +1,7 @@
 import React, { memo, useMemo, useCallback, useState, useEffect, useRef } from 'react';
 import MarkdownCode from '@/components/MarkdownCode';
 import { ContentFormHead } from '@/lib';
-import { Card, InputNumber } from 'antd';
+import { Card, InputNumber, Button } from 'antd';
 
 function Page() {
   const queryList = useMemo(
@@ -40,11 +40,15 @@ function Page() {
     console.log(values);
   }, []);
 
+  const extraNodes = useMemo(() => {
+    return <Button style={{ marginLeft: '8px' }}>自定义</Button>;
+  }, []);
+
   return (
     <Card style={{ margin: '20px 0 60px' }}>
       <p style={{ margin: '0 0 20px' }}>案例三（支持自定义查询表单项）</p>
       <div style={{ padding: '20px', background: '#f8f8f8' }}>
-        <ContentFormHead queryList={queryList} onSubmit={handleSubmit} />
+        <ContentFormHead queryList={queryList} onSubmit={handleSubmit} extraNodes={extraNodes} />
       </div>
       <MarkdownCode code={code} />
     </Card>
@@ -96,7 +100,7 @@ const code = `
 ~~~js
 import React, { memo, useMemo, useCallback, useState, useEffect, useRef } from 'react';
 import { ContentFormHead } from 'qm-vnit';
-import { InputNumber } from 'antd';
+import { InputNumber, Button } from 'antd';
 
 function Page() {
   const queryList = useMemo(() => [
@@ -128,9 +132,13 @@ function Page() {
     console.log(values);
   }, []);
 
+  const extraNodes= useMemo(() => {
+    return <Button style={{ marginLeft: '8px' }}>自定义</Button>;
+  }, []);
+
   return (
     <div style={{ padding: '20px', background: '#f8f8f8' }}>
-      <ContentFormHead queryList={queryList} onSubmit={handleSubmit} />
+      <ContentFormHead queryList={queryList} onSubmit={handleSubmit} extraNodes={extraNodes}/>
     </div>
   );
 }

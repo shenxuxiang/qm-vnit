@@ -53,6 +53,11 @@ const properties = [
     type: 'number',
   },
   {
+    key: 'extraNodes',
+    instruct: '按钮区域需要插入的自定义内容',
+    type: 'ReactNode',
+  },
+  {
     key: 'okButtonText',
     instruct: '提交查询表单按钮的文字',
     type: 'string',

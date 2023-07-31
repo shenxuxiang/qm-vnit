@@ -37,12 +37,15 @@ interface ContentFormPageProps {
   searchButtonText?: string;
   // 是否显示表单重置按钮
   showResetButton?: boolean;
+  // 是否显示导出表格按钮
+  showExportButton?: boolean;
+  // 插入到查询表单的自定义内容
+  extraNodesInsertHeader?: React.ReactNode;
   // 请求页面数据的
   requestDataSource: (query: any) => Promise<any>;
   // 是否具有搜索表单功能
   hasSearchFunction?: boolean;
   customResponse?: (data: any) => { pageList: any[]; total: number; pageNum: number; pageSize: number };
-
   // 同 Table 组件的 scroll
   tableScroll?: any;
   // 同 Table 组件的 rowKey
@@ -101,9 +104,11 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
     paginationSize,
     showResetButton,
     searchButtonText,
+    showExportButton,
     requestDataSource,
     hasSearchFunction,
     onPaginationChange,
+    extraNodesInsertHeader,
     paginationShowTotal = showTotal,
     customResponse = handleResponse,
   } = props;
@@ -243,6 +248,8 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
           onExport={handleExport}
           okButtonText={searchButtonText}
           showResetButton={showResetButton}
+          showExportButton={showExportButton}
+          extraNodes={extraNodesInsertHeader}
           initialValues={initialSearchCondition.current}
         />
       )}
