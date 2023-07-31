@@ -12,6 +12,7 @@ type QueryListItem = {
     keyNameForKey?: string;
     keyNameForValue?: string;
     component?: React.ReactElement;
+    watch?: (...args: any[]) => void;
 };
 type ContentFormHeadProps = {
     cols?: number;
