@@ -38,6 +38,8 @@ type QueryListItem = {
   keyNameForKey?: string;
   keyNameForValue?: string;
   component?: React.ReactElement;
+  // 每当表单项值改变时触发的监听事件
+  watch?: (...args: any[]) => void;
 };
 
 type ContentFormHeadProps = {
@@ -126,6 +128,7 @@ function ContentFormHead(props: ContentFormHeadProps) {
 
     for (let i = 0; i < queryList.length; i++) {
       const {
+        watch,
         title,
         options,
         formType,
@@ -141,10 +144,13 @@ function ContentFormHead(props: ContentFormHeadProps) {
 
       let contextItem = null;
 
+      // 表单项事件
+      const handleWatch = typeof watch === 'function' ? (...args: any[]) => watch(...args, form) : undefined;
+
       // 如果条件满足，则不渲染该项
       if (!component && !formType) continue;
       if (component) {
-        contextItem = React.cloneElement(component, { ...properties });
+        contextItem = React.cloneElement(component, { onChange: handleWatch, ...properties });
       } else {
         switch (formType) {
           case 'input':
@@ -153,6 +159,7 @@ function ContentFormHead(props: ContentFormHeadProps) {
                 allowClear
                 {...properties}
                 autoComplete="off"
+                onChange={handleWatch}
                 placeholder={placeholder || `请输入要查询的${label}`}
               />
             );
@@ -160,7 +167,12 @@ function ContentFormHead(props: ContentFormHeadProps) {
 
           case 'select':
             contextItem = (
-              <Select allowClear placeholder={placeholder || `请选择您要查询的${label}`} {...properties}>
+              <Select
+                allowClear
+                placeholder={placeholder || `请选择您要查询的${label}`}
+                {...properties}
+                onChange={handleWatch}
+              >
                 {options?.map((item: any) => (
                   <SelectOption key={item[keyNameForKey]} value={item[keyNameForValue]}>
                     {item[keyNameForKey]}
@@ -171,11 +183,13 @@ function ContentFormHead(props: ContentFormHeadProps) {
             break;
 
           case 'rangePicker':
-            contextItem = <DatePicker.RangePicker format="YYYY-MM-DD" {...properties} />;
+            contextItem = <DatePicker.RangePicker format="YYYY-MM-DD" {...properties} onChange={handleWatch} />;
             break;
 
           case 'datePicker':
-            contextItem = <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} {...properties} />;
+            contextItem = (
+              <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} {...properties} onChange={handleWatch} />
+            );
             break;
 
           case 'cascader':
@@ -184,6 +198,7 @@ function ContentFormHead(props: ContentFormHeadProps) {
                 changeOnSelect
                 {...properties}
                 options={options}
+                onChange={handleWatch}
                 placeholder={placeholder || `请选择您要查询的${label}`}
               />
             );

@@ -11,6 +11,10 @@ function Example() {
         name: 'name',
         label: '查询名称',
         formType: 'input',
+        watch: (...args: any[]) => {
+          const [, form] = args;
+          form.setFieldValue('time', null);
+        },
       },
       {
         name: 'time',
@@ -78,6 +82,10 @@ function Example() {
       name: 'name',
       label: '查询名称',
       formType: 'input',
+      watch: (...args: any[]) => {
+        const [ , form ] = args;
+        form.setFieldValue('time', null);
+      }
     },
     {
       name: 'time',

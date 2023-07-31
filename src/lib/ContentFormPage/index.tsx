@@ -20,6 +20,8 @@ type TableColumnsType = {
   visibleInTable?: boolean;
   component?: React.ReactElement;
   formatData?: (value: any) => any;
+  // 每当表单项值改变时触发的监听事件
+  watch?: (...args: any[]) => void;
 };
 
 interface ContentFormPageProps {

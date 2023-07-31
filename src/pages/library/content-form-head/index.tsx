@@ -155,4 +155,10 @@ const queryListItem = [
     instruct: '可选，自定义你希望渲染的内容，当 formType 无法满足你的需求时可以使用该方案',
     type: 'React.ReactElement',
   },
+  {
+    key: 'watch',
+    instruct:
+      '查询表单项值改变时触发的监听事件，最后一个参数是 formRef， 通过 formRef 可以调用 setFieldValue() 修改其他表单项的值。',
+    type: 'function',
+  },
 ];

@@ -12,6 +12,10 @@ function Example() {
         dataIndex: 'name',
         title: '用户姓名',
         formType: 'input',
+        watch: (...args: any[]) => {
+          const [, form] = args;
+          form.setFieldValue('country', '');
+        },
       },
       {
         dataIndex: 'sex',
@@ -79,6 +83,10 @@ function Example() {
       dataIndex: 'name',
       title: '用户姓名',
       formType: 'input',
+      watch: (...args: any[]) => {
+        const [ , form ] = args;
+        form.setFieldValue('country', '');
+      }
     },
     {
       dataIndex: 'sex',
