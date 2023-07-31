@@ -42,6 +42,7 @@ function ContentFormHead(props) {
   var onSubmit = props.onSubmit,
     onExport = props.onExport,
     queryList = props.queryList,
+    extraNodes = props.extraNodes,
     initialValues = props.initialValues,
     propCols = props.cols,
     showExportButton = props.showExportButton,
@@ -262,7 +263,7 @@ function ContentFormHead(props) {
       marginLeft: '8px'
     },
     onClick: handleExport
-  }, "\u5BFC\u51FA"), queryList.length >= 24 / colSpan && /*#__PURE__*/React.createElement(Button, {
+  }, "\u5BFC\u51FA"), extraNodes ? extraNodes : null, queryList.length >= 24 / colSpan && /*#__PURE__*/React.createElement(Button, {
     type: "link",
     onClick: handleChangeExpand
   }, expand ? '收起' : '展开', /*#__PURE__*/React.createElement(DownOutlined, {

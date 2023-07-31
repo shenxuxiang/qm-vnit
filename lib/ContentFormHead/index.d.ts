@@ -22,6 +22,7 @@ type ContentFormHeadProps = {
     showResetButton?: boolean;
     queryList: QueryListItem[];
     showExportButton?: boolean;
+    extraNodes?: React.ReactNode;
     onSubmit: (values: any) => void;
     onExport?: (values: any) => void;
 };

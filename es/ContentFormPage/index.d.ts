@@ -24,6 +24,8 @@ interface ContentFormPageProps {
     exportFileName?: string;
     searchButtonText?: string;
     showResetButton?: boolean;
+    showExportButton?: boolean;
+    extraNodesInsertHeader?: React.ReactNode;
     requestDataSource: (query: any) => Promise<any>;
     hasSearchFunction?: boolean;
     customResponse?: (data: any) => {
