@@ -8,6 +8,7 @@ import _defineProperty from '@babel/runtime-corejs3/helpers/defineProperty';
 import _slicedToArray from '@babel/runtime-corejs3/helpers/slicedToArray';
 import 'core-js/modules/es.array.push.js';
 import _filterInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/filter';
+import _concatInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/concat';
 import _mapInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/map';
 import React, { memo, useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { Form, Select, Row, Col, Button, Cascader, DatePicker, Input } from 'antd';
@@ -106,6 +107,7 @@ function ContentFormHead(props) {
     var context = [];
     var _loop = function _loop() {
       var _queryList$i = queryList[i],
+        watch = _queryList$i.watch,
         title = _queryList$i.title,
         options = _queryList$i.options,
         formType = _queryList$i.formType,
@@ -122,10 +124,19 @@ function ContentFormHead(props) {
         _queryList$i$keyNameF2 = _queryList$i.keyNameForValue,
         keyNameForValue = _queryList$i$keyNameF2 === void 0 ? 'value' : _queryList$i$keyNameF2;
       var contextItem = null;
+      // 表单项事件
+      var handleWatch = typeof watch === 'function' ? function () {
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+        return watch.apply(void 0, _concatInstanceProperty(args).call(args, [form]));
+      } : undefined;
       // 如果条件满足，则不渲染该项
       if (!component && !formType) return "continue";
       if (component) {
-        contextItem = /*#__PURE__*/React.cloneElement(component, _objectSpread({}, properties));
+        contextItem = /*#__PURE__*/React.cloneElement(component, _objectSpread({
+          onChange: handleWatch
+        }, properties));
       } else {
         switch (formType) {
           case 'input':
@@ -133,14 +144,17 @@ function ContentFormHead(props) {
               allowClear: true
             }, properties), {}, {
               autoComplete: "off",
+              onChange: handleWatch,
               placeholder: placeholder || "\u8BF7\u8F93\u5165\u8981\u67E5\u8BE2\u7684".concat(label)
             }));
             break;
           case 'select':
-            contextItem = /*#__PURE__*/React.createElement(Select, _objectSpread({
+            contextItem = /*#__PURE__*/React.createElement(Select, _objectSpread(_objectSpread({
               allowClear: true,
               placeholder: placeholder || "\u8BF7\u9009\u62E9\u60A8\u8981\u67E5\u8BE2\u7684".concat(label)
-            }, properties), options === null || options === void 0 ? void 0 : _mapInstanceProperty(options).call(options, function (item) {
+            }, properties), {}, {
+              onChange: handleWatch
+            }), options === null || options === void 0 ? void 0 : _mapInstanceProperty(options).call(options, function (item) {
               return /*#__PURE__*/React.createElement(SelectOption, {
                 key: item[keyNameForKey],
                 value: item[keyNameForValue]
@@ -148,23 +162,28 @@ function ContentFormHead(props) {
             }));
             break;
           case 'rangePicker':
-            contextItem = /*#__PURE__*/React.createElement(DatePicker.RangePicker, _objectSpread({
+            contextItem = /*#__PURE__*/React.createElement(DatePicker.RangePicker, _objectSpread(_objectSpread({
               format: "YYYY-MM-DD"
-            }, properties));
+            }, properties), {}, {
+              onChange: handleWatch
+            }));
             break;
           case 'datePicker':
-            contextItem = /*#__PURE__*/React.createElement(DatePicker, _objectSpread({
+            contextItem = /*#__PURE__*/React.createElement(DatePicker, _objectSpread(_objectSpread({
               format: "YYYY-MM-DD",
               style: {
                 width: '100%'
               }
-            }, properties));
+            }, properties), {}, {
+              onChange: handleWatch
+            }));
             break;
           case 'cascader':
             contextItem = /*#__PURE__*/React.createElement(Cascader, _objectSpread(_objectSpread({
               changeOnSelect: true
             }, properties), {}, {
               options: options,
+              onChange: handleWatch,
               placeholder: placeholder || "\u8BF7\u9009\u62E9\u60A8\u8981\u67E5\u8BE2\u7684".concat(label)
             }));
             break;

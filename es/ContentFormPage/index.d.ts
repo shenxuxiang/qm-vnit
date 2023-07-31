@@ -15,6 +15,7 @@ type TableColumnsType = {
     visibleInTable?: boolean;
     component?: React.ReactElement;
     formatData?: (value: any) => any;
+    watch?: (...args: any[]) => void;
 };
 interface ContentFormPageProps {
     tableTitle?: string;
