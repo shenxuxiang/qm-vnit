@@ -57,9 +57,11 @@ function ContentFormPage(props, ref) {
     paginationSize = props.paginationSize,
     showResetButton = props.showResetButton,
     searchButtonText = props.searchButtonText,
+    showExportButton = props.showExportButton,
     requestDataSource = props.requestDataSource,
     hasSearchFunction = props.hasSearchFunction,
     onPaginationChange = props.onPaginationChange,
+    extraNodesInsertHeader = props.extraNodesInsertHeader,
     _props$paginationShow = props.paginationShowTotal,
     paginationShowTotal = _props$paginationShow === void 0 ? showTotal : _props$paginationShow,
     _props$customResponse = props.customResponse,
@@ -255,6 +257,8 @@ function ContentFormPage(props, ref) {
     onExport: handleExport,
     okButtonText: searchButtonText,
     showResetButton: showResetButton,
+    showExportButton: showExportButton,
+    extraNodes: extraNodesInsertHeader,
     initialValues: initialSearchCondition.current
   }), /*#__PURE__*/React.createElement(Card, {
     bodyStyle: {
