@@ -66,6 +66,11 @@ const properties = [
     type: 'ReactNode',
   },
   {
+    key: 'extraNodesInsertHeader',
+    instruct: '查询表单按钮区域需要插入的额外内容',
+    type: 'ReactNode',
+  },
+  {
     key: 'dataExport',
     instruct: '数据导出功能，如果不用传，则表单搜索功能中不展示导出按钮',
     type: 'function(values)',
@@ -86,6 +91,12 @@ const properties = [
     instruct: '是否显示表单重置按钮',
     type: 'boolean',
     default: 'true',
+  },
+  {
+    key: 'showExportButton',
+    instruct: '是否显示导出按钮',
+    type: 'boolean',
+    default: 'false',
   },
   {
     key: 'requestDataSource',

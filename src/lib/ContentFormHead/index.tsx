@@ -57,6 +57,8 @@ type ContentFormHeadProps = {
   queryList: QueryListItem[];
   // 是否展示导出功能按钮
   showExportButton?: boolean;
+  // 需要展示的额外内容
+  extraNodes?: React.ReactNode;
   // 表单提交回调函数
   onSubmit: (values: any) => void;
   // 导出功能回调函数
@@ -68,6 +70,7 @@ function ContentFormHead(props: ContentFormHeadProps) {
     onSubmit,
     onExport,
     queryList,
+    extraNodes,
     initialValues,
     cols: propCols,
     showExportButton,
@@ -278,6 +281,8 @@ function ContentFormHead(props: ContentFormHeadProps) {
                 导出
               </Button>
             )}
+            {/* 附加的自定义节点 */}
+            {extraNodes ? extraNodes : null}
             {queryList.length >= 24 / colSpan && (
               <Button type="link" onClick={handleChangeExpand}>
                 {expand ? '收起' : '展开'}

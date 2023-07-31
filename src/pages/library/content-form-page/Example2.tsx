@@ -66,6 +66,7 @@ function Example() {
         <ContentFormPage
           rowKey="id"
           ref={taleRef}
+          showExportButton
           hasSearchFunction
           columns={columns as any}
           requestDataSource={getTableList}
@@ -140,6 +141,7 @@ function Example() {
       <ContentFormPage
         rowKey="id"
         ref={taleRef}
+        showExportButton
         hasSearchFunction
         columns={columns as any}
         requestDataSource={getTableList}
