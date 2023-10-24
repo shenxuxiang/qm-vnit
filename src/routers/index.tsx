@@ -5,8 +5,8 @@ import LazyLoader from '@/components/LazyLoader';
 import Library from '@/pages/library';
 
 export const menuItems = [
-  { key: 'content-form-head', label: 'ContentFormHead 表单查询' },
-  { key: 'content-form-page', label: 'ContentFormPage 表格页面' },
+  { key: 'content-form-header', label: 'ContentFormHeader 表单查询' },
+  { key: 'content-form-table', label: 'ContentFormTable 表格页面' },
   { key: 'model-tree', label: 'ModelTree 模型树' },
   { key: 'preview-image', label: 'PreviewImage 图片预览' },
   { key: 'upload-file', label: 'UploadFile 文件上传' },
@@ -36,15 +36,15 @@ function Router() {
           children: [
             {
               path: `/library/`,
-              element: <Navigate to="/library/content-form-head" />,
+              element: <Navigate to="/library/content-form-header" />,
             },
             {
-              path: `/library/content-form-head`,
-              element: React.createElement(LazyLoader(() => import('../pages/library/content-form-head'))),
+              path: `/library/content-form-header`,
+              element: React.createElement(LazyLoader(() => import('../pages/library/content-form-header'))),
             },
             {
-              path: `/library/content-form-page`,
-              element: React.createElement(LazyLoader(() => import('../pages/library/content-form-page'))),
+              path: `/library/content-form-table`,
+              element: React.createElement(LazyLoader(() => import('../pages/library/content-form-table'))),
             },
             {
               path: `/library/model-tree`,

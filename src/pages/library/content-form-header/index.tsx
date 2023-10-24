@@ -58,7 +58,7 @@ const properties = [
     type: 'ReactNode',
   },
   {
-    key: 'okButtonText',
+    key: 'submitButtonText',
     instruct: '提交查询表单按钮的文字',
     type: 'string',
     default: '查询',
@@ -92,7 +92,12 @@ const properties = [
   },
   {
     key: 'onSubmit',
-    instruct: '表单提交/重置的回调函数',
+    instruct: '表单提交回调函数',
+    type: 'function(values)',
+  },
+  {
+    key: 'onReset',
+    instruct: '表单重置的回调函数',
     type: 'function(values)',
   },
   {
@@ -106,11 +111,6 @@ const queryListItem = [
   {
     key: 'name',
     instruct: '可选，表单的 name 值',
-    type: 'string',
-  },
-  {
-    key: 'label',
-    instruct: '可选，表单的 label 值',
     type: 'string',
   },
   {
@@ -129,18 +129,6 @@ const queryListItem = [
     type: 'any[]',
   },
   {
-    key: 'keyNameForKey',
-    instruct:
-      '可选，如果 options 中的数组对象不是 {label, value} 的形式时，我们可以通过 keyNameForKey 来定义 label 字段的取值',
-    type: 'string',
-  },
-  {
-    key: 'keyNameForValue',
-    instruct:
-      '可选，如果 options 中的数组对象不是 {label, value} 的形式时，我们可以通过 keyNameForValue 来定义 value 字段的取值',
-    type: 'string',
-  },
-  {
     key: 'properties',
     instruct: '可选，传递给表单组件的 props，你可以通过 properties 来给组件传递任何属性',
     type: 'object',
@@ -148,7 +136,7 @@ const queryListItem = [
   {
     key: 'placeholder',
     instruct: '可选，传递给 Input、Select 等组件的 placeholder 属性',
-    type: 'string',
+    type: 'string | [string, string]',
   },
   {
     key: 'formType',
@@ -165,5 +153,11 @@ const queryListItem = [
     instruct:
       '查询表单项值改变时触发的监听事件，最后一个参数是 formRef， 通过 formRef 可以调用 setFieldValue() 修改其他表单项的值。',
     type: 'function',
+  },
+  {
+    key: 'dataFormat',
+    instruct:
+      '表单项数据格式化函数，格式化函数将在表达提交时执行，我们可以页面底部的 dataFormat 函数中查看 dataFormat() 调用',
+    type: '(value: any) => { [propName: string]: any }',
   },
 ];

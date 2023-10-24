@@ -1,5 +1,5 @@
-export { default as ContentFormHead } from './ContentFormHead';
-export { default as ContentFormPage } from './ContentFormPage';
+export { default as ContentFormHeader } from './ContentFormHeader';
+export { default as ContentFormTable } from './ContentFormTable';
 export { default as ModelTree } from './ModelTree';
 export { default as PreviewImage } from './PreviewImage';
 export { default as UploadAudio } from './UploadAudio';

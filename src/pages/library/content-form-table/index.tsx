@@ -47,7 +47,6 @@ function Page() {
       <Table bordered columns={TABLE_HEADER} rowKey="key" dataSource={properties} pagination={false} />
       <h1>TableColumnsType</h1>
       <Table bordered columns={TABLE_HEADER} rowKey="key" dataSource={tableColumnsType} pagination={false} />
-      <MarkdownCode code={code} defaultExpand />
     </section>
   );
 }
@@ -71,17 +70,17 @@ const properties = [
     type: 'ReactNode',
   },
   {
-    key: 'dataExport',
-    instruct: '数据导出功能，如果不用传，则表单搜索功能中不展示导出按钮',
+    key: 'exportTableList',
+    instruct: '表格数据数据导出功能',
     type: 'function(values)',
   },
   {
     key: 'exportFileName',
-    instruct: '导出的文件名',
+    instruct: '指定导出的文件名',
     type: 'string',
   },
   {
-    key: 'searchButtonText',
+    key: 'submitButtonText',
     instruct: '表单查询按钮内容自定义',
     type: 'string',
     default: '查询',
@@ -102,12 +101,6 @@ const properties = [
     key: 'requestDataSource',
     instruct: '请求数据的方法',
     type: 'function',
-  },
-  {
-    key: 'hasSearchFunction',
-    instruct: '是否具有搜索表单功能',
-    type: 'boolean',
-    default: 'false',
   },
   {
     key: 'customResponse',
@@ -147,7 +140,7 @@ const properties = [
     default: 'default',
   },
   {
-    key: 'paginationShowTotal',
+    key: 'showTotal',
     instruct: '同 Pagination 组件的 paginationShowTotal',
     type: '(total: number, range: number[]) => string',
     default: 'showTotal',
@@ -157,17 +150,23 @@ const properties = [
     instruct: '同 Pagination 组件的 onChange 事件',
     type: '(pageNum: number, pageSize: number) => void',
   },
+  {
+    key: 'tableSize',
+    instruct: '同 Table 组件的 size',
+    type: 'small | middle | large',
+  },
+  {
+    key: 'immediate',
+    instruct: '是否在页面初始化时就请求数据接口',
+    type: 'boolean',
+    default: 'true',
+  },
 ];
 
 const tableColumnsType = [
   {
     key: 'name',
     instruct: '可选，表单的 name 值，如果 name 与 dataIndex 字段所对应的值相同，则可以不传 name。',
-    type: 'string',
-  },
-  {
-    key: 'label',
-    instruct: '可选，表单的 label 值，如果 label 与 title 字段所对应的值相同，则可以不传 label。',
     type: 'string',
   },
   {
@@ -184,18 +183,6 @@ const tableColumnsType = [
     key: 'options',
     instruct: '可选，以配置形式设置子元素，',
     type: 'any[]',
-  },
-  {
-    key: 'keyNameForKey',
-    instruct:
-      '可选，如果 options 中的数组对象不是 {label, value} 的形式时，我们可以通过 keyNameForKey 来定义 label 字段的取值',
-    type: 'string',
-  },
-  {
-    key: 'keyNameForValue',
-    instruct:
-      '可选，如果 options 中的数组对象不是 {label, value} 的形式时，我们可以通过 keyNameForValue 来定义 value 字段的取值',
-    type: 'string',
   },
   {
     key: 'properties',
@@ -223,10 +210,10 @@ const tableColumnsType = [
     type: 'any',
   },
   {
-    key: 'formatData',
+    key: 'dataFormat',
     instruct:
       '表单项数据格式化函数，格式化函数将在表达提交时执行，我们可以页面底部的 formatFormData 函数中查看 formatData() 调用',
-    type: '(value: any) => any',
+    type: '(value: any) => { [propName: string]: any }',
   },
   {
     key: 'visibleInTable',
@@ -237,91 +224,7 @@ const tableColumnsType = [
   {
     key: 'watch',
     instruct:
-      '查询表单项值改变时触发的监听事件，最后一个参数是 formRef， 通过 formRef 可以调用 setFieldValue() 修改其他表单项的值。',
-    type: 'function',
+      '查询表单项值改变时触发的监听事件，最后一个参数是 formRef， 通过 formRef 可以调用 setFieldValue()、getFieldValue() 修改/获取其他表单项的值。',
+    type: 'function(...args)',
   },
 ];
-
-const code = `
-~~~jsx
-function showTotal(total: number) {
-  return '共 ' + total + ' 条数据';
-}
-
-
-function handleResponse(data: any) {
-  const { list: pageList, total, pageSize, pageNum } = data;
-  return { pageList, total, pageSize, pageNum };
-}
-
-
-function formatFormData(values: any, columns: TableColumnsType[]): SearchCondition {
-  const formData = {} as { [propName: string]: any };
-
-  for (let i = 0; i < columns.length; i++) {
-    const { dataIndex, name = dataIndex, formatData } = columns[i];
-    const value = values[name];
-    // eslint-disable-next-line
-    if (value == null) continue;
-
-    // 通过 formatData() 将数据格式化，并做为最总发送给后端的查询内容
-    if (typeof formatData === "function") {
-      const fieldValue = formatData(value);
-      Object.assign(formData, fieldValue);
-    } else {
-      formData[name] = value;
-    }
-  }
-  return formData;
-}
-
-// ContentFormPage 组件内部对外暴露的句柄
-useImperativeHandle(
-  ref,
-  () => ({
-    // 强制更新页面数据
-    forceUpdate(opts?: any, callback?: Function) {
-      const query = { pageSize, pageNum, ...searchContent, ...opts };
-      sendRequestPageList(query).finally(() => callback?.());
-    },
-  }),
-  [pageSize, pageNum, searchContent]
-);
-
-
-/**
- * ContentFormPage 组件支持排序
- * 当 columns 中的某一项设置了 sorter 字段时，则该字段将支持【倒叙/正序】 查询。
- * 所有需要排序字段都集中在 searchContent.order 对象中，例如：
- * [{ field: 'time', direction: true  }] direction === true 则表示升序，false 则表示倒叙。
- * 如果某个字段不存在，则该字段不排序。
-*/
-const handleTableChange = useCallback((_: any, __: any, sorter: any) => {
-  const orderList: OrderList = [];
-  // sorter 可能是对象，也可能是数组。分开处理
-  if (sorter instanceof Array) {
-    for (let i = 0; i < sorter.length; i++) {
-      const { field, order } = sorter[i];
-      // 如果 order 字段不存在则说明没有排序
-      // 正序-true、倒叙-false，
-      if (order) orderList.push({ field, direction: order.includes("asc") });
-    }
-  } else {
-    const { field, order } = sorter;
-    // 如果 order 字段不存在则说明没有排序
-    // 正序-true、倒叙-false，
-    if (order) orderList.push({ field, direction: order.includes("asc") });
-  }
-
-  const newSearchCondition: SearchCondition = {
-    ...searchContent,
-    order: orderList,
-  };
-  if (orderList.length <= 0) delete newSearchCondition.order;
-
-  setState({ searchContent: newSearchCondition });
-}, [searchContent]);
-
-
-~~~
-`;

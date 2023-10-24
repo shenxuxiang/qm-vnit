@@ -4,17 +4,6 @@ import { DownOutlined } from '@ant-design/icons';
 import { throttle } from '@/utils';
 import './index.less';
 
-// 计算 <Row /> 容器下面一个 <Col/> 组件将设置多少 span
-function computeColSpan(): number {
-  const width: number = window.innerWidth || document.documentElement.clientWidth;
-
-  if (width >= 1600) return colSpanConfig.xxl;
-  if (width >= 1200) return colSpanConfig.xl;
-  if (width >= 992) return colSpanConfig.lg;
-  if (width >= 768) return colSpanConfig.md;
-  return colSpanConfig.sm;
-}
-
 const { useForm, Item: FormItem } = Form;
 const SelectOption = Select.Option;
 const colSpanConfig = {
@@ -26,7 +15,7 @@ const colSpanConfig = {
   xs: 12,
 };
 
-type QueryListItem = {
+export type QueryListItem = {
   name?: string;
   label?: string;
   title?: string;
@@ -34,39 +23,44 @@ type QueryListItem = {
   formType?: string;
   dataIndex?: string;
   properties?: object;
-  placeholder?: string;
   keyNameForKey?: string;
   keyNameForValue?: string;
   component?: React.ReactElement;
   // 每当表单项值改变时触发的监听事件
   watch?: (...args: any[]) => void;
+  placeholder?: string | string[];
+  // 数据格式化函数
+  dataFormat?: (value: any) => { [propName: string]: any };
 };
 
-type ContentFormHeadProps = {
+type ContentFormHeaderProps = {
   // 指定一行放置几列（指定后，布局列数不在随屏幕宽度的大小而变化）
   cols?: number;
   // 提交查询表单按钮的文字
-  okButtonText?: string;
+  submitButtonText?: string;
   // 表单查询的初始值
   initialValues?: object;
   // 是否展开所有查询的表单，默认 true
   defaultExpand?: boolean;
   // 是否展示重置按钮，默认 true
   showResetButton?: boolean;
-  // 查询表单项
-  queryList: QueryListItem[];
   // 是否展示导出功能按钮
   showExportButton?: boolean;
+  // 查询表单项
+  queryList: QueryListItem[];
   // 需要展示的额外内容
   extraNodes?: React.ReactNode;
+  // 表单重置
+  onReset?: (values: any) => void;
   // 表单提交回调函数
   onSubmit: (values: any) => void;
   // 导出功能回调函数
   onExport?: (values: any) => void;
 };
 
-function ContentFormHead(props: ContentFormHeadProps) {
+function ContentFormHeader(props: ContentFormHeaderProps) {
   const {
+    onReset,
     onSubmit,
     onExport,
     queryList,
@@ -75,17 +69,20 @@ function ContentFormHead(props: ContentFormHeadProps) {
     cols: propCols,
     showExportButton,
     defaultExpand = true,
-    okButtonText = '查询',
     showResetButton = true,
+    submitButtonText = '查询',
   } = props;
-  const [colSpan, setColSpan] = useState(propCols ? 24 / propCols : computeColSpan);
-  const [expand, setExpand] = useState(defaultExpand);
   const [form] = useForm();
+  const [colSpan, setColSpan] = useState(6);
+  const [expand, setExpand] = useState(defaultExpand);
+  const [formName] = useState(() => 'qm-vnit-form-' + Math.random().toString(32).slice(2));
+
+  const xRef = useRef<any>();
   const containerRef = useRef<any>();
 
   useEffect(() => {
     function resize() {
-      const colSpan = propCols ? 24 / propCols : computeColSpan();
+      const colSpan = propCols ? 24 / propCols : computeColSpan(xRef.current);
       setColSpan(() => colSpan);
 
       if (expand) {
@@ -104,6 +101,7 @@ function ContentFormHead(props: ContentFormHeadProps) {
 
     if (propCols) return;
 
+    // 如果没有设置 props.cols，则组件会根据 pagesize 事件自动计算
     const hanleResize = throttle(resize, 200);
     window.addEventListener('resize', hanleResize, false);
     return () => {
@@ -139,7 +137,6 @@ function ContentFormHead(props: ContentFormHeadProps) {
         component,
         properties,
         placeholder,
-        label = title,
         name = dataIndex,
         keyNameForKey = 'label',
         keyNameForValue = 'value',
@@ -163,7 +160,7 @@ function ContentFormHead(props: ContentFormHeadProps) {
                 {...properties}
                 autoComplete="off"
                 onChange={handleWatch}
-                placeholder={placeholder || `请输入要查询的${label}`}
+                placeholder={(placeholder as string) || `请输入要查询的${title}`}
               />
             );
             break;
@@ -172,9 +169,9 @@ function ContentFormHead(props: ContentFormHeadProps) {
             contextItem = (
               <Select
                 allowClear
-                placeholder={placeholder || `请选择您要查询的${label}`}
                 {...properties}
                 onChange={handleWatch}
+                placeholder={placeholder || `请选择您要查询的${title}`}
               >
                 {options?.map((item: any) => (
                   <SelectOption key={item[keyNameForKey]} value={item[keyNameForValue]}>
@@ -186,13 +183,17 @@ function ContentFormHead(props: ContentFormHeadProps) {
             break;
 
           case 'rangePicker':
-            contextItem = <DatePicker.RangePicker format="YYYY-MM-DD" {...properties} onChange={handleWatch} />;
+            contextItem = (
+              <DatePicker.RangePicker
+                {...properties}
+                onChange={handleWatch}
+                placeholder={placeholder as [string, string]}
+              />
+            );
             break;
 
           case 'datePicker':
-            contextItem = (
-              <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} {...properties} onChange={handleWatch} />
-            );
+            contextItem = <DatePicker {...properties} onChange={handleWatch} placeholder={placeholder as string} />;
             break;
 
           case 'cascader':
@@ -202,7 +203,7 @@ function ContentFormHead(props: ContentFormHeadProps) {
                 {...properties}
                 options={options}
                 onChange={handleWatch}
-                placeholder={placeholder || `请选择您要查询的${label}`}
+                placeholder={placeholder || `请选择您要查询的${title}`}
               />
             );
             break;
@@ -212,11 +213,9 @@ function ContentFormHead(props: ContentFormHeadProps) {
         }
       }
 
-      const spanProps = propCols ? { span: 24 / propCols } : colSpanConfig;
-
       context.push(
-        <Col key={name} {...spanProps} style={{ display: i > cols - 2 && !expand ? 'none' : '' }}>
-          <FormItem label={label} name={name}>
+        <Col key={name} span={colSpan} style={{ display: i > cols - 2 && !expand ? 'none' : '' }}>
+          <FormItem label={title} name={name}>
             {contextItem}
           </FormItem>
         </Col>,
@@ -226,19 +225,22 @@ function ContentFormHead(props: ContentFormHeadProps) {
   }, [queryList, colSpan, expand, propCols]);
 
   const handleFinish = useCallback(
-    (values: {}) => {
-      onSubmit?.(values);
+    (values: any) => {
+      const query = formatFormModel(queryList, values);
+      onSubmit?.(query);
     },
-    [onSubmit],
+    [onSubmit, queryList],
   );
 
   const handleReset = useCallback(() => {
-    onSubmit?.({});
-  }, []);
+    const query = formatFormModel(queryList, initialValues as any);
+    onReset?.(query);
+  }, [queryList]);
 
   const handleExport = useCallback(() => {
-    onExport?.(form.getFieldsValue());
-  }, [onExport]);
+    const query = formatFormModel(queryList, form.getFieldsValue());
+    onExport?.(query);
+  }, [onExport, queryList]);
 
   // 展开/收起
   const handleChangeExpand = useCallback(() => {
@@ -254,22 +256,14 @@ function ContentFormHead(props: ContentFormHeadProps) {
     }
   }, [expand, colSpan, renderFormContent.length]);
 
-  const spanProps = useMemo(() => (propCols ? { span: 24 / propCols } : colSpanConfig), [propCols]);
-
   return (
-    <section className="qm-content-form-head">
-      <Form
-        form={form}
-        onReset={handleReset}
-        onFinish={handleFinish}
-        name="content-form-head"
-        initialValues={initialValues}
-      >
+    <section className="qm-content-form-head" ref={xRef}>
+      <Form form={form} name={formName} onReset={handleReset} onFinish={handleFinish} initialValues={initialValues}>
         <Row className="qm-content-form-head-row" ref={containerRef}>
           {renderFormContent}
-          <Col {...spanProps} offset={offsetSpan} className="qm-content-form-head-button-group">
+          <Col span={colSpan} offset={offsetSpan} className="qm-content-form-head-button-group">
             <Button type="primary" htmlType="submit">
-              {okButtonText}
+              {submitButtonText}
             </Button>
             {showResetButton && (
               <Button htmlType="reset" style={{ marginLeft: '8px' }}>
@@ -296,4 +290,34 @@ function ContentFormHead(props: ContentFormHeadProps) {
   );
 }
 
-export default memo(ContentFormHead);
+export default memo(ContentFormHeader);
+
+// 格式化表单数据
+function formatFormModel(queryList: QueryListItem[], data: { [propName: string]: any } = {}) {
+  const query: any = {};
+  queryList.forEach((item) => {
+    const { dataIndex, name = dataIndex!, dataFormat } = item;
+    const value = data[name];
+
+    // eslint-disable-next-line
+    if (value == null) return;
+
+    if (typeof dataFormat === 'function') {
+      Object.assign(query, dataFormat(value));
+    } else {
+      query[name] = value;
+    }
+  });
+  return query;
+}
+
+// 计算 <Row /> 容器下面一个 <Col/> 组件将设置多少 span
+function computeColSpan(element: HTMLElement): number {
+  const width: number = element.offsetWidth;
+
+  if (width >= 1600) return colSpanConfig.xxl;
+  if (width >= 1200) return colSpanConfig.xl;
+  if (width >= 992) return colSpanConfig.lg;
+  if (width >= 768) return colSpanConfig.md;
+  return colSpanConfig.sm;
+}

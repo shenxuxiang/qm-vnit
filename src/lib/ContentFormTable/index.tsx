@@ -1,51 +1,44 @@
 import React, { useCallback, useEffect, forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
+import type { QueryListItem } from '../ContentFormHeader';
 import { Card, Table, Pagination, message } from 'antd';
-import ContentFormHead from '../ContentFormHead';
+import ContentFormHead from '../ContentFormHeader';
 import useReducer from '@/utils/useReducer';
 import { downloadFile } from '@/utils';
 import './index.less';
 
-type TableColumnsType = {
-  name: string;
-  title: string;
-  label?: string;
-  options?: any[];
-  formType?: string;
-  dataIndex: string;
-  initialValue?: any;
-  properties?: object;
-  placeholder?: string;
-  keyNameForKey?: string;
-  keyNameForValue?: string;
+type TableColumnsType = QueryListItem & {
   visibleInTable?: boolean;
-  component?: React.ReactElement;
-  formatData?: (value: any) => any;
-  // 每当表单项值改变时触发的监听事件
-  watch?: (...args: any[]) => void;
+  initialValue?: any;
 };
 
 interface ContentFormPageProps {
+  // 查询表单要展示的列数
+  cols?: number;
+  // 是否再页面初始化时就请求数据接口
+  immediate?: boolean;
   // 表格左上角展示的标题
   tableTitle?: string;
+  // 是否展开所有查询的表单，默认 true
+  defaultExpand?: boolean;
   // 表格右上角展示自定义内容
   extra?: React.ReactNode;
-  // 数据导出功能
-  dataExport?: Function;
   // 导出的文件名
   exportFileName?: string;
+  // 数据导出功能
+  exportTableList?: Function;
   // 表单查询按钮内容自定义
-  searchButtonText?: string;
+  submitButtonText?: string;
   // 是否显示表单重置按钮
   showResetButton?: boolean;
   // 是否显示导出表格按钮
   showExportButton?: boolean;
   // 插入到查询表单的自定义内容
   extraNodesInsertHeader?: React.ReactNode;
+  // 在正式请求表格数据之前，会触发 beforeQueryAction 行为，返回 false 将中断请求。此行为中可以对表单进行校验
+  beforeQueryAction?: (query: any) => boolean;
   // 请求页面数据的
   requestDataSource: (query: any) => Promise<any>;
-  // 是否具有搜索表单功能
-  hasSearchFunction?: boolean;
-  customResponse?: (data: any) => { pageList: any[]; total: number; pageNum: number; pageSize: number };
+  customResponse?: (data: any) => { tableList: any[]; total: number };
   // 同 Table 组件的 scroll
   tableScroll?: any;
   // 同 Table 组件的 rowKey
@@ -58,8 +51,9 @@ interface ContentFormPageProps {
   rowSelection?: any;
   // 同 Pagination 组件的 size
   paginationSize?: 'default' | 'small';
-  // 同 Pagination 组件的 paginationShowTotal
-  paginationShowTotal?: (total: number, range: number[]) => string;
+  tableSize?: 'small' | 'middle' | 'large';
+  // 同 Pagination 组件的 showTotal
+  showTotal?: (total: number, range: number[]) => string;
   // 同 Pagination 组件的 onChange 事件
   onPaginationChange?: (pageNum: number, pageSize: number) => void;
 }
@@ -76,45 +70,41 @@ type SearchCondition = {
   [propName: string]: any;
 };
 
-function initialState() {
-  return {
-    total: 0,
-    pageNum: 1,
-    pageList: [],
-    pageSize: 10,
-    loading: false,
-    searchContent: {} as SearchCondition,
-  };
-}
-
 function ContentFormPage(props: ContentFormPageProps, ref: any) {
   const [state, setState] = useReducer(initialState);
-  const { total, pageNum, loading, pageSize, pageList, searchContent } = state;
+  const { total, pageNum, loading, pageSize, tableList, searchContent } = state;
 
   const {
+    cols,
     extra,
     rowKey,
     columns,
     bordered,
+    tableSize,
     tableTitle,
-    dataExport,
     tableScroll,
     rowSelection,
     exportFileName,
     paginationSize,
+    exportTableList,
     showResetButton,
-    searchButtonText,
+    immediate = true,
+    submitButtonText,
     showExportButton,
+    beforeQueryAction,
     requestDataSource,
-    hasSearchFunction,
     onPaginationChange,
+    defaultExpand = true,
     extraNodesInsertHeader,
-    paginationShowTotal = showTotal,
+    showTotal = defaultShowTotal,
     customResponse = handleResponse,
   } = props;
 
+  // immediate 表示是否在页面初始化的时候请求后台接口。默认 true
+  const immediateRef = useRef(immediate);
+
   // 表单查询条件（初始化的值）。Form 表单不会更新初始化值，所以我们使用 ref。
-  const initialSearchCondition = useRef<any>(null);
+  const initialSearchCondition = useRef<any>({});
 
   // Table 组件使用的 columns
   const tableColumns = useMemo(() => {
@@ -130,27 +120,32 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
   if (initialSearchCondition.current === null) {
     const initialValues = {} as any;
     for (let i = 0; i < queryList.length; i++) {
-      const { dataIndex, name, initialValue } = queryList[i];
-      if (initialValue) initialValues[name || dataIndex] = initialValue;
+      const { dataIndex, name = dataIndex!, initialValue } = queryList[i];
+      if (initialValue) initialValues[name] = initialValue;
     }
 
     initialSearchCondition.current = initialValues;
-    setState({ searchContent: formatFormData(initialValues, queryList) });
+    setState({ searchContent: formatFormModel(queryList, initialValues) });
   }
 
   // 请求数据
-  const sendRequestPageList = useCallback(async (query: any) => {
-    setState({ loading: true });
-    try {
-      const response = await requestDataSource(query);
-      const { data, code } = response;
-      if (code === 0) {
-        setState({ ...customResponse(data) });
+  const sendRequestTableList = useCallback(
+    async (query: any) => {
+      // 如果 action 返回 false， 则行为终止，否则将返回的内容作为 request body。
+      const action = beforeQueryAction?.(query) ?? query;
+
+      if (action === false) return;
+
+      setState({ loading: true });
+      try {
+        const response = await requestDataSource(action);
+        setState({ ...customResponse(response) });
+      } finally {
+        setState({ loading: false });
       }
-    } finally {
-      setState({ loading: false });
-    }
-  }, []);
+    },
+    [beforeQueryAction],
+  );
 
   // 对组件外部暴露可调用的 API
   useImperativeHandle(
@@ -159,55 +154,54 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
       // 强制更新页面数据
       forceUpdate(opts?: any, callback?: Function) {
         const query = { pageSize, pageNum, ...searchContent, ...opts };
-        sendRequestPageList(query).finally(() => callback?.());
+        sendRequestTableList(query).finally(() => callback?.());
       },
     }),
-    [pageSize, pageNum, searchContent],
+    [pageSize, pageNum, searchContent, sendRequestTableList],
   );
 
   // 页面初始化。
-  // 之后，每当 deps 变化都会触发 sendRequestPageList() 重新请求数据
+  // 之后，每当 deps 变化都会触发 sendRequestTableList() 重新请求数据
   useEffect(() => {
-    sendRequestPageList({ pageSize, pageNum, ...searchContent });
-  }, [pageSize, pageNum, searchContent]);
+    // immediateRef 表示再页面初始化时是否请求数
+    if (immediateRef.current === false) {
+      immediateRef.current = true;
+      return;
+    }
+
+    sendRequestTableList({ pageSize, pageNum, ...searchContent });
+  }, [pageSize, pageNum, searchContent, sendRequestTableList]);
 
   useEffect(() => {
     onPaginationChange?.(pageNum, pageSize);
   }, [pageSize, pageNum]);
 
-  const onPageSizeChange = useCallback((_: any, pageSize: number) => {
-    setState({ pageSize, pageNum: 1 });
-  }, []);
-
-  const onPageNumChange = useCallback((pageNum: number) => {
-    setState({ pageNum });
+  const onPageNumChange = useCallback((pageNum: number, pageSize: number) => {
+    setState({ pageSize, pageNum });
   }, []);
 
   // 点击查询按钮
-  const handleSubmit = useCallback(
-    (values: any) => {
-      const formData = formatFormData(values, queryList);
-      setState({ searchContent: formData, pageNum: 1 });
-    },
-    [queryList],
-  );
+  const handleSubmit = useCallback((values: any) => setState({ searchContent: values, pageNum: 1 }), []);
+
+  // 点击重置按钮
+  const handleReset = useCallback((values: any) => setState({ searchContent: values, pageNum: 1 }), []);
 
   // 导出数据
   const handleExport = useCallback(
-    async (values: any) => {
-      const formData = formatFormData(values, queryList);
+    async (query: any) => {
+      // 如果 action 返回 false， 则行为终止，否则将返回的内容作为 request body。
+      const action = beforeQueryAction?.(query) ?? query;
+      if (action === false) return;
+
       try {
-        const file = await dataExport!({ pageNum, pageSize, ...formData });
-        if (file.data.type === 'application/json') {
-          throw new Error('文件下载失败');
-        } else {
-          downloadFile(exportFileName || file.fileName, file.data);
-        }
+        const response = await exportTableList!({ pageNum, pageSize, ...action });
+
+        downloadFile(exportFileName || '_default_file', response.data);
       } catch (error) {
         message.warning('文件下载失败');
       }
     },
-    [dataExport, exportFileName, queryList, pageNum, pageSize],
+    [exportTableList, exportFileName, queryList, pageNum, pageSize, beforeQueryAction],
   );
 
   // 当 columns 中的某一项设置了 sorter 时，可以设置【倒叙/正序】 查询。
@@ -239,15 +233,20 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
     [searchContent],
   );
 
+  console.log(defaultExpand, 'defaultExpand');
+
   return (
     <div className="qm-content-form-page">
-      {hasSearchFunction && (
+      {queryList?.length > 0 && (
         <ContentFormHead
+          cols={cols}
           queryList={queryList}
+          onReset={handleReset}
           onSubmit={handleSubmit}
           onExport={handleExport}
-          okButtonText={searchButtonText}
+          defaultExpand={defaultExpand}
           showResetButton={showResetButton}
+          submitButtonText={submitButtonText}
           showExportButton={showExportButton}
           extraNodes={extraNodesInsertHeader}
           initialValues={initialSearchCondition.current}
@@ -261,11 +260,12 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
 
         <Table
           rowKey={rowKey}
+          size={tableSize}
           loading={loading}
           pagination={false}
           bordered={bordered}
           scroll={tableScroll}
-          dataSource={pageList}
+          dataSource={tableList}
           columns={tableColumns}
           rowSelection={rowSelection}
           onChange={handleTableChange}
@@ -274,13 +274,12 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
         {total > 0 ? (
           <Pagination
             total={total}
+            showSizeChanger
             current={pageNum}
             pageSize={pageSize}
             size={paginationSize}
-            showSizeChanger={true}
+            showTotal={showTotal}
             onChange={onPageNumChange}
-            showTotal={paginationShowTotal}
-            onShowSizeChange={onPageSizeChange}
             className="qm-content-form-page-pagination"
           />
         ) : null}
@@ -291,31 +290,40 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
 
 export default forwardRef(ContentFormPage);
 
-function showTotal(total: number) {
+function initialState() {
+  return {
+    total: 0,
+    pageNum: 1,
+    tableList: [],
+    pageSize: 10,
+    loading: false,
+    searchContent: {} as SearchCondition,
+  };
+}
+
+function defaultShowTotal(total: number) {
   return `共 ${total} 条数据`;
 }
 
-function handleResponse(data: any) {
-  const { list: pageList, total, pageSize, pageNum } = data;
-  return { pageList, total, pageSize, pageNum };
+function handleResponse({ data }: any) {
+  const { list: tableList, total } = data;
+  return { tableList, total };
 }
 
-function formatFormData(values: any, columns: TableColumnsType[]): SearchCondition {
-  const formData = {} as { [propName: string]: any };
+function formatFormModel(columns: TableColumnsType[], values: any): SearchCondition {
+  const query = {} as { [propName: string]: any };
 
   for (let i = 0; i < columns.length; i++) {
-    const { dataIndex, name = dataIndex, formatData } = columns[i];
+    const { dataIndex, name = dataIndex!, dataFormat } = columns[i];
     const value = values[name];
     // eslint-disable-next-line
     if (value == null) continue;
 
-    // 通过 formatData() 将数据格式化，并做为最总发送给后端的查询内容
-    if (typeof formatData === 'function') {
-      const fieldValue = formatData(value);
-      Object.assign(formData, fieldValue);
+    if (typeof dataFormat === 'function') {
+      Object.assign(query, dataFormat(value));
     } else {
-      formData[name] = value;
+      query[name] = value;
     }
   }
-  return formData;
+  return query;
 }
