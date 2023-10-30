@@ -47,6 +47,11 @@ const properties = [
     type: 'string',
   },
   {
+    key: 'method',
+    instruct: '上传的方法',
+    type: 'POST | GET | PUT',
+  },
+  {
     key: 'accept',
     instruct: '指定上传的文件类型',
     type: 'audio/*',
@@ -54,7 +59,7 @@ const properties = [
   {
     key: 'headers',
     instruct: '上传时携带的请求头',
-    type: 'object',
+    type: '() => { [key: string]: any };',
   },
   {
     key: 'maxCount',
@@ -83,6 +88,11 @@ const properties = [
     key: 'onChange',
     instruct: '可控，value 变化的回调函数',
     type: '(fileList: UploadFile[]) => void',
+  },
+  {
+    key: 'onError',
+    instruct: '当文件上传出错时，触发该事件',
+    type: '(error: any) => void',
   },
   {
     key: 'disabled',

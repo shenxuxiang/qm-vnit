@@ -1,10 +1,11 @@
 import React, { memo, useCallback, useMemo, useState } from 'react';
-import MarkdownCode from '@/components/MarkdownCode';
-import { Card } from 'antd';
+import Template from '@/components/ExampleTemplate';
+import type { TreeData } from '@/lib/ModelTree';
+import type { Key } from 'react';
 import { ModelTree } from '@/lib';
 
 function Example() {
-  const [checkedKeys, setCheckedKeys] = useState(['1-1-1-1']);
+  const [checkedKeys, setCheckedKeys] = useState<Key[]>(['1-1-1-1']);
   const treeData = useMemo(
     () => [
       {
@@ -53,7 +54,7 @@ function Example() {
             id: '1-2-2',
             parentId: '1-2',
             name: '1-2-2',
-            disableCheckbox: true,
+            disabled: true,
             children: [
               {
                 id: '1-2-2-1',
@@ -85,19 +86,36 @@ function Example() {
    * @param keys 表示当前选中的节点的 key
    * @param allKeys 表示当前选中的节点的 key，以及包含它们的所有父级（祖先）节点的key。
    */
-  const handleChange = useCallback((keys: string[], allKeys: string[]) => {
+  const handleChange = useCallback((keys: Key[], allKeys: Key[]) => {
     console.log(keys, allKeys);
     setCheckedKeys(keys);
   }, []);
 
+  function formatTreeData(sourceList: any[]): TreeData[] {
+    return (
+      sourceList?.map((item) => {
+        const { id, parentId, name, children, ...props } = item;
+        return {
+          key: id,
+          title: name,
+          parentKey: parentId,
+          children: children ? formatTreeData(children) : undefined,
+          ...props,
+        };
+      }) ?? []
+    );
+  }
+
   return (
-    <Card style={{ margin: '20px 0 60px' }}>
-      <p style={{ margin: '0 0 20px' }}>案例一</p>
-      <div style={{ padding: '0 0 20px', background: '#fff' }}>
-        <ModelTree checkable treeData={treeData} onChange={handleChange} checkedKeys={checkedKeys} />
-      </div>
-      <MarkdownCode code={code} />
-    </Card>
+    <Template markdown={code} title="案例一">
+      <ModelTree
+        checkable
+        treeData={treeData}
+        onChange={handleChange}
+        checkedKeys={checkedKeys}
+        formatTreeData={formatTreeData}
+      />
+    </Template>
   );
 }
 
@@ -106,101 +124,123 @@ export default memo(Example);
 const code = `
 ~~~js
 import React, { memo, useCallback, useMemo, useState } from 'react';
-import { ModelTree } from 'qm-vnit';
+import Template from '@/components/ExampleTemplate';
+import type { TreeData } from '@/lib/ModelTree';
+import type { Key } from 'react';
+import { ModelTree } from '@/lib';
 
 function Example() {
-  const [ checkedKeys, setCheckedKeys ] = useState(['1-1-1-1']);
-  const treeData = useMemo(() => [
-    {
-      id: '1-1',
-      name: '1-1',
-      children: [
-        {
-          id: '1-1-1',
-          parentId: '1-1',
-          name: '1-1-1',
-          children: [
-            {
-              id: '1-1-1-1',
-              parentId: '1-1-1',
-              name: '1-1-1-1',
-            },
-            {
-              id: '1-1-1-2',
-              parentId: '1-1-1',
-              name: '1-1-1-2',
-            },
-          ]
-        },
-        {
-          id: '1-1-2',
-          parentId: '1-1',
-          name: '1-1-2',
-        },
-        {
-          id: '1-1-3',
-          parentId: '1-1',
-          name: '1-1-3',
-        },
-      ]
-    },
-    {
-      id: '1-2',
-      name: '1-2',
-      children: [
-        {
-          id: '1-2-1',
-          parentId: '1-2',
-          name: '1-2-1',
-        },
-        {
-          id: '1-2-2',
-          parentId: '1-2',
-          name: '1-2-2',
-          disableCheckbox: true,
-          children: [
-            {
-              id: '1-2-2-1',
-              parentId: '1-2-2',
-              name: '1-2-2-1',
-            },
-            {
-              id: '1-2-2-2',
-              parentId: '1-2-2',
-              name: '1-2-2-2',
-            },
-          ]
-        },
-      ]
-    },
-    {
-      id: '1-3',
-      name: '1-3',
-    },
-    {
-      id: '1-4',
-      name: '1-4',
-    }
-  ], []);
+  const [checkedKeys, setCheckedKeys] = useState<Key[]>(['1-1-1-1']);
+  const treeData = useMemo(
+    () => [
+      {
+        id: '1-1',
+        name: '1-1',
+        children: [
+          {
+            id: '1-1-1',
+            parentId: '1-1',
+            name: '1-1-1',
+            children: [
+              {
+                id: '1-1-1-1',
+                parentId: '1-1-1',
+                name: '1-1-1-1',
+              },
+              {
+                id: '1-1-1-2',
+                parentId: '1-1-1',
+                name: '1-1-1-2',
+              },
+            ],
+          },
+          {
+            id: '1-1-2',
+            parentId: '1-1',
+            name: '1-1-2',
+          },
+          {
+            id: '1-1-3',
+            parentId: '1-1',
+            name: '1-1-3',
+          },
+        ],
+      },
+      {
+        id: '1-2',
+        name: '1-2',
+        children: [
+          {
+            id: '1-2-1',
+            parentId: '1-2',
+            name: '1-2-1',
+          },
+          {
+            id: '1-2-2',
+            parentId: '1-2',
+            name: '1-2-2',
+            disabled: true,
+            children: [
+              {
+                id: '1-2-2-1',
+                parentId: '1-2-2',
+                name: '1-2-2-1',
+              },
+              {
+                id: '1-2-2-2',
+                parentId: '1-2-2',
+                name: '1-2-2-2',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: '1-3',
+        name: '1-3',
+      },
+      {
+        id: '1-4',
+        name: '1-4',
+      },
+    ],
+    [],
+  );
 
   /**
    * @param keys 表示当前选中的节点的 key
    * @param allKeys 表示当前选中的节点的 key，以及包含它们的所有父级（祖先）节点的key。
-  */
-  const handleChange = useCallback((keys: string[], allKeys: string[]) => {
+   */
+  const handleChange = useCallback((keys: Key[], allKeys: Key[]) => {
     console.log(keys, allKeys);
     setCheckedKeys(keys);
   }, []);
 
+  function formatTreeData(sourceList: any[]): TreeData[] {
+    return (
+      sourceList?.map((item) => {
+        const { id, parentId, name, children, ...props } = item;
+        return {
+          key: id,
+          title: name,
+          parentKey: parentId,
+          children: children ? formatTreeData(children) : undefined,
+          ...props,
+        };
+      }) ?? []
+    );
+  }
+
   return (
-    <div style={{ padding: '0 0 20px', background: '#fff' }}>
+    <Template markdown={code} title="案例一">
       <ModelTree
         checkable
         treeData={treeData}
         onChange={handleChange}
         checkedKeys={checkedKeys}
+        formatTreeData={formatTreeData}
       />
-    </div>
+    </Template>
   );
 }
 

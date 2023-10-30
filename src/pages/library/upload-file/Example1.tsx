@@ -1,66 +1,76 @@
-import React, { memo, useCallback } from 'react';
-import MarkdownCode from '@/components/MarkdownCode';
-import { Card } from 'antd';
+import React, { memo, useCallback, useState } from 'react';
+import Template from '@/components/ExampleTemplate';
+import img1 from '@/assets/images/1.jpg';
 import { UploadFile } from '@/lib';
 
 function Example() {
+  const [fileList, setFileList] = useState([{ uid: 111, name: '1.jpg', url: img1 }]);
+
   const onChange = useCallback((files: any) => {
-    console.log(files);
+    setFileList(files);
   }, []);
 
   const onPreview = useCallback((file: any) => {
     console.log(file);
-    const url = window.URL.createObjectURL(file.originFileObj);
+    const url = file.url || window.URL.createObjectURL(file.originFileObj);
     window.open(url, '_blank');
     window.URL.revokeObjectURL(url);
   }, []);
 
+  const header = { Authorization: 'Bearer 5d55e30f-f574-4eb3-8eed-c5ad57129aa7' };
+
   return (
-    <Card style={{ margin: '20px 0 60px' }}>
-      <div style={{ padding: '0 0 20px', background: '#fff' }}>
-        <UploadFile
-          accept="*"
-          maxCount={2}
-          listType="text"
-          onChange={onChange}
-          action="/upload/file"
-          onPreview={onPreview}
-        />
-      </div>
-      <MarkdownCode code={code} />
-    </Card>
+    <Template markdown={code} title="案例">
+      <UploadFile
+        maxCount={6}
+        headers={header}
+        onChange={onChange}
+        onPreview={onPreview}
+        value={fileList as any}
+        listType="picture-card"
+        action="/v1.0/file/upload"
+      />
+    </Template>
   );
 }
 
 export default memo(Example);
 
 const code = `
-~~~js
-import React, { memo, useCallback } from 'react';
-import { UploadFile } from 'qm-vnit';
+~~~tsx
+import React, { memo, useCallback, useState } from 'react';
+import Template from '@/components/ExampleTemplate';
+import img1 from '@/assets/images/1.jpg';
+import { UploadFile } from '@/lib';
 
 function Example() {
+  const [ fileList, setFileList ] = useState([ { uid: 111, name: '1.jpg', url: img1 } ]);
+
   const onChange = useCallback((files: any) => {
-    console.log(files);
+    setFileList(files);
   }, []);
 
-  const onPreview = useCallback((file: any) => {console.log(file);
-    const url = window.URL.createObjectURL(file.originFileObj);
+  const onPreview = useCallback((file: any) => {
+    console.log(file);
+    const url = file.url || window.URL.createObjectURL(file.originFileObj);
     window.open(url, '_blank');
     window.URL.revokeObjectURL(url);
   }, []);
 
+  const header = { Authorization: 'Bearer 5d55e30f-f574-4eb3-8eed-c5ad57129aa7' };
+
   return (
-    <div style={{ padding: '0 0 20px', background: '#fff' }}>
+    <Template markdown={code} title="案例">
       <UploadFile
-        accept="*"
-        maxCount={2}
-        listType='text'
+        maxCount={6}
+        headers={header}
         onChange={onChange}
-        action="/upload/file"
         onPreview={onPreview}
+        value={fileList as any}
+        listType="picture-card"
+        action="/v1.0/file/upload"
       />
-    </div>
+    </Template>
   );
 }
 

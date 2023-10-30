@@ -17,9 +17,9 @@ const usage = `
 
 const notes = `
   ### 开发者注意事项
-  支持一般模式的图片预览，这里的一般模式值得是图片大小不超过 50M。对于超过限制的，我们提供了另一套高清渲染逻辑。
+  支持一般模式的图片预览，这里的一般模式值得是图片大小不超过 200M。对于超过限制的，我们提供了另一套高清渲染逻辑。
 
-  对于高清渲染逻辑来说，开发者需要提供一个高清图的列表（imgs）、一个缩略图的列表（previewImgs），
+  对于高清渲染逻辑来说，开发者需要使用 SuperPreviewImage 组件，
 
   当用户进行操作时及时响应用户操作，待高清图展示完成后再切换成高清图
 `;
@@ -38,10 +38,10 @@ function Page() {
       <Example1 />
       <Example2 />
 
-      <h1>API</h1>
+      <h1>PreviewImage API</h1>
       <Table bordered columns={TABLE_HEADER} rowKey="key" dataSource={properties} pagination={false} />
-
-      <MarkdownCode code={code} defaultExpand />
+      <h1>SuperPreviewImage API</h1>
+      <Table bordered columns={TABLE_HEADER} rowKey="key" dataSource={superProperties} pagination={false} />
     </section>
   );
 }
@@ -70,7 +70,7 @@ const properties = [
   {
     key: 'onClose',
     instruct: '关闭组件的回调方法',
-    type: '() => void',
+    type: '(index: number) => void',
   },
   {
     key: 'pageSize',
@@ -78,48 +78,35 @@ const properties = [
     type: 'number',
     default: '9',
   },
+];
+
+const superProperties = [
   {
-    key: 'previewImgs',
-    instruct:
-      '缩略图展示列表，注意 previewImgs 作为缩略图列表（非高清图）用在下方的缩略图展示列表。并且，当高清图没有加载完成时，预览区域展示的是其对应的缩略图',
-    type: 'string[]',
-  },
-  {
-    key: 'hasPerformance',
-    instruct: '是否启动性能优化方案，当提供 previewImgs 时需要将其设置为 true',
+    key: 'open',
+    instruct: '是否展示组件',
     type: 'boolean',
     default: 'false',
   },
+  {
+    key: 'imgs',
+    instruct: '预览超大图的列表，hdUrl 表示大图的链接，url 表示小图的链接',
+    type: '{ url: string; hdUrl: string }[]',
+  },
+  {
+    key: 'index',
+    instruct: '默认展示第几个图片，默认第一个',
+    type: 'number',
+    default: '0',
+  },
+  {
+    key: 'onClose',
+    instruct: '关闭组件的回调方法',
+    type: '(index: number) => void',
+  },
+  {
+    key: 'pageSize',
+    instruct: '指定缩略图展示列表一页可以展示多少张图片',
+    type: 'number',
+    default: '9',
+  },
 ];
-
-const code = `
-~~~jsx
-// 注意这里我将 open 添加到依赖项，其目的是为了防止初始化时 imageURL 没有取到值时，在 open 变化时重新取值。
-useEffect(() => {
-  const hd = HDPictureListRef.current[currentIndex];
-  // 如果高清图不存在，则不执行后续的逻辑
-  if (!hd) return;
-  // 如果当前 IMG 节点上展示的图像就是目标图像，也同样不执行后续逻辑
-  if (imgRef.current?.src?.endsWith(hd)) return;
-
-  // 是否执行 IMG 优化，优化方案则是先加载缩略图，等高清图加载完成后再添加到 IMG 节点展示。
-  // 否则就是直接展示高清图。
-  if (!hasPerformance) {
-    setState({ imageURL: hd });
-    return;
-  }
-
-  // 优化方案：先展示缩略图（thumbnailListRef.current[currentIndex]）。当高清图（hd）加载完成后再切换。
-  // 这样的做法就是为了避免用户切换图片后（由于图片太大，或者网络不好时资源加载缓慢）而预览区域不发生变化，而给用户带来不好的体验效果。
-  setState({ spinning: true, imageURL: thumbnailListRef.current[currentIndex] });
-
-  const img = new Image();
-  img.src = hd;
-  img.onload = () => setState({ spinning: false, imageURL: hd });
-
-  return () => {
-    if (img) img.onload = null;
-  }
-}, [open, currentIndex]);
-~~~
-`;

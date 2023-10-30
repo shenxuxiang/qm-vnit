@@ -16,7 +16,8 @@ const usage = `
 
 const notes = `
   ### 开发者注意事项
-  对于一般无需用户登录凭证的可以直接使用，如需登陆凭证可以通过 headers 传递给组件
+  对于一般无需用户登录凭证的可以直接使用，如需登陆凭证可以通过 headers 传递给组件；
+  该组件是基于 Antd 的 Upload 组件封装的，使用方法基本上都是遵从 Upload 组件使用方式。
 `;
 
 function Page() {

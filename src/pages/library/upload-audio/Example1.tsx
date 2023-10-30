@@ -1,6 +1,5 @@
+import Template from '@/components/ExampleTemplate';
 import React, { memo, useCallback } from 'react';
-import MarkdownCode from '@/components/MarkdownCode';
-import { Card } from 'antd';
 import { UploadAudio } from '@/lib';
 
 function Example() {
@@ -8,33 +7,58 @@ function Example() {
     console.log(files);
   }, []);
 
+  const headers = useCallback(() => {
+    return { Authorization: 'Bearer 5d55e30f-f574-4eb3-8eed-c5ad57129aa7' };
+  }, []);
+
+  const handleError = useCallback((error: any) => {
+    console.log(error);
+  }, []);
+
   return (
-    <Card style={{ margin: '20px 0 60px' }}>
-      <p style={{ margin: '0 0 20px' }}>案例一（默认上传音频格式的文件）</p>
-      <div style={{ padding: '0 0 20px', background: '#fff' }}>
-        <UploadAudio action="/upload/file" onChange={onChange} accept="*" />
-      </div>
-      <MarkdownCode code={code} />
-    </Card>
+    <Template markdown={code} title="案例一（默认上传音频格式的文件）">
+      <UploadAudio
+        accept=".mp4, .mp3"
+        headers={headers}
+        onChange={onChange}
+        onError={handleError}
+        action="/v1.0/upload/file"
+      />
+    </Template>
   );
 }
 
 export default memo(Example);
 
 const code = `
-~~~js
+~~~tsx
+import Template from '@/components/ExampleTemplate';
 import React, { memo, useCallback } from 'react';
-import { UploadAudio } from 'qm-vnit';
+import { UploadAudio } from '@/lib';
 
 function Example() {
   const onChange = useCallback((files: any) => {
     console.log(files);
   }, []);
 
+  const headers = useCallback(() => {
+    return { Authorization: 'Bearer 5d55e30f-f574-4eb3-8eed-c5ad57129aa7' };
+  }, []);
+
+  const handleError = useCallback((error: any) => {
+    console.log(error);
+  }, [])
+
   return (
-    <div style={{ padding: '0 0 20px', background: '#fff' }}>
-      <UploadAudio action="/upload/file" onChange={onChange} accept="*" />
-    </div>
+    <Template markdown={code} title="案例一（默认上传音频格式的文件）">
+      <UploadAudio
+        accept=".mp4, .mp3"
+        headers={headers}
+        onChange={onChange}
+        onError={handleError}
+        action="/v1.0/upload/file"
+      />
+    </Template>
   );
 }
 

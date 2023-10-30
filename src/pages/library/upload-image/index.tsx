@@ -1,6 +1,5 @@
 import { Table } from 'antd';
 import Example1 from './Example1';
-import Example2 from './Example2';
 import React, { memo } from 'react';
 import MarkdownCode from '@/components/MarkdownCode';
 import { TABLE_HEADER } from '@/pages/library/constants';
@@ -32,7 +31,6 @@ function Page() {
       <MarkdownCode code="### 代码演示" hasExpandButton={false} defaultExpand />
 
       <Example1 />
-      <Example2 />
 
       <h1>API</h1>
       <Table bordered columns={TABLE_HEADER} rowKey="key" dataSource={properties} pagination={false} />
@@ -49,6 +47,11 @@ const properties = [
     type: 'string',
   },
   {
+    key: 'method',
+    instruct: '请求方法',
+    type: 'POST | GET | PUT',
+  },
+  {
     key: 'accept',
     instruct: '指定上传的文件类型',
     type: 'image/*',
@@ -56,7 +59,7 @@ const properties = [
   {
     key: 'headers',
     instruct: '上传时携带的请求头',
-    type: 'object',
+    type: '() => { [key: string]: any }',
   },
   {
     key: 'maxCount',
@@ -87,6 +90,11 @@ const properties = [
     type: '(fileList: UploadFile[]) => void',
   },
   {
+    key: 'onError',
+    instruct: '当文件上传出错时，触发该事件',
+    type: '(error: any) => void',
+  },
+  {
     key: 'disabled',
     instruct: '是否禁用',
     type: 'boolean',
@@ -94,8 +102,17 @@ const properties = [
   },
   {
     key: 'onPreview',
-    instruct:
-      '图片预览功能，注意组件本身就就自带预览的功能，如果自带的预览功能无法满足开发者需求可以通过 onPreview 方法自定义',
-    type: '(file: UploadFile) => void',
+    instruct: '自定义图片预览功能，不传则使用组件自带的预览功能',
+    type: '(url: string, rawResource?: File) => void',
+  },
+  {
+    key: 'renderItem',
+    instruct: '渲染上传成功后展示的内容',
+    type: '({ url, uid, name }) => React.ReactNode',
+  },
+  {
+    key: 'children',
+    instruct: '替换默认的上传按钮',
+    type: '({ url, uid, name }) => React.ReactNode',
   },
 ];
