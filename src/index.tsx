@@ -4,11 +4,11 @@ import zhCN from 'antd/es/locale/zh_CN';
 import { ConfigProvider } from 'antd';
 import history from '@/utils/history';
 import Routers from '@/routers';
+import 'dayjs/locale/zh-cn';
 import React from 'react';
 import './index.less';
 import '@/mock/mock';
 import dayjs from 'dayjs';
-import 'dayjs/locale/zh-cn';
 dayjs.locale('zh-cn');
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
