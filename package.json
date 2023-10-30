@@ -1,6 +1,6 @@
 {
   "name": "qm-vnit",
-  "version": "1.0.0-beta6",
+  "version": "2.0.0",
   "main": "./src/index.tsx",
   "contributors": [
     "shenxuxiang"
@@ -12,6 +12,7 @@
     "UI component",
     "UI"
   ],
+  "homepage": "http://aitweb.top/qm-vnit/",
   "repository": "https://github.com/shenxuxiang/qm-vnit",
   "description": "React antd ui library",
   "type": "module",

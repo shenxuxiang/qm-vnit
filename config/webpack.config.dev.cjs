@@ -234,9 +234,11 @@ module.exports = {
     },
     proxy: {
       '/v1.0': {
-        // target: 'http://192.168.5.120:2005',
+        target: 'http://192.168.5.2:20021',// 测试环境
+        // target: 'http://192.168.5.2:30021',// 正式环境
+        // target: 'http://192.168.5.120:2006',
         // 测试
-        target: 'http://192.168.5.2:20011',
+        // target: 'http://192.168.5.61:2006',
         changeOrigin: true,
       },
       '/group1': {
