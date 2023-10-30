@@ -158,6 +158,6 @@ const queryListItem = [
     key: 'dataFormat',
     instruct:
       '表单项数据格式化函数，格式化函数将在表达提交时执行，我们可以页面底部的 dataFormat 函数中查看 dataFormat() 调用',
-    type: '(value: any) => { [propName: string]: any }',
+    type: '(value: any) => object',
   },
 ];

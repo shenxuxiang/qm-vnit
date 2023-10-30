@@ -9,11 +9,11 @@ type UploadImageProps = {
     disabled?: boolean;
     value?: UploadFile[];
     uploadButtonText?: string;
+    onPreview?: (file: UploadFile) => void;
     headers?: {
         [propName: string]: string;
     };
     onChange?: (fileList: UploadFile[]) => void;
-    onPreview?: (file: UploadFile) => void;
     listType?: 'text' | 'picture' | 'picture-card' | 'picture-circle';
 };
 /**

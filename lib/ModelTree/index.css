@@ -2,6 +2,7 @@
   padding: 10px 10px;
   border: 1px solid #ddd;
   border-radius: 6px;
+  background: #fff;
 }
 .qm-model-tree .qm-model-tree-node-rich {
   color: #f50;

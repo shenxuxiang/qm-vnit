@@ -18,25 +18,32 @@ function Modal(props) {
   var maskRef = useRef();
   var contentRef = useRef();
   useEffect(function () {
+    var interval = null;
     if (open) {
       document.body.style.overflow = 'none';
       maskRef.current.style.display = '';
       contentRef.current.style.display = '';
-      setTimeout(function () {
+      interval = requestAnimationFrame(function () {
         return setVisible(function () {
           return true;
         });
-      }, 20);
+      });
     } else {
       document.body.style.overflow = '';
       setVisible(function () {
         return false;
       });
-      setTimeout(function () {
+      interval = window.setTimeout(function () {
         maskRef.current.style.display = 'none';
         contentRef.current.style.display = 'none';
       }, 300);
     }
+    return function () {
+      if (interval) {
+        clearTimeout(interval);
+        cancelAnimationFrame(interval);
+      }
+    };
   }, [open]);
   var handleCloseModal = useCallback(function () {
     maskClosable && (onClose === null || onClose === void 0 ? void 0 : onClose());

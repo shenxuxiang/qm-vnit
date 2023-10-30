@@ -10,7 +10,7 @@ import _defineProperty from '@babel/runtime-corejs3/helpers/defineProperty';
 import _objectWithoutProperties from '@babel/runtime-corejs3/helpers/objectWithoutProperties';
 import _concatInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/concat';
 import React, { memo } from 'react';
-import './index.css';
+import '../assets/font/iconfont.css';
 
 var _excluded = ["name", "className", "style", "onClick"];
 function ownKeys(object, enumerableOnly) { var keys = _Object$keys(object); if (_Object$getOwnPropertySymbols) { var symbols = _Object$getOwnPropertySymbols(object); enumerableOnly && (symbols = _filterInstanceProperty(symbols).call(symbols, function (sym) { return _Object$getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }

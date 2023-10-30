@@ -61,3 +61,7 @@ export declare function getLocalStorage(key: string): any;
  * @returns
  */
 export declare function toFixed(value: string | number, divisor?: number, float?: number): string;
+export declare function getViewportSize(): {
+    width: number;
+    height: number;
+};

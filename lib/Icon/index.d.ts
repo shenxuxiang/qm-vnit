@@ -1,5 +1,5 @@
 import React from 'react';
-import './index.less';
+import '../assets/font/iconfont.css';
 type IconProps = {
     name: string;
     className?: string;

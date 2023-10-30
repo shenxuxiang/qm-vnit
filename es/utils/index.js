@@ -74,5 +74,14 @@ function throttle(func, delay) {
     }
   };
 }
+// 获取视口尺寸
+function getViewportSize() {
+  var width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+  var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+  return {
+    width: width,
+    height: height
+  };
+}
 
-export { downloadFile, getType, isArray, throttle };
+export { downloadFile, getType, getViewportSize, isArray, throttle };

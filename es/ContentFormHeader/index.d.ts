@@ -1,0 +1,33 @@
+import React from 'react';
+import './index.less';
+export type QueryListItem = {
+    name?: string;
+    label?: string;
+    title?: string;
+    options?: any[];
+    formType?: string;
+    dataIndex?: string;
+    properties?: object;
+    keyNameForKey?: string;
+    keyNameForValue?: string;
+    component?: React.ReactElement;
+    placeholder?: string | string[];
+    watch?: (...args: any[]) => void;
+    dataFormat?: (value: any) => object;
+};
+type ContentFormHeaderProps = {
+    cols?: number;
+    submitButtonText?: string;
+    initialValues?: object;
+    defaultExpand?: boolean;
+    showResetButton?: boolean;
+    showExportButton?: boolean;
+    queryList: QueryListItem[];
+    extraNodes?: React.ReactNode;
+    onReset?: (values: any) => void;
+    onSubmit: (values: any) => void;
+    onExport?: (values: any) => void;
+};
+declare function ContentFormHeader(props: ContentFormHeaderProps): React.JSX.Element;
+declare const _default: React.MemoExoticComponent<typeof ContentFormHeader>;
+export default _default;

@@ -26,11 +26,11 @@ export type QueryListItem = {
   keyNameForKey?: string;
   keyNameForValue?: string;
   component?: React.ReactElement;
+  placeholder?: string | string[];
   // 每当表单项值改变时触发的监听事件
   watch?: (...args: any[]) => void;
-  placeholder?: string | string[];
   // 数据格式化函数
-  dataFormat?: (value: any) => { [propName: string]: any };
+  dataFormat?: (value: any) => object;
 };
 
 type ContentFormHeaderProps = {
