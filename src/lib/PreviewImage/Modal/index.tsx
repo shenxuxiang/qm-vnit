@@ -9,19 +9,27 @@ function Modal(props: any) {
   const contentRef = useRef<any>();
 
   useEffect(() => {
+    let interval: number = null!;
     if (open) {
       document.body.style.overflow = 'none';
       maskRef.current.style.display = '';
       contentRef.current.style.display = '';
-      setTimeout(() => setVisible(() => true), 20);
+      interval = requestAnimationFrame(() => setVisible(() => true));
     } else {
       document.body.style.overflow = '';
       setVisible(() => false);
-      setTimeout(() => {
+      interval = window.setTimeout(() => {
         maskRef.current.style.display = 'none';
         contentRef.current.style.display = 'none';
       }, 300);
     }
+
+    return () => {
+      if (interval) {
+        clearTimeout(interval);
+        cancelAnimationFrame(interval);
+      }
+    };
   }, [open]);
 
   const handleCloseModal = useCallback(() => {

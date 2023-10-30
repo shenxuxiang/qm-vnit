@@ -1,186 +1,233 @@
-import React, { memo, useEffect, useCallback, useState, useRef } from 'react';
+import React, { useRef, memo, useEffect } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { Upload, message, UploadFile } from 'antd';
 import PreviewImage from '@/lib/PreviewImage';
+import useReducer from '@/utils/useReducer';
+import RenderItem from './RenderItem';
+import Portal from '@/utils/portal';
+import { message } from 'antd';
+import './index.less';
+
+export type FileList = {
+  uid: string;
+  name: string;
+  url?: string;
+  response?: any;
+  percent?: number;
+  rowSource?: File;
+  status?: 'loading' | 'done' | 'error' | 'remove';
+}[];
 
 type UploadImageProps = {
   action: string;
   accept?: string;
+  method?: string;
+  value?: FileList;
   maxSize?: number;
   maxCount?: number;
   multiple?: boolean;
   disabled?: boolean;
-  value?: UploadFile[];
-  headers?: { [propName: string]: string };
-  onChange?: (fileList: UploadFile[]) => void;
-  onPreview?: (file: UploadFile) => void;
+  children?: React.ReactNode;
+  onError?: (Error: any) => void;
+  headers?: () => { [key: string]: any };
+  onChange?: (fileList: FileList) => void;
+  onPreview?: (url: string, rawResource?: File) => void;
+  renderItem?: (values: { url: string; uid: string; name: string }) => React.ReactNode;
 };
 
-/**
- * 图片上传组件
- * @param action    上传的路径
- * @param accept    指定上传的文件类型
- * @param headers   上传时携带的请求头
- * @param maxCount  最多可以上传多少个图片，0 表示不限制
- * @param multiple  是否支持多张图片上传
- * @param maxSize   限制图片的大小，0 表示不限制
- * @param value     可控，组件回显，也可用 Form 表单控件
- * @param onChange  可控，value 变化的回调函数，也可用 Form 表单控件
- * @param onPreview 图片预览功能
- * @param disabled  是否禁用
- */
+function initialState() {
+  return {
+    showPreviewImage: false,
+    fileList: [] as FileList,
+    previewImgs: [] as string[],
+  };
+}
+
 function UploadImage(props: UploadImageProps) {
   const {
-    action,
-    headers,
-    maxCount = 0,
-    maxSize = 0,
     value,
-    onChange,
-    multiple = true,
+    action,
+    method,
+    maxSize,
+    onError,
+    headers,
+    maxCount,
+    multiple,
     disabled,
-    accept = 'image/*',
+    children,
+    onChange,
     onPreview,
+    renderItem,
+    accept = 'image/*',
   } = props;
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const [previewImageInfo, updatePreviewImageInfo] = useState({
-    open: false,
-    index: 0,
-    imgs: [] as string[],
-  });
 
-  // 是否是内部更新的 fileList
-  const isInternalModifiedFileList = useRef(false);
+  const [state, setState] = useReducer(initialState);
+  const { fileList, previewImgs, showPreviewImage } = state;
+
+  const _inputRef = useRef<any>();
+  const _uploadButtonRef = useRef<any>();
+  const _isInternalChange = useRef(false);
 
   useEffect(() => {
-    if (isInternalModifiedFileList.current) {
-      onChange?.(fileList);
-    }
-  }, [fileList]);
-
-  useEffect(() => {
-    if (value === undefined) {
+    if (typeof value === 'undefined') {
       return;
-    } else if (isInternalModifiedFileList.current) {
-      isInternalModifiedFileList.current = false;
+    } else if (_isInternalChange.current) {
+      _isInternalChange.current = false;
       return;
     } else {
-      setFileList(() => value);
+      setState({ fileList: value });
     }
   }, [value]);
 
-  // 图片预览功能
-  const handlePreview = useCallback(
-    (file: any) => {
-      updatePreviewImageInfo({
-        open: true,
-        index: fileList.findIndex((item: any) => item.uid === file.uid),
-        imgs: fileList
-          .map((item: any) => {
-            if (item.url) {
-              return item.url;
-            } else {
-              return window.URL.createObjectURL(item.originFileObj);
-            }
-          })
-          .filter(Boolean),
-      });
-    },
-    [fileList],
-  );
+  function handleFileChange(event: any) {
+    let newFiles: File[] = Array.from(event.target.files);
+    // 需要每次都将 input.value 给清空，这样用户再次上传时就可以选择相同的文件了。
+    _inputRef.current.value = '';
+    // 判断当前文件数量是否已经超出 maxCount
+    if (maxCount && fileList.length >= maxCount) {
+      message.warning(`最多只能上传${maxCount}个文件！`);
+      return;
+    }
 
-  const handleClosePreviewImage = useCallback(() => {
-    updatePreviewImageInfo({
-      ...previewImageInfo,
-      open: false,
-    });
-  }, [previewImageInfo]);
-
-  // 图片上传事件
-  const handleChangeFileList = useCallback(
-    (field: any) => {
-      const { file } = field;
-      // maxSize === 0 表示不对文件大小进行限制。
-      if (maxSize > 0 && file.size > maxSize * 1024 * 1024) return;
-      function setStateAction(prevFileList: UploadFile[]) {
-        let newFileList: any[] = [...prevFileList];
-
-        // maxCount === 0 表示不限制上传的数量
-        if (maxCount > 0 && newFileList.length >= maxCount && file.percent === 0) {
-          const index = newFileList.findIndex((item) => item.uid === file.uid);
-          if (index >= 0) newFileList.splice(index, 1, file);
-          return prevFileList;
-        } else if (file.status === 'uploading') {
-          const index = newFileList.findIndex((item) => item.uid === file.uid);
-          if (~index) {
-            newFileList.splice(index, 1, file);
-          } else {
-            newFileList.push(file);
-          }
-        } else if (file.status === 'error') {
-          const { uid, name, status } = file;
-          const index = newFileList.findIndex((item) => item.uid === uid);
-          newFileList.splice(index, 1, { uid, name, status });
-        } else if (file.status === 'done') {
-          const index = newFileList.findIndex((item) => item.uid === file.uid);
-          if (file?.response?.code !== 0) {
-            newFileList.splice(index, 1, { uid: file.uid, name: file.name, status: 'error' });
-          } else {
-            newFileList.splice(index, 1, file);
-          }
-        } else if (file.status === 'removed') {
-          newFileList = prevFileList.filter((item) => item.uid !== file.uid);
+    if (maxSize) {
+      let length = newFiles.length;
+      while (length--) {
+        const file = newFiles[length];
+        if (file.size > props.maxSize!) {
+          newFiles.splice(length, 1);
+          message.warning(file.name + '文件过大无法上传！');
         }
-        return newFileList;
       }
 
-      isInternalModifiedFileList.current = true;
-      setFileList(setStateAction);
-    },
-    [fileList, maxSize, maxCount],
-  );
+      if (newFiles.length <= 0) return;
+    }
 
-  // 返回 false 表示不上传图片。
-  const handleBeforeUploadForFileList = useCallback(
-    (file: File) => {
-      // 如果maxSize === 0 表示不对文件大小进行限制。
-      if (maxSize === 0) return true;
+    if (maxCount) {
+      // 计算还可以添加文件的数量
+      const rest = maxCount - fileList.length;
+      rest < newFiles.length && message.warning(`最多只能上传${maxCount}个文件！`);
+      newFiles = newFiles.slice(0, rest);
+    }
 
-      if (file.size > maxSize * 1024 * 1024) {
-        message.warning(`上传图片大小不能超过${maxSize}M`);
-        return false;
-      } else {
-        return true;
-      }
-    },
-    [maxSize],
-  );
+    let newFileList: FileList = newFiles.map((file) => ({
+      percent: 0,
+      name: file.name,
+      rawResource: file,
+      status: 'loading' as FileList[number]['status'],
+      uid: Math.random().toString(32).slice(2) + Date.now(),
+    }));
+
+    newFileList = fileList.concat(newFileList);
+
+    _isInternalChange.current = true;
+    setState({ fileList: newFileList });
+    onChange?.(newFileList);
+
+    if (!maxCount || newFileList.length < maxCount) {
+      // 每次上传时，给上传按钮一个向右移动的动效。
+      _uploadButtonRef.current!.classList.add('enter-from');
+      requestAnimationFrame(() => _uploadButtonRef.current.classList.remove('enter-from'));
+    }
+  }
+
+  // 图片上传成功
+  function handleUploadSuccess(uid: string, res: any) {
+    const newFileList = [...fileList];
+    const target = newFileList.find((file) => file.uid === uid);
+    if (target) {
+      target.status = 'done';
+      target.percent = 100;
+      target.response = res;
+      _isInternalChange.current = true;
+      setState({ fileList: newFileList });
+      onChange?.(newFileList);
+    }
+  }
+
+  // 图片上传失败
+  function handleUploadError(uid: string, error: any) {
+    onError?.(error);
+    const newFileList = [...fileList];
+    const target = newFileList.find((file) => file.uid === uid);
+    if (target) {
+      target.status = 'error';
+      _isInternalChange.current = true;
+      setState({ fileList: newFileList });
+      onChange?.(newFileList);
+    }
+  }
+
+  // 移除
+  function handleRemoveItem(uid: string) {
+    const newFileList = fileList.filter((file) => file.uid !== uid);
+    _isInternalChange.current = true;
+    setState({ fileList: newFileList });
+    onChange?.(newFileList);
+  }
+
+  function handlePreviewImage(url: string, rawResource?: File) {
+    if (typeof onPreview === 'function') {
+      onPreview(url, rawResource);
+    } else {
+      setState({ previewImgs: [url], showPreviewImage: true });
+    }
+  }
 
   return (
     <>
-      <Upload
-        action={action}
-        withCredentials
-        accept={accept}
-        headers={headers}
-        disabled={disabled}
-        multiple={multiple}
-        maxCount={maxCount}
-        fileList={fileList}
-        listType="picture-card"
-        onChange={handleChangeFileList}
-        onPreview={onPreview || handlePreview}
-        beforeUpload={handleBeforeUploadForFileList}
-      >
-        {maxCount === 0 || fileList?.length < maxCount ? (
-          <div>
-            <PlusOutlined disabled={disabled} />
-            <div style={{ marginTop: 8 }}>上传</div>
-          </div>
-        ) : null}
-      </Upload>
-
-      <PreviewImage hasPerformance onClose={handleClosePreviewImage} {...previewImageInfo} />
+      <div className="qm-vnit-upload-image">
+        <ul className="qm-vnit-upload-image-list">
+          {fileList.map((file) => (
+            <RenderItem
+              {...file}
+              key={file.uid}
+              method={method}
+              action={action}
+              headers={headers}
+              disabled={disabled}
+              renderItem={renderItem}
+              onRemove={handleRemoveItem}
+              onError={handleUploadError}
+              onPreview={handlePreviewImage}
+              onSuccess={handleUploadSuccess}
+            />
+          ))}
+          {!maxCount || fileList.length < maxCount ? (
+            <li
+              ref={_uploadButtonRef}
+              onClick={() => _inputRef.current?.click()}
+              className={`qm-vnit-upload-image-label${disabled ? ' disabled' : ''}`}
+            >
+              {children ? (
+                children
+              ) : (
+                <div className="qm-vnit-upload-image-slot">
+                  <PlusOutlined style={{ fontSize: 16, marginBottom: 10, color: 'rgba(0, 0, 0, 0.8)' }} />
+                  <div>上传图片</div>
+                </div>
+              )}
+              <input
+                type="file"
+                ref={_inputRef}
+                accept={accept}
+                disabled={disabled}
+                multiple={multiple}
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+              />
+            </li>
+          ) : null}
+        </ul>
+      </div>
+      {typeof onPreview !== 'function' ? (
+        <Portal>
+          <PreviewImage
+            imgs={previewImgs}
+            index={0}
+            open={showPreviewImage}
+            onClose={() => setState({ showPreviewImage: false })}
+          />
+        </Portal>
+      ) : null}
     </>
   );
 }

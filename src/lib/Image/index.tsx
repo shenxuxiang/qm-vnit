@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
-import imgURL from '../../assets/images/default.svg';
+import imgURL from '@/lib/assets/images/default.svg';
 import intersectionImage from './intersection';
 
 type IProps = {
   src: string;
   alt?: string;
   className?: string;
-  style?: React.CSSProperties;
   [propName: string]: any;
+  style?: React.CSSProperties;
 };
 
 function Image(props: IProps, ref: any) {
@@ -15,10 +15,7 @@ function Image(props: IProps, ref: any) {
   const imageRef = useRef<any>();
 
   useEffect(() => {
-    intersectionImage.observeImage(imageRef.current);
-    return () => {
-      intersectionImage.unobserveImage(imageRef.current);
-    };
+    intersectionImage.addElement(imageRef.current, src);
   }, []);
 
   useImperativeHandle(
@@ -29,17 +26,7 @@ function Image(props: IProps, ref: any) {
     [],
   );
 
-  return (
-    <img
-      src={imgURL}
-      style={style}
-      {...restProps}
-      ref={imageRef}
-      data-src={src}
-      alt={alt || '图片'}
-      className={className}
-    />
-  );
+  return <img {...restProps} src={imgURL} style={style} ref={imageRef} alt={alt || '图片'} className={className} />;
 }
 
 export default forwardRef(Image);

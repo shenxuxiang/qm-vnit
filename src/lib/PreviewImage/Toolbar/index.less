@@ -1,0 +1,28 @@
+.qm-preview-image-head {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: rgba(255, 255, 255, 0.3);
+  z-index: 1;
+}
+.qm-preview-image-operation-icon {
+  margin-right: 10px;
+  padding: 6px 6px;
+  border-radius: 4px;
+  font-size: 24px !important;
+  color: #fff;
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0);
+  transition: background-color 0.3s ease;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  &.rotate90 {
+    transform: rotate(90deg);
+  }
+}
