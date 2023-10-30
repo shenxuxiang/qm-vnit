@@ -208,3 +208,10 @@ export function toFixed(value: string | number, divisor = 10000, float = 2) {
   if (!value) return '';
   return ((value as number) / divisor).toFixed(float);
 }
+
+// 获取视口尺寸
+export function getViewportSize() {
+  const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+  const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+  return { width, height };
+}
