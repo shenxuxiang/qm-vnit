@@ -1,6 +1,6 @@
 import React, { useCallback, memo } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Layout } from 'antd';
+import { Layout, Popover } from 'antd';
 import logo from '@/assets/images/vnit-logo.svg';
 import './index.less';
 import { NavLink } from 'react-router-dom';
@@ -33,7 +33,24 @@ const MainLayout: React.FC = () => {
             </li>
           </ul>
           <ul className="qm-vnit-tool-bar">
-            <li>1.0.0</li>
+            <li>
+              <Popover
+                title={
+                  <div>
+                    <h3>Version 2.x 在 1.x 的基础上进行了一下修改：</h3>
+                    <p style={{ margin: '10px 0 0 0' }}>
+                      1、Version 2.x 重写了 UploadFile、UploadImage、UploadVideo、UploadAudio 组件。
+                    </p>
+                    <p style={{ margin: '10px 0 0 0' }}>
+                      2、对 ContentFormTable、ModelTree 组件进行了优化，并添加了一些新功能。
+                    </p>
+                    <p style={{ margin: '10px 0 0 0' }}>3、新增 Image 组件。</p>
+                  </div>
+                }
+              >
+                <span style={{ padding: '5px 12px', cursor: 'pointer' }}>2.0.0</span>
+              </Popover>
+            </li>
           </ul>
         </div>
       </Header>

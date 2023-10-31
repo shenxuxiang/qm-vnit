@@ -1,15 +1,25 @@
 import React, { memo, useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { dracula, coldarkCold } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+// import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { darcula } from 'react-syntax-highlighter/dist/esm/styles/prism';
+// @ts-ignore
+import coyWithoutShadows from 'react-syntax-highlighter/dist/esm/styles/prism/coy-without-shadows';
 import remarkGfm from 'remark-gfm';
 import { Button } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import classes from './index.module.less';
+// import jsx from 'react-syntax-highlighter/dist/esm/languages/prism/jsx';
+// import javascript from 'react-syntax-highlighter/dist/esm/languages/prism/javascript';
+// import tsx from 'react-syntax-highlighter/dist/esm/languages/prism/tsx';
+
+// SyntaxHighlighter.registerLanguage('js', javascript);
+// SyntaxHighlighter.registerLanguage('jsx', jsx);
+// SyntaxHighlighter.registerLanguage('tsx', tsx);
 
 const theme = {
-  light: coldarkCold,
-  dark: dracula,
+  dark: darcula,
+  light: coyWithoutShadows,
 };
 
 type MarkdownProps = {
@@ -31,18 +41,15 @@ function Markdown(props: MarkdownProps) {
     return {
       // eslint-disable-next-line
       code(values: any) {
-        const { node, inline, className, children, ...props } = values;
+        const { node, className, children, ...rest } = values;
         const match = /language-(\w+)/.exec(className || '');
-        return !inline && match ? (
-          <SyntaxHighlighter
-            {...props}
-            PreTag="div"
-            style={theme[mode]}
-            language={match[1]}
-            children={String(children).replace(/\n$/, '')}
-          />
+
+        return match ? (
+          <SyntaxHighlighter {...rest} PreTag="div" showLineNumbers style={theme[mode]} language={match[1]}>
+            {String(children).replace(/\n$/, '')}
+          </SyntaxHighlighter>
         ) : (
-          <code {...props} className={className}>
+          <code {...rest} className={className}>
             {children}
           </code>
         );

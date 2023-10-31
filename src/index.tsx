@@ -6,7 +6,7 @@ import history from '@/utils/history';
 import Routers from '@/routers';
 import React from 'react';
 import './index.less';
-import '@/mock/mock';
+// import '@/mock/mock';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 dayjs.locale('zh-cn');

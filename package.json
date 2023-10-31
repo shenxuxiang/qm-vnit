@@ -3,7 +3,7 @@
   "version": "1.1.1",
   "main": "./lib/index.js",
   "module": "./es/index.js",
-  "types": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "files": [ "es", "lib" ],
   "contributors": [
     "shenxuxiang"
@@ -15,6 +15,7 @@
     "UI component",
     "UI"
   ],
+  "homepage": "http://aitweb.top/qm-vnit/",
   "repository": "https://github.com/shenxuxiang/qm-vnit",
   "description": "React antd ui library",
   "type": "module",

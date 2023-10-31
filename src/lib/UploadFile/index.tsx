@@ -11,9 +11,9 @@ type UploadImageProps = {
   disabled?: boolean;
   value?: UploadFile[];
   uploadButtonText?: string;
+  onPreview?: (file: UploadFile) => void;
   headers?: { [propName: string]: string };
   onChange?: (fileList: UploadFile[]) => void;
-  onPreview?: (file: UploadFile) => void;
   listType?: 'text' | 'picture' | 'picture-card' | 'picture-circle';
 };
 
@@ -50,17 +50,14 @@ function UploadImage(props: UploadImageProps) {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   // 是否是内部更新的 fileList
-  const isInternalModifiedFileList = useRef(false);
-
-  useEffect(() => {
-    if (isInternalModifiedFileList.current) onChange?.(fileList);
-  }, [fileList]);
+  const _isInternalChange = useRef(false);
+  const _fileAmount = useRef(0);
 
   useEffect(() => {
     if (value === undefined) {
       return;
-    } else if (isInternalModifiedFileList.current) {
-      isInternalModifiedFileList.current = false;
+    } else if (_isInternalChange.current) {
+      _isInternalChange.current = false;
       return;
     } else {
       setFileList(() => value);
@@ -70,61 +67,37 @@ function UploadImage(props: UploadImageProps) {
   // 图片上传事件
   const handleChangeFileList = useCallback(
     (field: any) => {
-      const { file } = field;
-      // maxSize === 0 表示不对文件大小进行限制。
-      if (maxSize > 0 && file.size > maxSize * 1024 * 1024) return;
+      let { fileList } = field;
 
-      function setStateAction(prevFileList: UploadFile[]) {
-        let newFileList: any[] = [...prevFileList];
-        // maxCount === 0 表示不限制上传的数量
-        if (maxCount > 0 && newFileList.length >= maxCount && file.percent === 0) {
-          const index = newFileList.findIndex((item) => item.uid === file.uid);
-          if (index >= 0) newFileList.splice(index, 1, file);
-          return prevFileList;
-        } else if (file.status === 'uploading') {
-          const index = newFileList.findIndex((item) => item.uid === file.uid);
-          if (~index) {
-            newFileList.splice(index, 1, file);
-          } else {
-            newFileList.push(file);
-          }
-        } else if (file.status === 'error') {
-          const { uid, name, status } = file;
-          const index = newFileList.findIndex((item) => item.uid === uid);
-          newFileList.splice(index, 1, { uid, name, status });
-        } else if (file.status === 'done') {
-          const index = newFileList.findIndex((item) => item.uid === file.uid);
-          if (file?.response?.code !== 0) {
-            newFileList.splice(index, 1, { uid: file.uid, name: file.name, status: 'error' });
-          } else {
-            newFileList.splice(index, 1, file);
-          }
-        } else if (file.status === 'removed') {
-          newFileList = prevFileList.filter((item) => item.uid !== file.uid);
-        }
+      if (maxSize) fileList = fileList.filter((file: File) => file.size! <= maxSize);
 
-        return newFileList;
-      }
-      isInternalModifiedFileList.current = true;
-      setFileList(setStateAction);
+      if (maxCount) fileList = fileList.slice(0, maxCount);
+
+      _fileAmount.current = fileList.length;
+      _isInternalChange.current = true;
+
+      setFileList(() => fileList);
+      onChange?.(fileList);
     },
     [fileList, maxSize, maxCount],
   );
 
   // 返回 false 表示不上传图片。
-  const handleBeforeUploadForFileList = useCallback(
+  const handleBeforeUpload = useCallback(
     (file: File) => {
-      // 如果maxSize === 0 表示不对文件大小进行限制。
-      if (maxSize === 0) return true;
-
-      if (file.size > maxSize * 1024 * 1024) {
-        message.warning(`上传图片大小不能超过${maxSize}M`);
+      if (maxSize && file.size > maxSize * 1024 * 1024) {
+        message.warning(`上传图片大小不能超过${maxSize}M！`);
         return false;
-      } else {
-        return true;
       }
+
+      if (maxCount && _fileAmount.current >= maxCount) {
+        message.warning(`最多只能上传${maxCount}个文件！`);
+        return false;
+      }
+      _fileAmount.current += 1;
+      return true;
     },
-    [maxSize],
+    [maxSize, maxCount],
   );
 
   const renderUploadButton = useMemo(() => {
@@ -155,7 +128,7 @@ function UploadImage(props: UploadImageProps) {
       listType={listType}
       onPreview={onPreview}
       onChange={handleChangeFileList}
-      beforeUpload={handleBeforeUploadForFileList}
+      beforeUpload={handleBeforeUpload}
     >
       {renderUploadButton}
     </Upload>

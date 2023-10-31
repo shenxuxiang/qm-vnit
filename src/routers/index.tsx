@@ -5,15 +5,41 @@ import LazyLoader from '@/components/LazyLoader';
 import Library from '@/pages/library';
 
 export const menuItems = [
-  { key: 'content-form-head', label: 'ContentFormHead 表单查询' },
-  { key: 'content-form-page', label: 'ContentFormPage 表格页面' },
-  { key: 'model-tree', label: 'ModelTree 模型树' },
-  { key: 'preview-image', label: 'PreviewImage 图片预览' },
-  { key: 'upload-file', label: 'UploadFile 文件上传' },
-  { key: 'upload-video', label: 'UploadVideo 视频上传' },
-  { key: 'upload-audio', label: 'UploadAudio 音频上传' },
-  { key: 'upload-image', label: 'UploadImage 图片上传' },
-  { key: 'icon', label: 'Icon 图标' },
+  {
+    type: 'group',
+    label: '表格相关',
+    children: [
+      { key: 'content-form-header', label: 'ContentFormHeader 表单查询' },
+      { key: 'content-form-table', label: 'ContentFormTable 表格页面' },
+    ],
+  },
+  { type: 'divider' },
+  {
+    type: 'group',
+    label: '图像展示',
+    children: [
+      { key: 'icon', label: 'Icon 图标' },
+      { key: 'image', label: 'Image 图像' },
+      { key: 'preview-image', label: 'PreviewImage 图片预览' },
+    ],
+  },
+  { type: 'divider' },
+  {
+    type: 'group',
+    label: '上传功能',
+    children: [
+      { key: 'upload-video', label: 'UploadVideo 视频上传' },
+      { key: 'upload-audio', label: 'UploadAudio 音频上传' },
+      { key: 'upload-image', label: 'UploadImage 图片上传' },
+      { key: 'upload-file', label: 'UploadFile 文件上传' },
+    ],
+  },
+  { type: 'divider' },
+  {
+    type: 'group',
+    label: '数据选项',
+    children: [{ key: 'model-tree', label: 'ModelTree 模型树' }],
+  },
 ];
 
 function Router() {
@@ -36,15 +62,15 @@ function Router() {
           children: [
             {
               path: `/library/`,
-              element: <Navigate to="/library/content-form-head" />,
+              element: <Navigate to="/library/content-form-header" />,
             },
             {
-              path: `/library/content-form-head`,
-              element: React.createElement(LazyLoader(() => import('../pages/library/content-form-head'))),
+              path: `/library/content-form-header`,
+              element: React.createElement(LazyLoader(() => import('../pages/library/content-form-header'))),
             },
             {
-              path: `/library/content-form-page`,
-              element: React.createElement(LazyLoader(() => import('../pages/library/content-form-page'))),
+              path: `/library/content-form-table`,
+              element: React.createElement(LazyLoader(() => import('../pages/library/content-form-table'))),
             },
             {
               path: `/library/model-tree`,
@@ -73,6 +99,10 @@ function Router() {
             {
               path: `/library/icon`,
               element: React.createElement(LazyLoader(() => import('../pages/library/icon'))),
+            },
+            {
+              path: `/library/image`,
+              element: React.createElement(LazyLoader(() => import('../pages/library/image'))),
             },
           ],
         },

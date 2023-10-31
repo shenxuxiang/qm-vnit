@@ -38,8 +38,6 @@ function Page() {
 
       <h1>API</h1>
       <Table bordered columns={TABLE_HEADER} rowKey="key" dataSource={properties} pagination={false} />
-
-      <MarkdownCode code={code} defaultExpand />
     </section>
   );
 }
@@ -61,46 +59,32 @@ const properties = [
   {
     key: 'checkedKeys',
     instruct: '（受控）选中复选框的树节点',
-    type: 'string[]',
+    type: 'Key[]',
   },
   {
     key: 'onChange',
     instruct: '点击复选框触发',
-    type: '(checkedKeys: string[], allKeys: string[]) => void',
+    type: '(checkedKeys: Key[], allKeys: Key[]) => void',
   },
   {
-    key: 'formatData',
-    instruct:
-      '数据格式化的函数，如果提供的 treeData 数据格式符合 TreeData[] 数据类型，则不需要 formatData 函数进行再次处理，此时我们应该将其设置为 null 避免不必要的性能损耗。',
-    type: '((treeData: any[]) => TreeData[]) | null',
-    default: 'computePropTreeData',
+    key: 'formatTreeData',
+    instruct: '数据格式化的函数，如果提供的 treeData 数据格式符合 TreeData[] 数据类型，则不需要 formatTreeData 函数。',
+    type: '(treeData: any[]) => TreeData[]',
   },
   {
-    key: 'filterOption',
-    instruct: '条件筛选方法，将 filterOption 设置为 false 将隐藏条件过滤项',
-    type: 'boolean | ((data: TreeData[], searchValue: string) => TreeData[])',
+    key: 'showFilter',
+    instruct: '是否展示搜索输入框',
+    type: 'boolea',
     default: 'true',
   },
+  {
+    key: 'expandedKeys',
+    instruct: '展开项',
+    type: 'Key[]',
+  },
+  {
+    key: 'onExpand',
+    instruct: '点击组合节点时触发的回调函数',
+    type: '(expandeKeys: Key[]) => void;',
+  },
 ];
-
-const code = `
-~~~jsx
-type PropTreeData = { id: string; parentId: string; name: string; children: PropTreeData }[];
-type TreeData = { key: string; parentKey?: string; title: string; children?: TreeData[], [propName: string]: any };
-
-function computePropTreeData(sourceList: PropTreeData): TreeData[] {
-  return (
-    sourceList?.map((item) => {
-      const { id, parentId, name, children, ...props } = item;
-      return {
-        key: id,
-        title: name,
-        parentKey: parentId,
-        children: children ? computePropTreeData(children) : undefined,
-        ...props,
-      };
-    }) ?? []
-  );
-}
-~~~
-`;
