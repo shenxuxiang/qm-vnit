@@ -32,10 +32,10 @@ function Page() {
   return (
     <Layout className={classes.page} hasSider>
       <Sider theme="light" width={320}>
-        <p className={classes.menu_title}>组件总览</p>
+        {/* <p className={classes.menu_title}>组件总览</p> */}
         <Menu
           mode="inline"
-          items={menuItems}
+          items={menuItems as any}
           onSelect={handleSelect}
           selectedKeys={state.activeKey}
           className={classes.menu_wrapper}

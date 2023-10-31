@@ -1,6 +1,6 @@
 import React, { useCallback, memo } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Layout, Popconfirm, Popover } from 'antd';
+import { Layout, Popover } from 'antd';
 import logo from '@/assets/images/vnit-logo.svg';
 import './index.less';
 import { NavLink } from 'react-router-dom';

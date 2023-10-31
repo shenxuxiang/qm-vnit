@@ -5,16 +5,41 @@ import LazyLoader from '@/components/LazyLoader';
 import Library from '@/pages/library';
 
 export const menuItems = [
-  { key: 'content-form-header', label: 'ContentFormHeader 表单查询' },
-  { key: 'content-form-table', label: 'ContentFormTable 表格页面' },
-  { key: 'model-tree', label: 'ModelTree 模型树' },
-  { key: 'preview-image', label: 'PreviewImage 图片预览' },
-  { key: 'upload-file', label: 'UploadFile 文件上传' },
-  { key: 'upload-video', label: 'UploadVideo 视频上传' },
-  { key: 'upload-audio', label: 'UploadAudio 音频上传' },
-  { key: 'upload-image', label: 'UploadImage 图片上传' },
-  { key: 'icon', label: 'Icon 图标' },
-  { key: 'image', label: 'Image 图像' },
+  {
+    type: 'group',
+    label: '表格相关',
+    children: [
+      { key: 'content-form-header', label: 'ContentFormHeader 表单查询' },
+      { key: 'content-form-table', label: 'ContentFormTable 表格页面' },
+    ],
+  },
+  { type: 'divider' },
+  {
+    type: 'group',
+    label: '图像展示',
+    children: [
+      { key: 'icon', label: 'Icon 图标' },
+      { key: 'image', label: 'Image 图像' },
+      { key: 'preview-image', label: 'PreviewImage 图片预览' },
+    ],
+  },
+  { type: 'divider' },
+  {
+    type: 'group',
+    label: '上传功能',
+    children: [
+      { key: 'upload-video', label: 'UploadVideo 视频上传' },
+      { key: 'upload-audio', label: 'UploadAudio 音频上传' },
+      { key: 'upload-image', label: 'UploadImage 图片上传' },
+      { key: 'upload-file', label: 'UploadFile 文件上传' },
+    ],
+  },
+  { type: 'divider' },
+  {
+    type: 'group',
+    label: '数据选项',
+    children: [{ key: 'model-tree', label: 'ModelTree 模型树' }],
+  },
 ];
 
 function Router() {

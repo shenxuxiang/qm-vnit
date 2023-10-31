@@ -125,7 +125,11 @@ function Example() {
   };
 
   return (
-    <Template markdown={code} title="案例二（支持字段排序、表格数据导出，手动刷新）">
+    <Template
+      markdown={code}
+      title="案例二（支持字段排序、表格数据导出，手动刷新）"
+      bodyStyle={{ padding: '0 0 20px' }}
+    >
       <ContentFormTable
         rowKey="id"
         ref={taleRef}
@@ -270,7 +274,7 @@ function Example() {
   };
 
   return (
-    <Template markdown={code} title="案例二（支持字段排序、表格数据导出，手动刷新）">
+    <Template markdown={code} title="案例二（支持字段排序、表格数据导出，手动刷新）" bodyStyle={{ padding: '0 0 20px' }}>
       <ContentFormTable
         rowKey="id"
         ref={taleRef}

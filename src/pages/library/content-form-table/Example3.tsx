@@ -95,7 +95,7 @@ function Example() {
   );
 
   return (
-    <Template markdown={code} title="案例三（支持自定义查询表单项，修改 response）">
+    <Template markdown={code} title="案例三（支持自定义查询表单项，修改 response）" bodyStyle={{ padding: '0 0 20px' }}>
       <ContentFormTable
         rowKey="id"
         columns={columns}
@@ -245,7 +245,7 @@ function Example() {
   );
 
   return (
-    <Template markdown={code} title="案例三（支持自定义查询表单项，修改 response）">
+    <Template markdown={code} title="案例三（支持自定义查询表单项，修改 response）" bodyStyle={{ padding: '0 0 20px' }}>
       <ContentFormTable
         rowKey="id"
         columns={columns}

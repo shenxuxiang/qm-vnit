@@ -120,7 +120,11 @@ function Example() {
   }, []);
 
   return (
-    <Template markdown={code} title="案例一（支持表单验证，发送请求之前修改 request body，指定列数）">
+    <Template
+      markdown={code}
+      title="案例一（支持表单验证，发送请求之前修改 request body，指定列数）"
+      bodyStyle={{ padding: '0 0 20px' }}
+    >
       <ContentFormTable
         cols={2}
         rowKey="id"
@@ -262,9 +266,9 @@ function Example() {
   }, [])
 
   return (
-    <Template markdown={code} title="案例一（支持表单验证，发送请求之前修改 request body，指定列数）">
+    <Template markdown={code} title="案例一（支持表单验证，发送请求之前修改 request body，指定列数）"  bodyStyle={{ padding: '0 0 20px' }}>
       <ContentFormTable
-        cols={2}
+        cols={2}s
         rowKey="id"
         immediate={false}
         columns={columns}
