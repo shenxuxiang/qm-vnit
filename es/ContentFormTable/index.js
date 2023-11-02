@@ -260,7 +260,6 @@ function ContentFormPage(props, ref) {
       searchContent: newSearchCondition
     });
   }, [searchContent]);
-  console.log(defaultExpand, 'defaultExpand');
   return /*#__PURE__*/React.createElement("div", {
     className: "qm-content-form-page"
   }, (queryList === null || queryList === void 0 ? void 0 : queryList.length) > 0 && /*#__PURE__*/React.createElement(ContentFormHead, {
