@@ -233,8 +233,6 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
     [searchContent],
   );
 
-  console.log(defaultExpand, 'defaultExpand');
-
   return (
     <div className="qm-content-form-page">
       {queryList?.length > 0 && (

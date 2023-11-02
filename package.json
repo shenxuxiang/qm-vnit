@@ -23,7 +23,7 @@
     "build:analyse": "cross-env NODE_ENV=production cross-env ANALYSE=true webpack --config ./config/webpack.config.prod.cjs",
     "lint": "npx eslint ./src --config ./.eslintrc.yml --ext .tsx,.ts --fix",
     "prettier": "npx prettier -w ./src",
-    "build-lib": "npx gulp",
+    "build:lib": "cross-env NODE_ENV=production npx gulp",
     "preview": "node ./server/app.cjs"
   },
   "lint-staged": {
