@@ -61,6 +61,7 @@ function Example() {
         dataIndex: 'name',
         title: '用户姓名',
         formType: 'input',
+        initialValue: 'Tom',
       },
       {
         name: 'range',

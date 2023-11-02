@@ -1,6 +1,6 @@
 {
   "name": "qm-vnit",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "main": "./lib/index.js",
   "module": "./es/index.js",
   "types": "./lib/index.d.ts",
@@ -40,7 +40,8 @@
     "antd": "^5.4.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "@babel/runtime-corejs3": "^7.21.5"
+    "@babel/runtime-corejs3": "^7.21.5",
+    "core-js": "^3.30.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.22.5",
@@ -69,7 +70,6 @@
     "babel-plugin-import": "^1.13.6",
     "case-sensitive-paths-webpack-plugin": "^2.4.0",
     "copy-webpack-plugin": "^11.0.0",
-    "core-js": "^3.30.2",
     "cross-env": "^7.0.3",
     "css-loader": "^6.7.3",
     "css-minimizer-webpack-plugin": "^5.0.0",

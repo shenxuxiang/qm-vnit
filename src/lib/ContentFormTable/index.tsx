@@ -104,7 +104,7 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
   const immediateRef = useRef(immediate);
 
   // 表单查询条件（初始化的值）。Form 表单不会更新初始化值，所以我们使用 ref。
-  const initialSearchCondition = useRef<any>({});
+  const initialSearchCondition = useRef<any>(null);
 
   // Table 组件使用的 columns
   const tableColumns = useMemo(() => {

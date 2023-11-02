@@ -64,7 +64,7 @@ function ContentFormPage(props, ref) {
   // immediate 表示是否在页面初始化的时候请求后台接口。默认 true
   var immediateRef = useRef(immediate);
   // 表单查询条件（初始化的值）。Form 表单不会更新初始化值，所以我们使用 ref。
-  var initialSearchCondition = useRef({});
+  var initialSearchCondition = useRef(null);
   // Table 组件使用的 columns
   var tableColumns = useMemo(function () {
     return _filterInstanceProperty(columns).call(columns, function (column) {
