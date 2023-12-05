@@ -62,7 +62,6 @@ export default class Ajax {
         if (xhr.status >= 200 && xhr.status < 300) {
           this.handleSuccess(JSON.parse(xhr.response));
         } else {
-          console.log(xhr.response);
           this.handleError?.({
             response: xhr.response,
             status: xhr.status,

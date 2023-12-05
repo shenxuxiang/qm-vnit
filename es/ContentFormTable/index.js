@@ -133,7 +133,7 @@ function ContentFormPage(props, ref) {
     return function (_x) {
       return _ref.apply(this, arguments);
     };
-  }(), [beforeQueryAction]);
+  }(), []);
   // 对组件外部暴露可调用的 API
   useImperativeHandle(ref, function () {
     return {
@@ -148,7 +148,7 @@ function ContentFormPage(props, ref) {
         });
       }
     };
-  }, [pageSize, pageNum, searchContent, sendRequestTableList]);
+  }, [pageSize, pageNum, searchContent]);
   // 页面初始化。
   // 之后，每当 deps 变化都会触发 sendRequestTableList() 重新请求数据
   useEffect(function () {
@@ -161,7 +161,7 @@ function ContentFormPage(props, ref) {
       pageSize: pageSize,
       pageNum: pageNum
     }, searchContent));
-  }, [pageSize, pageNum, searchContent, sendRequestTableList]);
+  }, [pageSize, pageNum, searchContent]);
   useEffect(function () {
     onPaginationChange === null || onPaginationChange === void 0 ? void 0 : onPaginationChange(pageNum, pageSize);
   }, [pageSize, pageNum]);
@@ -225,7 +225,7 @@ function ContentFormPage(props, ref) {
     return function (_x2) {
       return _ref2.apply(this, arguments);
     };
-  }(), [exportTableList, exportFileName, queryList, pageNum, pageSize, beforeQueryAction]);
+  }(), [exportTableList, exportFileName, queryList, pageNum, pageSize]);
   // 当 columns 中的某一项设置了 sorter 时，可以设置【倒叙/正序】 查询。
   var handleTableChange = useCallback(function (_, __, sorter) {
     var orderList = [];

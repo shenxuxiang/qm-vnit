@@ -1,6 +1,6 @@
 import _defineProperty from '@babel/runtime-corejs3/helpers/defineProperty';
-import _objectWithoutProperties from '@babel/runtime-corejs3/helpers/objectWithoutProperties';
 import _toConsumableArray from '@babel/runtime-corejs3/helpers/toConsumableArray';
+import _objectWithoutProperties from '@babel/runtime-corejs3/helpers/objectWithoutProperties';
 import _slicedToArray from '@babel/runtime-corejs3/helpers/slicedToArray';
 import 'core-js/modules/es.object.to-string.js';
 import 'core-js/modules/web.dom-collections.for-each.js';
@@ -18,13 +18,14 @@ import _Object$getOwnPropertySymbols from '@babel/runtime-corejs3/core-js-stable
 import _filterInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/filter';
 import _Object$getOwnPropertyDescriptor from '@babel/runtime-corejs3/core-js-stable/object/get-own-property-descriptor';
 import _Object$getOwnPropertyDescriptors from '@babel/runtime-corejs3/core-js-stable/object/get-own-property-descriptors';
-import React, { forwardRef, useDeferredValue, useRef, useEffect, useMemo, useImperativeHandle, useCallback } from 'react';
+import React, { forwardRef, useDeferredValue, useEffect, useMemo, useImperativeHandle, useCallback } from 'react';
 import useReducer from '../utils/useReducer.js';
-import { isArray } from '../utils/index.js';
 import { Input, Tree } from 'antd';
+import { objectIs, isArray } from '../utils/index.js';
 import './index.css';
 
-var _excluded = ["title", "key", "parentKey", "children"];
+var _excluded = ["onChange", "onExpand", "checkable", "formatTreeData", "showFilter", "treeData", "checkedKeys", "expandedKeys", "selectedKeys"],
+  _excluded2 = ["title", "key", "parentKey", "children", "renderDOM"];
 function ownKeys(object, enumerableOnly) { var keys = _Object$keys(object); if (_Object$getOwnPropertySymbols) { var symbols = _Object$getOwnPropertySymbols(object); enumerableOnly && (symbols = _filterInstanceProperty(symbols).call(symbols, function (sym) { return _Object$getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : _Object$getOwnPropertyDescriptors ? Object.defineProperties(target, _Object$getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, _Object$getOwnPropertyDescriptor(source, key)); }); } return target; }
 function initialState() {
@@ -33,6 +34,7 @@ function initialState() {
     searchValue: '',
     // 选中的节点数组
     checkedKeys: [],
+    selectedKeys: [],
     // Tree 组件的展开项
     expandedKeys: [],
     // 扁平的 TreeData 数组
@@ -41,7 +43,6 @@ function initialState() {
 }
 /**
  * 二次封装的 Tree 组件
- * @param filterOption 表示是否支持条件过滤，默认 true。可以自定义过滤方法，默认使用 filterTreeData。
  * @param treeData     组件的数据源，数据格式为：TreeData。
  * @param checkedKeys  受控，被选中的子节点集合。
  * @param checkable    是否展示复选框。
@@ -55,6 +56,7 @@ function ModelTree(props, ref) {
   var searchValue = state.searchValue,
     checkedKeys = state.checkedKeys,
     expandedKeys = state.expandedKeys,
+    selectedKeys = state.selectedKeys,
     flatTreeData = state.flatTreeData;
   var onChange = props.onChange,
     onExpand = props.onExpand,
@@ -64,32 +66,52 @@ function ModelTree(props, ref) {
     showFilter = _props$showFilter === void 0 ? true : _props$showFilter,
     propTreeData = props.treeData,
     propCheckedKeys = props.checkedKeys,
-    propsExpandeKeys = props.expandedKeys;
+    propsExpandeKeys = props.expandedKeys,
+    propsSelectedKeys = props.selectedKeys,
+    restProps = _objectWithoutProperties(props, _excluded);
   var deferSearchValue = useDeferredValue(searchValue);
-  // 是否组件内容修改了 checkedKeys
-  var isInternalModifiedCheckedKeys = useRef(false);
-  var isInternalModifiedExpandeKeys = useRef(false);
   useEffect(function () {
     if (propCheckedKeys === undefined) {
       return;
-    } else if (isInternalModifiedCheckedKeys.current) {
-      isInternalModifiedCheckedKeys.current = false;
-      return;
     } else {
-      setState({
-        checkedKeys: propCheckedKeys
+      setState(function (prev) {
+        if (objectIs(prev.checkedKeys, propCheckedKeys)) {
+          return null;
+        } else {
+          return {
+            checkedKeys: propCheckedKeys
+          };
+        }
       });
     }
   }, [propCheckedKeys]);
   useEffect(function () {
-    if (propsExpandeKeys === undefined) {
-      return;
-    } else if (isInternalModifiedExpandeKeys.current) {
-      isInternalModifiedExpandeKeys.current = false;
+    if (propsSelectedKeys === undefined) {
       return;
     } else {
-      setState({
-        expandedKeys: propsExpandeKeys
+      setState(function (prev) {
+        if (objectIs(prev.selectedKeys, propsSelectedKeys)) {
+          return null;
+        } else {
+          return {
+            selectedKeys: propsSelectedKeys
+          };
+        }
+      });
+    }
+  }, [propsSelectedKeys]);
+  useEffect(function () {
+    if (propsExpandeKeys === undefined) {
+      return;
+    } else {
+      setState(function (prev) {
+        if (objectIs(prev.expandedKeys, propsExpandeKeys)) {
+          return null;
+        } else {
+          return {
+            expandedKeys: propsExpandeKeys
+          };
+        }
       });
     }
   }, [propsExpandeKeys]);
@@ -103,7 +125,6 @@ function ModelTree(props, ref) {
   }, [propTreeData]);
   // 实时计算 Tree 组件的数据源
   var computeTreeData = useMemo(function () {
-    if (!deferSearchValue) return treeData;
     return filterTreeData(treeData, deferSearchValue);
   }, [treeData, deferSearchValue]);
   useEffect(function () {
@@ -129,16 +150,22 @@ function ModelTree(props, ref) {
       },
       getAllParentKeys: function getAllParentKeys() {
         var keys = [];
-        checkedKeys.forEach(function (key) {
-          return keys.push.apply(keys, _toConsumableArray(_getParentKeys(key, flatTreeData)));
-        });
+        if (checkable) {
+          checkedKeys.forEach(function (key) {
+            return keys.push.apply(keys, _toConsumableArray(_getParentKeys(key, flatTreeData)));
+          });
+        } else {
+          selectedKeys.forEach(function (key) {
+            return keys.push.apply(keys, _toConsumableArray(_getParentKeys(key, flatTreeData)));
+          });
+        }
         return _toConsumableArray(new _Set(keys));
       }
     };
-  }, [checkedKeys, flatTreeData]);
+  }, [checkedKeys, selectedKeys, flatTreeData, checkable]);
   // 点击 Tree 组件的复选框时触发
   var handleTreeCheck = useCallback(function (checkedKeys) {
-    isInternalModifiedCheckedKeys.current = true;
+    // isInternalModifiedCheckedKeys.current = true;
     setState({
       checkedKeys: checkedKeys
     });
@@ -148,9 +175,20 @@ function ModelTree(props, ref) {
     });
     onChange === null || onChange === void 0 ? void 0 : onChange(checkedKeys, _toConsumableArray(new _Set(allKeys)));
   }, [flatTreeData]);
+  var handleTreeSelect = useCallback(function (selectedKeys) {
+    // isInternalModifiedSelectedKeys.current = true;
+    setState({
+      selectedKeys: selectedKeys
+    });
+    var allKeys = [];
+    selectedKeys.forEach(function (key) {
+      return allKeys.push.apply(allKeys, _toConsumableArray(_getParentKeys(key, flatTreeData)));
+    });
+    onChange === null || onChange === void 0 ? void 0 : onChange(selectedKeys, _toConsumableArray(new _Set(allKeys)));
+  }, [flatTreeData]);
   // 手动展开/折叠 Tree 组件。
   var handleTreeExpand = useCallback(function (newExpandedKeys) {
-    isInternalModifiedExpandeKeys.current = false;
+    // isInternalModifiedExpandeKeys.current = false;
     setState({
       expandedKeys: newExpandedKeys
     });
@@ -170,14 +208,16 @@ function ModelTree(props, ref) {
     placeholder: "\u8BF7\u8F93\u5165\u5173\u952E\u5B57\u8FDB\u884C\u8FC7\u6EE4"
   }) : null, /*#__PURE__*/React.createElement("div", {
     className: "qm-model-tree"
-  }, /*#__PURE__*/React.createElement(Tree, {
+  }, /*#__PURE__*/React.createElement(Tree, _objectSpread({
     checkable: checkable,
     onCheck: handleTreeCheck,
     checkedKeys: checkedKeys,
     treeData: computeTreeData,
+    selectedKeys: selectedKeys,
+    onSelect: handleTreeSelect,
     onExpand: handleTreeExpand,
     expandedKeys: expandedKeys
-  })));
+  }, restProps))));
 }
 var index = /*#__PURE__*/forwardRef(ModelTree);
 /**
@@ -191,7 +231,8 @@ function filterTreeData(treeData, searchValue) {
       key = item.key,
       parentKey = item.parentKey,
       children = item.children,
-      props = _objectWithoutProperties(item, _excluded);
+      renderDOM = item.renderDOM,
+      props = _objectWithoutProperties(item, _excluded2);
     var newTitle = title;
     if (_indexOfInstanceProperty(title).call(title, searchValue) >= 0) {
       newTitle = [];
@@ -209,6 +250,7 @@ function filterTreeData(treeData, searchValue) {
       }
       newTitle = /*#__PURE__*/React.createElement("span", null, newTitle);
     }
+    if (typeof renderDOM === 'function') newTitle = renderDOM(newTitle, item);
     if (children !== null && children !== void 0 && children.length) {
       return _objectSpread({
         key: key,
@@ -261,7 +303,6 @@ function computedFlatTreeData(tree) {
       stack.unshift(children[i]);
     }
   }
-  // 排序
   return result;
 }
 

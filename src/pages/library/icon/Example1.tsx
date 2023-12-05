@@ -12,6 +12,10 @@ function Example() {
           image
         </div>
         <div className={classes.item}>
+          <Icon name="backtop" className={classes.icon} />
+          backtop
+        </div>
+        <div className={classes.item}>
           <Icon name="minus-circle" className={classes.icon} />
           minus-circle
         </div>
