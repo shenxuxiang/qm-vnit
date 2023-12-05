@@ -45,6 +45,16 @@ function downloadFile(fileName, data) {
   _URL.revokeObjectURL(eLink.href);
   document.body.removeChild(eLink);
 }
+// 判断两个值是否完全相等，可以比较 +0 !== -0，NaN === NaN
+function objectIs(v1, v2) {
+  if (v1 === 0 && v2 === 0) {
+    return 1 / v1 === 1 / v2;
+  } else if (v1 !== v1) {
+    return v2 !== v2;
+  } else {
+    return v1 === v2;
+  }
+}
 /**
  * 节流
  * @param func        节流的方法
@@ -84,4 +94,4 @@ function getViewportSize() {
   };
 }
 
-export { downloadFile, getType, getViewportSize, isArray, throttle };
+export { downloadFile, getType, getViewportSize, isArray, objectIs, throttle };

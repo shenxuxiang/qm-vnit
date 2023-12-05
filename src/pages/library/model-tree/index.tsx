@@ -1,6 +1,7 @@
 import { Table } from 'antd';
 import Example1 from './Example1';
 import Example2 from './Example2';
+import Example3 from './Example3';
 import React, { memo } from 'react';
 import MarkdownCode from '@/components/MarkdownCode';
 import { TABLE_HEADER } from '@/pages/library/constants';
@@ -35,6 +36,7 @@ function Page() {
 
       <Example1 />
       <Example2 />
+      <Example3 />
 
       <h1>API</h1>
       <Table bordered columns={TABLE_HEADER} rowKey="key" dataSource={properties} pagination={false} />

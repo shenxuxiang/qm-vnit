@@ -129,23 +129,20 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
   }
 
   // 请求数据
-  const sendRequestTableList = useCallback(
-    async (query: any) => {
-      // 如果 action 返回 false， 则行为终止，否则将返回的内容作为 request body。
-      const action = beforeQueryAction?.(query) ?? query;
+  const sendRequestTableList = useCallback(async (query: any) => {
+    // 如果 action 返回 false， 则行为终止，否则将返回的内容作为 request body。
+    const action = beforeQueryAction?.(query) ?? query;
 
-      if (action === false) return;
+    if (action === false) return;
 
-      setState({ loading: true });
-      try {
-        const response = await requestDataSource(action);
-        setState({ ...customResponse(response) });
-      } finally {
-        setState({ loading: false });
-      }
-    },
-    [beforeQueryAction],
-  );
+    setState({ loading: true });
+    try {
+      const response = await requestDataSource(action);
+      setState({ ...customResponse(response) });
+    } finally {
+      setState({ loading: false });
+    }
+  }, []);
 
   // 对组件外部暴露可调用的 API
   useImperativeHandle(
@@ -157,7 +154,7 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
         sendRequestTableList(query).finally(() => callback?.());
       },
     }),
-    [pageSize, pageNum, searchContent, sendRequestTableList],
+    [pageSize, pageNum, searchContent],
   );
 
   // 页面初始化。
@@ -170,7 +167,7 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
     }
 
     sendRequestTableList({ pageSize, pageNum, ...searchContent });
-  }, [pageSize, pageNum, searchContent, sendRequestTableList]);
+  }, [pageSize, pageNum, searchContent]);
 
   useEffect(() => {
     onPaginationChange?.(pageNum, pageSize);
@@ -201,7 +198,7 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
         message.warning('文件下载失败');
       }
     },
-    [exportTableList, exportFileName, queryList, pageNum, pageSize, beforeQueryAction],
+    [exportTableList, exportFileName, queryList, pageNum, pageSize],
   );
 
   // 当 columns 中的某一项设置了 sorter 时，可以设置【倒叙/正序】 查询。

@@ -2,11 +2,11 @@ import { useState } from 'react';
 
 type InitialStateType<S> = () => S | S;
 
-type Action<S> = Partial<S> | ((prevState: S) => Partial<S>);
+type Action<S> = Partial<S> | ((prevState: S) => Partial<S> | null);
 
 type SetState<S> = (action: Action<S>) => void;
 
-function reduce<S>(state: S, action: Partial<S>) {
+function reduce<S>(state: S, action: Partial<S> | null) {
   if (action === null) return state;
   return { ...state, ...action };
 }

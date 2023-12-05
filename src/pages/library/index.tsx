@@ -4,6 +4,8 @@ import classes from './index.module.less';
 import useReducer from '@/utils/useReducer';
 import React, { memo, useCallback, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { Icon } from '@/lib';
+import { scrollToPosition } from '@/utils';
 
 const { Sider, Content } = Layout;
 
@@ -43,6 +45,13 @@ function Page() {
       </Sider>
       <Content>
         <Outlet />
+        <div className={classes.backTop}>
+          <Icon
+            name="backtop"
+            onClick={() => scrollToPosition(0)}
+            style={{ fontSize: 40, color: 'rgba(255, 255, 255, 0.7)' }}
+          />
+        </div>
       </Content>
     </Layout>
   );

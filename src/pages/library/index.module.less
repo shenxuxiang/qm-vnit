@@ -17,3 +17,28 @@
 h1 {
   font-size: 16px;
 }
+.backTop {
+  position: fixed;
+  bottom: 100px;
+  right: 50px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  &:hover {
+    background: rgba(0, 0, 0, 0.5);
+    transform: translate3d(2px, -2px, 0);
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
+  }
+  &:hover i {
+    color: rgba(255, 255, 255, 1) !important;
+  }
+  & i {
+    transition: all 0.3s ease;
+  }
+}

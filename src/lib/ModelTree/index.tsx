@@ -1,16 +1,16 @@
 import React, {
-  forwardRef,
-  useEffect,
-  useCallback,
-  useMemo,
   useRef,
+  useMemo,
+  useEffect,
+  forwardRef,
+  useCallback,
   useDeferredValue,
   useImperativeHandle,
 } from 'react';
 import useReducer from '@/utils/useReducer';
-import type { Key } from 'react';
-import { isArray } from '@/utils';
 import { Input, Tree } from 'antd';
+import { isArray, objectIs } from '@/utils';
+import type { Key } from 'react';
 import './index.less';
 
 export type TreeData = {
@@ -27,12 +27,14 @@ interface ModelTreeProps {
   treeData: any[];
   checkable?: boolean;
   checkedKeys?: Key[];
+  selectedKeys?: Key[];
   expandedKeys?: Key[];
   showFilter?: boolean;
   onExpand?: (expandeKeys: Key[]) => void;
   onChange?: (checkedKeys: Key[], allKeys: Key[]) => void;
   // 格式化数据，在数据需要进行转换时可以是使用
   formatTreeData?: ((treeData: any[]) => TreeData[]) | null;
+  [propName: string]: any;
 }
 
 function initialState() {
@@ -41,6 +43,7 @@ function initialState() {
     searchValue: '',
     // 选中的节点数组
     checkedKeys: [] as React.Key[],
+    selectedKeys: [] as React.Key[],
     // Tree 组件的展开项
     expandedKeys: [] as React.Key[],
     // 扁平的 TreeData 数组
@@ -50,7 +53,6 @@ function initialState() {
 
 /**
  * 二次封装的 Tree 组件
- * @param filterOption 表示是否支持条件过滤，默认 true。可以自定义过滤方法，默认使用 filterTreeData。
  * @param treeData     组件的数据源，数据格式为：TreeData。
  * @param checkedKeys  受控，被选中的子节点集合。
  * @param checkable    是否展示复选框。
@@ -58,7 +60,7 @@ function initialState() {
  */
 function ModelTree(props: ModelTreeProps, ref: any) {
   const [state, setState] = useReducer(initialState);
-  const { searchValue, checkedKeys, expandedKeys, flatTreeData } = state;
+  const { searchValue, checkedKeys, expandedKeys, selectedKeys, flatTreeData } = state;
 
   const {
     onChange,
@@ -69,47 +71,64 @@ function ModelTree(props: ModelTreeProps, ref: any) {
     treeData: propTreeData,
     checkedKeys: propCheckedKeys,
     expandedKeys: propsExpandeKeys,
+    selectedKeys: propsSelectedKeys,
+    ...restProps
   } = props;
 
   const deferSearchValue = useDeferredValue(searchValue);
 
-  // 是否组件内容修改了 checkedKeys
-  const isInternalModifiedCheckedKeys = useRef(false);
-  const isInternalModifiedExpandeKeys = useRef(false);
-
   useEffect(() => {
     if (propCheckedKeys === undefined) {
       return;
-    } else if (isInternalModifiedCheckedKeys.current) {
-      isInternalModifiedCheckedKeys.current = false;
-      return;
     } else {
-      setState({ checkedKeys: propCheckedKeys });
+      setState((prev) => {
+        if (objectIs(prev.checkedKeys, propCheckedKeys)) {
+          return null;
+        } else {
+          return { checkedKeys: propCheckedKeys };
+        }
+      });
     }
   }, [propCheckedKeys]);
 
   useEffect(() => {
-    if (propsExpandeKeys === undefined) {
-      return;
-    } else if (isInternalModifiedExpandeKeys.current) {
-      isInternalModifiedExpandeKeys.current = false;
+    if (propsSelectedKeys === undefined) {
       return;
     } else {
-      setState({ expandedKeys: propsExpandeKeys });
+      setState((prev) => {
+        if (objectIs(prev.selectedKeys, propsSelectedKeys)) {
+          return null;
+        } else {
+          return { selectedKeys: propsSelectedKeys };
+        }
+      });
+    }
+  }, [propsSelectedKeys]);
+
+  useEffect(() => {
+    if (propsExpandeKeys === undefined) {
+      return;
+    } else {
+      setState((prev) => {
+        if (objectIs(prev.expandedKeys, propsExpandeKeys)) {
+          return null;
+        } else {
+          return { expandedKeys: propsExpandeKeys };
+        }
+      });
     }
   }, [propsExpandeKeys]);
 
   const treeData = useMemo(() => {
     // 如果 formatTreeData 不是一个函数，那表示 propTreeData 数据类型就是 TreeData[], 所以无需再进行格式化处理了。
     const treeData = typeof formatTreeData === 'function' ? formatTreeData(propTreeData) : propTreeData;
+
     setState({ flatTreeData: computedFlatTreeData(treeData) });
     return treeData;
   }, [propTreeData]);
 
   // 实时计算 Tree 组件的数据源
   const computeTreeData = useMemo(() => {
-    if (!deferSearchValue) return treeData;
-
     return filterTreeData(treeData, deferSearchValue);
   }, [treeData, deferSearchValue]);
 
@@ -133,18 +152,22 @@ function ModelTree(props: ModelTreeProps, ref: any) {
       getParentKeys: (key: Key) => getParentKeys(key, flatTreeData),
       getAllParentKeys: () => {
         const keys: Key[] = [];
-        checkedKeys.forEach((key: Key) => keys.push(...getParentKeys(key, flatTreeData)));
+        if (checkable) {
+          checkedKeys.forEach((key: Key) => keys.push(...getParentKeys(key, flatTreeData)));
+        } else {
+          selectedKeys.forEach((key: Key) => keys.push(...getParentKeys(key, flatTreeData)));
+        }
 
         return [...new Set(keys)];
       },
     }),
-    [checkedKeys, flatTreeData],
+    [checkedKeys, selectedKeys, flatTreeData, checkable],
   );
 
   // 点击 Tree 组件的复选框时触发
   const handleTreeCheck = useCallback(
     (checkedKeys: any) => {
-      isInternalModifiedCheckedKeys.current = true;
+      // isInternalModifiedCheckedKeys.current = true;
       setState({ checkedKeys });
 
       const allKeys: Key[] = [];
@@ -155,9 +178,22 @@ function ModelTree(props: ModelTreeProps, ref: any) {
     [flatTreeData],
   );
 
+  const handleTreeSelect = useCallback(
+    (selectedKeys: Key[]) => {
+      // isInternalModifiedSelectedKeys.current = true;
+      setState({ selectedKeys });
+
+      const allKeys: Key[] = [];
+      selectedKeys.forEach((key: Key) => allKeys.push(...getParentKeys(key, flatTreeData)));
+
+      onChange?.(selectedKeys, [...new Set(allKeys)]);
+    },
+    [flatTreeData],
+  );
+
   // 手动展开/折叠 Tree 组件。
   const handleTreeExpand = useCallback((newExpandedKeys: React.Key[]) => {
-    isInternalModifiedExpandeKeys.current = false;
+    // isInternalModifiedExpandeKeys.current = false;
     setState({ expandedKeys: newExpandedKeys });
     onExpand?.(newExpandedKeys);
   }, []);
@@ -177,8 +213,11 @@ function ModelTree(props: ModelTreeProps, ref: any) {
           onCheck={handleTreeCheck}
           checkedKeys={checkedKeys}
           treeData={computeTreeData}
+          selectedKeys={selectedKeys}
+          onSelect={handleTreeSelect}
           onExpand={handleTreeExpand}
           expandedKeys={expandedKeys}
+          {...restProps}
         />
       </div>
     </>
@@ -194,7 +233,7 @@ export default forwardRef(ModelTree);
  */
 function filterTreeData(treeData: TreeData[], searchValue: string): TreeData[] {
   return treeData.map((item) => {
-    const { title, key, parentKey, children, ...props } = item;
+    const { title, key, parentKey, children, renderDOM, ...props } = item;
 
     let newTitle: any = title;
 
@@ -217,6 +256,8 @@ function filterTreeData(treeData: TreeData[], searchValue: string): TreeData[] {
 
       newTitle = <span>{newTitle}</span>;
     }
+
+    if (typeof renderDOM === 'function') newTitle = renderDOM(newTitle, item);
 
     if (children?.length) {
       return {
@@ -263,6 +304,5 @@ function computedFlatTreeData(tree: TreeData | TreeData[]): FlatTreeData {
       stack.unshift(children[i]);
     }
   }
-  // 排序
   return result;
 }
