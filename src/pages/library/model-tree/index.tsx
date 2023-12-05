@@ -65,8 +65,8 @@ const properties = [
   },
   {
     key: 'onChange',
-    instruct: '点击复选框触发',
-    type: '(checkedKeys: Key[], allKeys: Key[]) => void',
+    instruct: '点击复选框触发、或者选中树节点时触发',
+    type: '(keys: Key[], allKeys: Key[]) => void',
   },
   {
     key: 'formatTreeData',
@@ -88,5 +88,20 @@ const properties = [
     key: 'onExpand',
     instruct: '点击组合节点时触发的回调函数',
     type: '(expandeKeys: Key[]) => void;',
+  },
+  {
+    key: 'selectedKeys',
+    instruct: '（受控）设置选中的树节点，多选需设置 multiple 为 true',
+    type: 'Key[]',
+  },
+  {
+    key: 'onExpand',
+    instruct: '点击组合节点时触发的回调函数',
+    type: '(expandeKeys: Key[]) => void;',
+  },
+  {
+    key: '其他',
+    instruct: '可以接受 Tree 组件的其他任何 props',
+    type: '-',
   },
 ];
