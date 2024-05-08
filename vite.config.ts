@@ -53,7 +53,7 @@ export default defineConfig(({ mode }) => {
       copyPublicDir: true,
       sourcemap: 'hidden',
       assetsInlineLimit: 10240,
-      outDir: path.resolve(__dirname, 'dist'),
+      outDir: path.resolve(__dirname, 'build'),
       terserOptions: {
         compress: {
           drop_console: true,
