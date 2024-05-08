@@ -13,9 +13,9 @@ const header = `
 
 const usage = `
   ### 何时使用
-  只要涉及到表格数据的展示都可以使用，只需要开发者传递一个获取数据的异步方法(requestDataSource)即可使用。
+  只要涉及到表格数据的展示都可以使用，只需要开发者传递一个获取数据的异步方法(queryTableList)即可使用。
 
-  必要时，开发者可以传递 customResponse 属性，当 requestDataSource() 完成时会见返回值传递给 customResponse() 方法，
+  必要时，开发者可以传递 customResponse 属性，当 queryTableList() 完成时会见返回值传递给 customResponse() 方法，
 
   customResponse() 方法执行完成后，将返回的值传递给组件并进行展示。
 
@@ -25,7 +25,16 @@ const notes = `
   ### 开发者注意事项
   为方便开发开箱即用，组件提供了 customResponse 属性，开发者可以通过该属性根据返回的数据结构返回组件所需要的内容
 
-  查询功能则是使用的 ContentFormHead 组件实现
+  查询功能则是使用的 ContentFormHeader 组件实现
+`;
+
+const updateText = `
+  ### 更新内容
+  * requestDataSource 属性替换成 queryTableList；
+  * 删除 exportFileName 属性；
+  * 将原本内置的导出文件功能删除，新版本中开发者通过 exportTableList(query) 方法自定义导出文件；
+  * tableTitle 属性类型由原来的 string 类型替换成 React.ReactNode；
+  * 组件样式微调；
 `;
 
 function Page() {
@@ -47,6 +56,9 @@ function Page() {
       <Table bordered columns={TABLE_HEADER} rowKey="key" dataSource={properties} pagination={false} />
       <h1>TableColumnsType</h1>
       <Table bordered columns={TABLE_HEADER} rowKey="key" dataSource={tableColumnsType} pagination={false} />
+
+      <br />
+      <MarkdownCode code={updateText} hasExpandButton={false} defaultExpand />
     </section>
   );
 }
@@ -57,7 +69,7 @@ const properties = [
   {
     key: 'tableTitle',
     instruct: '表格左上角展示的标题',
-    type: 'string',
+    type: 'React.ReactNode',
   },
   {
     key: 'extra',
@@ -73,11 +85,6 @@ const properties = [
     key: 'exportTableList',
     instruct: '表格数据数据导出功能',
     type: 'function(values)',
-  },
-  {
-    key: 'exportFileName',
-    instruct: '指定导出的文件名',
-    type: 'string',
   },
   {
     key: 'submitButtonText',
@@ -98,15 +105,14 @@ const properties = [
     default: 'false',
   },
   {
-    key: 'requestDataSource',
+    key: 'queryTableList',
     instruct: '请求数据的方法',
     type: 'function',
   },
   {
     key: 'customResponse',
     instruct: '自定义接口返回值处理函数，如果 HTTP 接口返回值的数据结构比较特殊，可以通过定义该返回来解决',
-    type: '(data: any) => {pageList: any[], total: number, pageNum: number, pageSize: number }',
-    default: 'handleResponse',
+    type: '(data: any) => { tableList: any[]; total: number }',
   },
   {
     key: 'tableScroll',
@@ -196,7 +202,7 @@ const tableColumnsType = [
   },
   {
     key: 'formType',
-    instruct: '可选，告诉 ContentFormHead 你希望渲染哪种类型的组件',
+    instruct: '可选，告诉 <ContentFormHeader/> 你希望渲染哪种类型的组件',
     type: 'input | select | rangePicker | datePicker | cascader',
   },
   {

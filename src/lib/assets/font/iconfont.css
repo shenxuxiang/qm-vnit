@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'iconfont'; /* Project id 4035587 */
-  src: url('iconfont.woff2?t=1687155286718') format('woff2'), url('iconfont.woff?t=1687155286718') format('woff'),
-    url('iconfont.ttf?t=1687155286718') format('truetype');
+  src: url('iconfont.woff2?t=1713144147948') format('woff2'), url('iconfont.woff?t=1713144147948') format('woff'),
+    url('iconfont.ttf?t=1713144147948') format('truetype');
 }
 
 .qm-vnit-iconfont {
@@ -10,6 +10,30 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.qm-vnit-icon-download:before {
+  content: '\e6b2';
+}
+
+.qm-vnit-icon-icon-comment:before {
+  content: '\e601';
+}
+
+.qm-vnit-icon-share:before {
+  content: '\e615';
+}
+
+.qm-vnit-icon-selected:before {
+  content: '\e66f';
+}
+
+.qm-vnit-icon-Pause:before {
+  content: '\e898';
+}
+
+.qm-vnit-icon-play1:before {
+  content: '\e614';
 }
 
 .qm-vnit-icon-backtop:before {

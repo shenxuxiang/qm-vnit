@@ -1,8 +1,9 @@
 import React, { memo, useEffect, useCallback, useState, useMemo, useRef } from 'react';
 import { UploadOutlined, PlusOutlined } from '@ant-design/icons';
-import { Upload, message, UploadFile, Button } from 'antd';
+import type { UploadFile } from 'antd';
+import { Upload, message, Button } from 'antd';
 
-type UploadImageProps = {
+type UploadFileProps = {
   action: string;
   accept?: string;
   maxSize?: number;
@@ -11,6 +12,7 @@ type UploadImageProps = {
   disabled?: boolean;
   value?: UploadFile[];
   uploadButtonText?: string;
+  customRequest?: (options: any) => void;
   onPreview?: (file: UploadFile) => void;
   headers?: { [propName: string]: string };
   onChange?: (fileList: UploadFile[]) => void;
@@ -31,8 +33,9 @@ type UploadImageProps = {
  * @param uploadButtonText 上传按钮的文案
  * @param listType         上传列表的内建样式，支持四种基本样式 text, picture, picture-card 和 picture-circle
  * @param onPreview        预览功能
+ * @param customRequest    通过覆盖默认的上传行为，可以自定义自己的上传实现
  */
-function UploadImage(props: UploadImageProps) {
+function UploadFileComp(props: UploadFileProps) {
   const {
     value,
     action,
@@ -43,6 +46,7 @@ function UploadImage(props: UploadImageProps) {
     maxSize = 0,
     accept = '*',
     maxCount = 0,
+    customRequest,
     multiple = true,
     uploadButtonText,
     listType = 'text',
@@ -61,15 +65,20 @@ function UploadImage(props: UploadImageProps) {
       return;
     } else {
       setFileList(() => value);
+      _fileAmount.current = value.length;
     }
   }, [value]);
 
-  // 图片上传事件
+  /**
+   * 图片上传事件
+   * 每次触发时 field.fileList 将包含所有的集合。
+   */
   const handleChangeFileList = useCallback(
     (field: any) => {
       let { fileList } = field;
 
-      if (maxSize) fileList = fileList.filter((file: File) => file.size! <= maxSize);
+      // 1048576 = 1024 * 1024 表示 1M 的大小
+      if (maxSize) fileList = fileList.filter((file: File) => file?.size ?? 0 <= maxSize * 1048576);
 
       if (maxCount) fileList = fileList.slice(0, maxCount);
 
@@ -94,7 +103,9 @@ function UploadImage(props: UploadImageProps) {
         message.warning(`最多只能上传${maxCount}个文件！`);
         return false;
       }
+
       _fileAmount.current += 1;
+
       return true;
     },
     [maxSize, maxCount],
@@ -123,10 +134,11 @@ function UploadImage(props: UploadImageProps) {
       headers={headers}
       disabled={disabled}
       multiple={multiple}
-      maxCount={maxCount}
+      // maxCount={maxCount}
       fileList={fileList}
       listType={listType}
       onPreview={onPreview}
+      customRequest={customRequest}
       onChange={handleChangeFileList}
       beforeUpload={handleBeforeUpload}
     >
@@ -135,4 +147,4 @@ function UploadImage(props: UploadImageProps) {
   );
 }
 
-export default memo(UploadImage);
+export default memo(UploadFileComp);

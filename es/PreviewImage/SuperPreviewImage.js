@@ -25,7 +25,7 @@ function initialState() {
 /**
  * 图片预览功能组件
  * @param { open }           是否展示组件
- * @param { imgs }           图片列表
+ * @param { imgs }           图片列表 { url: 表示普通像素的图像，hdUrl: 表示高清像素的图像 }
  * @param { index }          默认展示第几个图片，默认第一个
  * @param { onClose }        关闭组件的方法
  * @param { pageSize }       指定缩略图展示列表一页展示多少张图片
@@ -60,6 +60,7 @@ function SuperPreviewImage(props) {
     }
   }, [open]);
   useEffect(function () {
+    var _imgRef$current, _imgRef$current$addEv;
     if (!open) return;
     // 放大
     var handleEnlarge = function handleEnlarge() {
@@ -93,9 +94,10 @@ function SuperPreviewImage(props) {
       imgRef.current.parentNode.style.cssText = "transform: translate3D(0px, 0px, 0px);";
     };
     var handleMouseWheel = throttle(onMouseWheel, 100);
-    imgRef.current.parentNode.addEventListener('mousewheel', handleMouseWheel);
+    (_imgRef$current = imgRef.current) === null || _imgRef$current === void 0 || (_imgRef$current = _imgRef$current.parentNode) === null || _imgRef$current === void 0 || (_imgRef$current$addEv = _imgRef$current.addEventListener) === null || _imgRef$current$addEv === void 0 || _imgRef$current$addEv.call(_imgRef$current, 'mousewheel', handleMouseWheel);
     return function () {
-      imgRef.current.parentNode.removeEventListener('mousewheel', handleMouseWheel);
+      var _imgRef$current2, _imgRef$current2$remo;
+      (_imgRef$current2 = imgRef.current) === null || _imgRef$current2 === void 0 || (_imgRef$current2 = _imgRef$current2.parentNode) === null || _imgRef$current2 === void 0 || (_imgRef$current2$remo = _imgRef$current2.removeEventListener) === null || _imgRef$current2$remo === void 0 || _imgRef$current2$remo.call(_imgRef$current2, 'mousewheel', handleMouseWheel);
     };
   }, [open]);
   useEffect(function () {
@@ -141,6 +143,7 @@ function SuperPreviewImage(props) {
   var handlePrevItem = function handlePrevItem() {
     if (indictor <= 0) return;
     imgRef.current.style.transform = "scale(1, 1) rotate(0deg)";
+    imgRef.current.parentNode.style.cssText = "transform: translate3d(0px, 0px, 0px )";
     setState(function (prev) {
       return {
         indictor: prev.indictor - 1
@@ -150,6 +153,7 @@ function SuperPreviewImage(props) {
   var handleNextItem = function handleNextItem() {
     if (indictor >= imgs.length - 1) return;
     imgRef.current.style.transform = "scale(1, 1) rotate(0deg)";
+    imgRef.current.parentNode.style.cssText = "transform: translate3d(0px, 0px, 0px )";
     setState(function (prev) {
       return {
         indictor: prev.indictor + 1
@@ -159,6 +163,7 @@ function SuperPreviewImage(props) {
   var handleChangeIndex = function handleChangeIndex(index) {
     if (indictor === index) return;
     imgRef.current.style.transform = "scale(1, 1) rotate(0deg)";
+    imgRef.current.parentNode.style.cssText = "transform: translate3d(0px, 0px, 0px )";
     setState({
       indictor: index
     });
@@ -188,9 +193,9 @@ function SuperPreviewImage(props) {
     var _getViewportSize = getViewportSize(),
       SW = _getViewportSize.width,
       SH = _getViewportSize.height;
-    var _imgRef$current = imgRef.current,
-      offsetWidth = _imgRef$current.offsetWidth,
-      offsetHeight = _imgRef$current.offsetHeight;
+    var _imgRef$current3 = imgRef.current,
+      offsetWidth = _imgRef$current3.offsetWidth,
+      offsetHeight = _imgRef$current3.offsetHeight;
     var _getTransformProperti4 = getTransformProperties(imgRef.current),
       scaleX = _getTransformProperti4.scaleX,
       scaleY = _getTransformProperti4.scaleY;
@@ -201,8 +206,8 @@ function SuperPreviewImage(props) {
       element.style.cssText = "\n        transform: translate3d(0px, 0px, 0px);\n        transition: transform .3s ease\n      ";
     } else {
       var _context5;
-      var restX = (width - SW) / 2;
-      var restY = (height - SH) / 2;
+      var restX = Math.floor((width - SW) / 2);
+      var restY = Math.floor((height - SH) / 2);
       var _getTransformProperti5 = getTransformProperties(element),
         translateX = _getTransformProperti5.translateX,
         translateY = _getTransformProperti5.translateY;
@@ -273,6 +278,7 @@ function SuperPreviewImage(props) {
     key: imageURL,
     onMouseDown: onMouseDown,
     onMouseUp: handleMouseUp,
+    "aria-label": "super-preview-image",
     className: "qm-preview-image-preview-img",
     style: {
       transform: 'scale(1, 1) rotate(0)'

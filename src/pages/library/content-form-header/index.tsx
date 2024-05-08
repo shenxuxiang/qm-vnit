@@ -21,6 +21,17 @@ const notes = `
   在不传入 cols 参数的情况下，**ContentFormHead** 会根据屏幕的宽度自动调节（一行可以放置几列）
 `;
 
+const updateText = `
+  ### 更新内容
+  * onReset 回调函数将返回一个 Promise 实例；
+  * onSubmit 回调函数将返回一个 Promise 实例；
+  * onExport回调函数将返回一个 Promise 实例；
+  * 新增提交按钮、导出按钮、重置按钮用户反馈交互，并可以消除用户持续提交动作；
+  * 将原本内置的导出文件功能删除，新版本中开发者通过 exportTableList(query) 方法自定义导出文件；
+  * 组件内部逻辑优化，组件性能有所提升；
+  * 组件样式微调；
+`;
+
 function Page() {
   return (
     <section style={{ padding: '20px 20px 20px 60px' }}>
@@ -40,6 +51,9 @@ function Page() {
       <Table bordered columns={TABLE_HEADER} rowKey="key" dataSource={properties} pagination={false} />
       <h1>QueryListItem</h1>
       <Table bordered columns={TABLE_HEADER} rowKey="key" dataSource={queryListItem} pagination={false} />
+
+      <br />
+      <MarkdownCode code={updateText} hasExpandButton={false} defaultExpand />
     </section>
   );
 }
@@ -93,17 +107,17 @@ const properties = [
   {
     key: 'onSubmit',
     instruct: '表单提交回调函数',
-    type: 'function(values)',
+    type: '(values) => Promise<any>',
   },
   {
     key: 'onReset',
     instruct: '表单重置的回调函数',
-    type: 'function(values)',
+    type: '(values) => Promise<any>',
   },
   {
     key: 'onExport',
     instruct: '导出功能回调函数',
-    type: 'function(values)',
+    type: '(values) => Promise<any>',
   },
 ];
 

@@ -48,14 +48,14 @@ function Modal(props) {
   var handleCloseModal = useCallback(function () {
     maskClosable && (onClose === null || onClose === void 0 ? void 0 : onClose());
   }, [maskClosable]);
-  return /*#__PURE__*/React.createElement(Portal, null, mask && /*#__PURE__*/React.createElement("div", {
+  return /*#__PURE__*/React.createElement(Portal, null, mask && ( /*#__PURE__*/React.createElement("div", {
     ref: maskRef,
     onClick: handleCloseModal,
     style: {
       display: 'none'
     },
     className: "qm-vnit-modal-mask".concat(visible ? ' open' : '')
-  }), /*#__PURE__*/React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("div", {
     ref: contentRef,
     style: {
       display: 'none'

@@ -1,4 +1,6 @@
-import tween, { TweenAttrNames } from './tween';
+import type { TweenAttrNames } from './tween';
+import type { CSSProperties } from 'react';
+import tween from './tween';
 
 export function getType(data: any) {
   return Object.prototype.toString.call(data).slice(8, -1).toLowerCase();
@@ -8,7 +10,7 @@ export function isArray<T>(data: any): data is T[] {
   return getType(data) === 'array';
 }
 
-export function isObject(data: any): data is object {
+export function isObject(data: any): data is { [propName: string]: any } {
   return getType(data) === 'object';
 }
 
@@ -20,7 +22,12 @@ export function isSet<T>(data: any): data is Set<T> {
   return getType(data) === 'set';
 }
 
-export function isEmpty(data: null | undefined | object | Array<any> | Map<any, any> | Set<any>) {
+/**
+ * 判断数据是不是为空，null、undefined、false、0、' 等所有假值都将返回 true。空对象、空数组也返回 true。
+ * @param data
+ * @returns
+ */
+export function isEmpty(data: null | undefined | object | Array<any> | Map<any, any> | Set<any>): data is undefined {
   if (!data) return true;
   if (isArray(data)) {
     return data.length <= 0;
@@ -50,8 +57,9 @@ export function extName(filename: string) {
  * @param fileName 指定文件下载后的文件名
  * @param data     文件资源（blob）
  * @param extName  文件后缀
+ * @returns
  */
-export function downloadFile(fileName: string, data: any, extName = '.xlsx') {
+export function downloadFile(fileName: string, data: Blob | ArrayBuffer | DataView, extName = '.xlsx') {
   const blob = new Blob([data]);
   const eLink = document.createElement('a');
   // <a/> 上的 download 属性用于重命名一个需要下载的文件
@@ -65,7 +73,12 @@ export function downloadFile(fileName: string, data: any, extName = '.xlsx') {
   document.body.removeChild(eLink);
 }
 
-// 判断两个值是否完全相等，可以比较 +0 !== -0，NaN === NaN
+/**
+ * 判断两个值是否完全相等，可以比较 +0 !== -0，NaN === NaN
+ * @param v1
+ * @param v2
+ * @returns
+ */
 export function objectIs(v1: any, v2: any): boolean {
   if (v1 === 0 && v2 === 0) {
     return 1 / v1 === 1 / v2;
@@ -76,6 +89,12 @@ export function objectIs(v1: any, v2: any): boolean {
   }
 }
 
+/**
+ * 浅比较
+ * @param obj1
+ * @param obj2
+ * @returns
+ */
 export function shallowEqual(obj1: any, obj2: any): boolean {
   if (objectIs(obj1, obj2)) return true;
 
@@ -127,34 +146,43 @@ export function debounce(func: Function, delay: number, immediately = false) {
  */
 export function throttle(func: Function, delay: number, immediately = false) {
   let interval: any = null;
+  // 用来保存最新的参数，当 immediate 为 false 时有用。
+  let latestArgs: any = null;
   return function (...args: any[]) {
+    latestArgs = args;
     if (immediately) {
       if (interval) return;
-      func(...args);
+      func(...latestArgs);
       interval = setTimeout(() => (interval = null), delay);
     } else {
       if (interval) return;
       interval = setTimeout(() => {
-        func(...args);
+        // 注意，如果这里使用 args，args 可能不是最新的事件触发时传递的参数，所以这里使用 latestArgs。
+        func(...latestArgs);
         interval = null;
       }, delay);
     }
   };
 }
 
+type ScrollToPositionOptions = {
+  // 动画执行的次数
+  times?: number;
+  // 终点位置
+  position: number;
+  // 目标元素
+  container?: HTMLElement;
+  // 动画曲线
+  timingFunction?: TweenAttrNames;
+};
+
 /**
- * 页面，元素容器（voerflow 不是 visible）的滚动（动画）
- * @param position       终点位置
- * @param timingFunction 动画曲线
- * @param times          动画执行的次数
- * @param container      目标元素
+ * 在容器内从当前位置滚动到指定位置（JS动效）
+ * @param options
  */
-export function scrollToPosition(
-  position: number,
-  timingFunction: TweenAttrNames = 'linear',
-  times = 50,
-  container: HTMLElement = document.documentElement,
-) {
+export function scrollToPosition(options: ScrollToPositionOptions) {
+  const { position, times = 50, timingFunction = 'linear', container = document.documentElement } = options;
+
   execAnimation(0);
 
   function execAnimation(count: number) {
@@ -184,6 +212,11 @@ export function delay<T>(time: number, value: T): Promise<T> {
   });
 }
 
+/**
+ * 数据存储
+ * @param key
+ * @param value
+ */
 export function setLocalStorage(key: string, value: any) {
   if (value === null) {
     window.localStorage.clearItem(key);
@@ -192,21 +225,188 @@ export function setLocalStorage(key: string, value: any) {
   }
 }
 
+/**
+ * 获取存储数据
+ * @param key
+ * @returns
+ */
 export function getLocalStorage(key: string) {
   let value = window.localStorage.getItem(key);
   return value ? JSON.parse(value) : null;
 }
 
 /**
- * 数字格式化，toFixed(990000000, 10000, 2) => 99000.00(单位：万)
+ * 数字格式化，toFixed(1234567, 2, 10000) => 123.46
  * @param value   需要计算的数值
- * @param divisor 格式化的单位（万：10000，百万：1000000）
  * @param float   保留的小数
+ * @param divisor 格式化的单位。
  * @returns
  */
-export function toFixed(value: string | number, divisor = 10000, float = 2) {
-  if (!value) return '';
+export function toFixed(value: string | number | null, float = 2, divisor = 1) {
+  // eslint-disable-next-line
+  if (value == null) return '--';
+  if (!value) return '0.00';
   return ((value as number) / divisor).toFixed(float);
+}
+
+function getPattern(name: string) {
+  return new RegExp('(?:^|;) *' + name.replace(/[\^$\\.*+?()[\]{}|]/g, '\\$&') + '=([^;]*)');
+}
+
+/**
+ * 获取指定的 cookie
+ * @param name cookie 的名称
+ * @returns
+ */
+export function getCookie(name: string) {
+  const cookie = document.cookie;
+  const reg = getPattern(name);
+  const match = reg.exec(cookie);
+  if (!match) return null;
+  return match[1];
+}
+
+/**
+ * 设置（添加）cookie
+ * @param name cookie 的名称
+ * @param value cookie 的值
+ * @param maxAge cookie的有效期（以秒为单位）
+ */
+export function setCookie(name: string, value: string, maxAge?: number) {
+  let cookie = name + '=' + value;
+  if (maxAge) cookie = cookie + '; max-age=' + maxAge;
+  document.cookie = cookie;
+}
+
+/**
+ * 获取用户 TOKEN
+ * @returns
+ */
+export function getUserToken(): string {
+  return getLocalStorage('TOKEN') || '';
+}
+
+/**
+ * 设置用户 TOKEN
+ * @param token
+ */
+export function setUserToken(token: string) {
+  setLocalStorage('TOKEN', token);
+}
+
+/**
+ * 将区域编码格式化，[省，市，区，镇，村]
+ * @param regionCode 区域编码
+ */
+export function formatRegionCode(regionCode: string) {
+  if (!regionCode) return [];
+
+  let length = 0;
+
+  switch (regionCode.length) {
+    case 2:
+      length = 1;
+      break;
+    case 4:
+      length = 2;
+      break;
+    case 6:
+      length = 3;
+      break;
+    case 9:
+      length = 4;
+      break;
+    default:
+      length = 5;
+  }
+
+  const province = regionCode.slice(0, 2);
+  const city = regionCode.slice(0, 4);
+  const district = regionCode.slice(0, 6);
+  const town = regionCode.slice(0, 9);
+  return [province, city, district, town, regionCode].slice(0, length);
+}
+
+/**
+ * 拆分页面路径 '/aa/bb/cc' => ['/aa', '/aa/bb', '/aa/bb/cc']
+ * @param pathname 页面路由
+ * @returns
+ */
+export function splitPath(pathname: string) {
+  const regexp = /(\/[^/?#]+)/g;
+  const expandKeys: string[] = [];
+  while (regexp.test(pathname)) {
+    expandKeys.push(pathname.slice(0, regexp.lastIndex));
+  }
+
+  return expandKeys;
+}
+
+/**
+ * 格式化请求参数
+ * @param query 请求参数
+ * @returns
+ */
+export function formatQueryData(query: {
+  order: Array<{ direction: boolean; field: string; [propName: string]: any }>;
+}) {
+  if ('order' in query) {
+    const { order } = query;
+    const data: any = { ...query };
+
+    const orders: string[] = [];
+    order.forEach((item) => {
+      orders.push(`${item.field},${item.direction ? 'asc' : 'desc'}`);
+    });
+
+    data.orders = orders;
+    delete data.order;
+    return data;
+  } else {
+    return query;
+  }
+}
+
+/**
+ * 获取树中指定层级的所有父级节点的 id
+ * @param tree 树形结构数据
+ * @param id   指定节点
+ * @param fieldNames 字段名定义 { id: 'id', parentId: 'parentId', children: 'children' }
+ * @returns
+ */
+export function getParentIdsOfTree(
+  tree: { [x: string]: any },
+  id: string,
+  fieldNames: { id?: string; parentId?: string; children?: string } = {},
+) {
+  if (!tree) return [];
+
+  const parentId = [];
+  const stack = [tree];
+  const { id: iLabel = 'id', parentId: pLabel = 'parentId', children: cLabel = 'children' } = fieldNames;
+
+  // 注意，使用深度优先遍历的方法进行查找，应该尽量避免使用递归的方式
+  while (stack.length) {
+    const it = stack.shift()!;
+    while (parentId.length) {
+      if (parentId.slice(-1)[0] === it[pLabel]) {
+        break;
+      } else {
+        parentId.pop();
+      }
+    }
+
+    // 如果当前树节点的 id 与目标节点的 id 相等，则直接返回 parentId，并中断遍历。
+    if (it[iLabel] === id) return parentId;
+
+    parentId.push(it[iLabel]);
+
+    let len = it[cLabel]?.length ?? 0;
+    while (len--) {
+      stack.unshift(it[cLabel][len]);
+    }
+  }
+  return parentId;
 }
 
 // 获取视口尺寸
@@ -214,4 +414,23 @@ export function getViewportSize() {
   const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
   const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
   return { width, height };
+}
+
+/**
+ * 将字符串样式格式化为 CSSProperties
+ * @param style
+ * @returns
+ */
+export function parseStyle(style: string): CSSProperties | undefined {
+  if (!style) return;
+
+  const arr = style.split(/[:;]/).filter(Boolean);
+  const result = {} as any;
+  for (let i = 0; i < arr.length; i += 2) {
+    const key = arr[i].trim().replace(/(\-[a-z])/g, (v1: string) => v1.slice(-1).toUpperCase());
+    const value = arr[i + 1].trim();
+    result[key] = value;
+  }
+
+  return result;
 }

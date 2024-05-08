@@ -1,0 +1,28 @@
+.demo-content {
+  width: 200px;
+  height: 200px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  position: relative;
+}
+.demo-mask-box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  font-size: 14px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+  opacity: 0;
+  visibility: hidden;
+}
+.demo-mask {
+  font-size: 14px;
+  color: #fff;
+}
+.demo-content:hover .demo-mask-box {
+  opacity: 1;
+  visibility: visible;
+}

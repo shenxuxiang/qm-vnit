@@ -54,7 +54,7 @@ function UploadVideo(props) {
     } else {
       if (videoHeight > maxHeight) {
         height = maxHeight;
-        width = height / ratio;
+        width = height * ratio;
       } else {
         width = videoWidth;
         height = videoHeight;
@@ -117,14 +117,14 @@ function UploadVideo(props) {
     },
     onClick: handleClosePreview,
     className: "qm-vnit-upload-video-previewe".concat(showPreview ? ' show' : '')
-  }, videoURL ? /*#__PURE__*/React.createElement("video", {
+  }, videoURL ? ( /*#__PURE__*/React.createElement("video", {
     controls: true,
     ref: videoPreviewRef,
     onCanPlay: handleCanPlay,
     className: "qm-vnit-upload-video-preview-content"
   }, /*#__PURE__*/React.createElement("source", {
     src: videoURL
-  })) : null, /*#__PURE__*/React.createElement(Icon, {
+  }))) : null, /*#__PURE__*/React.createElement(Icon, {
     name: "close",
     onClick: handleClosePreview,
     className: "qm-vnit-upload-video-preview-close-icon"

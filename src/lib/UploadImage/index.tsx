@@ -60,18 +60,17 @@ function UploadImage(props: UploadImageProps) {
     accept = 'image/*',
   } = props;
 
-  const [state, setState] = useReducer(initialState);
-  const { fileList, previewImgs, showPreviewImage } = state;
+  const [{ fileList, previewImgs, showPreviewImage }, setState] = useReducer(initialState);
 
   const _inputRef = useRef<any>();
   const _uploadButtonRef = useRef<any>();
-  const _isInternalChange = useRef(false);
+  const _isInternalModified = useRef(false);
 
   useEffect(() => {
     if (typeof value === 'undefined') {
       return;
-    } else if (_isInternalChange.current) {
-      _isInternalChange.current = false;
+    } else if (_isInternalModified.current) {
+      _isInternalModified.current = false;
       return;
     } else {
       setState({ fileList: value });
@@ -82,11 +81,11 @@ function UploadImage(props: UploadImageProps) {
     let newFiles: File[] = Array.from(event.target.files);
     // 需要每次都将 input.value 给清空，这样用户再次上传时就可以选择相同的文件了。
     _inputRef.current.value = '';
-    // 判断当前文件数量是否已经超出 maxCount
-    if (maxCount && fileList.length >= maxCount) {
-      message.warning(`最多只能上传${maxCount}个文件！`);
-      return;
-    }
+    // // 判断当前文件数量是否已经超出 maxCount
+    // if (maxCount && fileList.length >= maxCount) {
+    //   message.warning(`最多只能上传${maxCount}个文件！`);
+    //   return;
+    // }
 
     if (maxSize) {
       let length = newFiles.length;
@@ -118,7 +117,7 @@ function UploadImage(props: UploadImageProps) {
 
     newFileList = fileList.concat(newFileList);
 
-    _isInternalChange.current = true;
+    _isInternalModified.current = true;
     setState({ fileList: newFileList });
     onChange?.(newFileList);
 
@@ -137,7 +136,7 @@ function UploadImage(props: UploadImageProps) {
       target.status = 'done';
       target.percent = 100;
       target.response = res;
-      _isInternalChange.current = true;
+      _isInternalModified.current = true;
       setState({ fileList: newFileList });
       onChange?.(newFileList);
     }
@@ -150,7 +149,7 @@ function UploadImage(props: UploadImageProps) {
     const target = newFileList.find((file) => file.uid === uid);
     if (target) {
       target.status = 'error';
-      _isInternalChange.current = true;
+      _isInternalModified.current = true;
       setState({ fileList: newFileList });
       onChange?.(newFileList);
     }
@@ -159,7 +158,7 @@ function UploadImage(props: UploadImageProps) {
   // 移除
   function handleRemoveItem(uid: string) {
     const newFileList = fileList.filter((file) => file.uid !== uid);
-    _isInternalChange.current = true;
+    _isInternalModified.current = true;
     setState({ fileList: newFileList });
     onChange?.(newFileList);
   }

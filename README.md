@@ -38,12 +38,10 @@ qm-vnit 安全支持 antd 的主题设置功能。
 
 ```js
 // 入口文件
+import React, { useEffect } from 'react';
 import zhCN from 'antd/es/locale/zh_CN';
 import { ConfigProvider } from 'antd';
-import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
-
-dayjs.locale('zh-cn');
 
 const theme = {
   token: { colorPrimary: '#00b96b' }
@@ -63,9 +61,9 @@ qm-vnit 安全支持 antd 的所有国际化语言设置。
 
 ```js
 // 入口文件
+import React, { useEffect } from 'react';
 import zhCN from 'antd/es/locale/zh_CN';
 import { ConfigProvider } from 'antd';
-import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 
 dayjs.locale('zh-cn');

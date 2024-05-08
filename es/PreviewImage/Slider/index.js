@@ -17,17 +17,17 @@ function initialState() {
 // 缩略图中每一个图片的宽度
 var ITEM_WIDTH = 120;
 function Slider(props) {
+  var sliderRef = useRef();
   var imgs = props.imgs,
     indictor = props.indictor,
     onChange = props.onChange,
     pageSize = props.pageSize;
   var _useReducer = useReducer(initialState),
     _useReducer2 = _slicedToArray(_useReducer, 2),
-    state = _useReducer2[0],
+    _useReducer2$ = _useReducer2[0],
+    isFirstPage = _useReducer2$.isFirstPage,
+    isLastPage = _useReducer2$.isLastPage,
     setState = _useReducer2[1];
-  var isFirstPage = state.isFirstPage,
-    isLastPage = state.isLastPage;
-  var sliderRef = useRef();
   useEffect(function () {
     sliderAnimation(indictor, 300);
     function sliderAnimation(index, duration) {
@@ -101,7 +101,6 @@ function Slider(props) {
       translateX = _getTransformProperti2.translateX;
     var maxOffsetX = (imgs.length - pageSize) * ITEM_WIDTH;
     var offsetX = translateX - pageSize * ITEM_WIDTH;
-    console.log(translateX, offsetX, maxOffsetX);
     if (offsetX <= -maxOffsetX) {
       offsetX = -maxOffsetX;
       setState({

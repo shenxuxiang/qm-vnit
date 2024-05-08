@@ -7,6 +7,7 @@ function Example() {
   const [fileList, setFileList] = useState([{ uid: 111, name: '1.jpg', url: img1 }]);
 
   const onChange = useCallback((files: any) => {
+    console.log(files);
     setFileList(files);
   }, []);
 
@@ -17,12 +18,13 @@ function Example() {
     window.URL.revokeObjectURL(url);
   }, []);
 
-  const header = { Authorization: 'Bearer 5d55e30f-f574-4eb3-8eed-c5ad57129aa7' };
+  const header = { Authorization: 'Bearer cceeae0048ad4645be9fd7eb867e7f50' };
 
   return (
     <Template markdown={code} title="案例">
       <UploadFile
         maxCount={6}
+        maxSize={0.5}
         headers={header}
         onChange={onChange}
         onPreview={onPreview}

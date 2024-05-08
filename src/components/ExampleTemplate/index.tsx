@@ -7,7 +7,7 @@ type TemplateProps = {
   style?: React.CSSProperties;
   children: React.ReactNode;
   title: React.ReactNode;
-  markdown: any;
+  markdown?: any;
 };
 
 function Template(props: TemplateProps) {
@@ -17,7 +17,7 @@ function Template(props: TemplateProps) {
       <p style={{ margin: '0 0 20px', fontWeight: 'bold', fontSize: 15 }}>{title}</p>
 
       <div style={{ padding: '20px', background: '#f8f8f8', ...bodyStyle }}>{children}</div>
-      <MarkdownCode code={markdown} />
+      {markdown ? <MarkdownCode code={markdown} /> : null}
     </Card>
   );
 }

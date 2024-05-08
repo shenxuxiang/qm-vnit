@@ -24,4 +24,4 @@ dts
 *.njsproj
 *.sln
 *.sw?
-
+coverage

@@ -61,12 +61,18 @@ function Example() {
   // 点击查询和重置按钮后都会触发
   const handleSubmit = useCallback((values: any) => {
     console.log(values);
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(true);
+      }, 1000);
+    });
   }, []);
 
   return (
     <Template markdown={code} title="案例一">
       <ContentFormHeader
         queryList={queryList}
+        onReset={handleSubmit}
         onSubmit={handleSubmit}
         initialValues={{
           name: 'hello world',
@@ -144,12 +150,18 @@ function Example() {
   // 点击查询和重置按钮后都会触发
   const handleSubmit = useCallback((values: any) => {
     console.log(values);
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(true);
+      }, 1000);
+    })
   }, []);
 
   return (
     <Template markdown={code} title="案例一">
       <ContentFormHeader
         queryList={queryList}
+        onReset={handleSubmit}
         onSubmit={handleSubmit}
         initialValues={{
           name: 'hello world',

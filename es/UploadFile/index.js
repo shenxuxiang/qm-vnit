@@ -19,8 +19,9 @@ import { message, Button, Upload } from 'antd';
  * @param uploadButtonText 上传按钮的文案
  * @param listType         上传列表的内建样式，支持四种基本样式 text, picture, picture-card 和 picture-circle
  * @param onPreview        预览功能
+ * @param customRequest    通过覆盖默认的上传行为，可以自定义自己的上传实现
  */
-function UploadImage(props) {
+function UploadFileComp(props) {
   var value = props.value,
     action = props.action,
     headers = props.headers,
@@ -33,6 +34,7 @@ function UploadImage(props) {
     accept = _props$accept === void 0 ? '*' : _props$accept,
     _props$maxCount = props.maxCount,
     maxCount = _props$maxCount === void 0 ? 0 : _props$maxCount,
+    customRequest = props.customRequest,
     _props$multiple = props.multiple,
     multiple = _props$multiple === void 0 ? true : _props$multiple,
     uploadButtonText = props.uploadButtonText,
@@ -55,13 +57,19 @@ function UploadImage(props) {
       setFileList(function () {
         return value;
       });
+      _fileAmount.current = value.length;
     }
   }, [value]);
-  // 图片上传事件
+  /**
+   * 图片上传事件
+   * 每次触发时 field.fileList 将包含所有的集合。
+   */
   var handleChangeFileList = useCallback(function (field) {
     var fileList = field.fileList;
+    // 1048576 = 1024 * 1024 表示 1M 的大小
     if (maxSize) fileList = _filterInstanceProperty(fileList).call(fileList, function (file) {
-      return file.size <= maxSize;
+      var _file$size;
+      return (_file$size = file === null || file === void 0 ? void 0 : file.size) !== null && _file$size !== void 0 ? _file$size : 0 <= maxSize * 1048576;
     });
     if (maxCount) fileList = _sliceInstanceProperty(fileList).call(fileList, 0, maxCount);
     _fileAmount.current = fileList.length;
@@ -69,7 +77,7 @@ function UploadImage(props) {
     setFileList(function () {
       return fileList;
     });
-    onChange === null || onChange === void 0 ? void 0 : onChange(fileList);
+    onChange === null || onChange === void 0 || onChange(fileList);
   }, [fileList, maxSize, maxCount]);
   // 返回 false 表示不上传图片。
   var handleBeforeUpload = useCallback(function (file) {
@@ -85,14 +93,14 @@ function UploadImage(props) {
     return true;
   }, [maxSize, maxCount]);
   var renderUploadButton = useMemo(function () {
-    return maxCount === 0 || (fileList === null || fileList === void 0 ? void 0 : fileList.length) < maxCount ? listType === 'text' || listType === 'picture' ? /*#__PURE__*/React.createElement(Button, {
+    return maxCount === 0 || (fileList === null || fileList === void 0 ? void 0 : fileList.length) < maxCount ? listType === 'text' || listType === 'picture' ? ( /*#__PURE__*/React.createElement(Button, {
       icon: /*#__PURE__*/React.createElement(UploadOutlined, null),
       disabled: disabled
-    }, uploadButtonText || '上传附件') : /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(PlusOutlined, null), /*#__PURE__*/React.createElement("div", {
+    }, uploadButtonText || '上传附件')) : ( /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(PlusOutlined, null), /*#__PURE__*/React.createElement("div", {
       style: {
         marginTop: 8
       }
-    }, uploadButtonText || '上传附件')) : null;
+    }, uploadButtonText || '上传附件'))) : null;
   }, [maxCount, fileList, disabled, uploadButtonText, listType]);
   return /*#__PURE__*/React.createElement(Upload, {
     accept: accept,
@@ -101,14 +109,15 @@ function UploadImage(props) {
     headers: headers,
     disabled: disabled,
     multiple: multiple,
-    maxCount: maxCount,
+    // maxCount={maxCount}
     fileList: fileList,
     listType: listType,
     onPreview: onPreview,
+    customRequest: customRequest,
     onChange: handleChangeFileList,
     beforeUpload: handleBeforeUpload
   }, renderUploadButton);
 }
-var index = /*#__PURE__*/memo(UploadImage);
+var index = /*#__PURE__*/memo(UploadFileComp);
 
 export { index as default };

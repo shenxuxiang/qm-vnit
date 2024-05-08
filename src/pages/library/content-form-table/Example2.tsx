@@ -4,7 +4,7 @@ import { Button, Space, message } from 'antd';
 import { ContentFormTable } from '@/lib';
 
 // 模拟异步数据请求。
-function getTableList(query?: any) {
+function queryTableList(query?: any) {
   // order 表示排序字段, order: [ {field: 'age', direction: true} ] direction-true 表示正序，false表示倒叙
   console.log(query);
   return new Promise((resolve) => {
@@ -45,7 +45,7 @@ function getTableList(query?: any) {
               time: '1990-02-23',
             },
           ],
-          total: 100,
+          total: 40,
         },
       });
     }, 1000);
@@ -54,19 +54,8 @@ function getTableList(query?: any) {
 
 function dataExport(query?: any) {
   console.log(query);
-
-  return new Promise((resolve) => {
-    const text = 'hello world!';
-    const uInt8Array = new Uint8Array(text.length);
-    for (let i = 0; i < text.length; i++) {
-      uInt8Array[i] = text.charCodeAt(i);
-    }
-
-    const blob = new Blob([uInt8Array], { type: 'text/plain' });
-
-    // 导出文件的接口返回的数据格式
-    resolve({ data: blob });
-  });
+  // 导出方式用户可自己定义。
+  return Promise.resolve();
 }
 
 function Example() {
@@ -121,7 +110,7 @@ function Example() {
     message.success('操作成功，页面正在刷新');
     // forceUpdate 将会强制更新数据，并且还可以携带参数，该参数将作为 requestDataSource 函数的参数
     // 页面底部会有详细的代码介绍 forceUpdate。
-    taleRef.current.forceUpdate();
+    taleRef.current.forceUpdate(id);
   };
 
   return (
@@ -135,9 +124,8 @@ function Example() {
         ref={taleRef}
         showExportButton
         columns={columns}
-        exportFileName="导出表格文件"
         exportTableList={dataExport}
-        requestDataSource={getTableList}
+        queryTableList={queryTableList}
       />
     </Template>
   );
@@ -194,7 +182,7 @@ function getTableList(query?: any) {
               time: '1990-02-23',
             },
           ],
-          total: 100,
+          total: 4,
         }
       });
     }, 1000);
@@ -280,9 +268,8 @@ function Example() {
         ref={taleRef}
         showExportButton
         columns={columns}
-        exportFileName='导出表格文件'
         exportTableList={dataExport}
-        requestDataSource={getTableList}
+        queryTableList={getTableList}
       />
     </Template>
   );

@@ -20,6 +20,12 @@ const notes = `
   该组件是基于 Antd 的 Upload 组件封装的，使用方法基本上都是遵从 Upload 组件使用方式。
 `;
 
+const updateText = `
+  ### 更新内容
+  * 新增 customRequest 属性；
+  * 修复原先 maxCount 的问题；
+`;
+
 function Page() {
   return (
     <section style={{ padding: '20px 20px 20px 60px' }}>
@@ -35,6 +41,9 @@ function Page() {
 
       <h1>API</h1>
       <Table bordered rowKey="key" pagination={false} columns={TABLE_HEADER} dataSource={properties} />
+
+      <br />
+      <MarkdownCode code={updateText} hasExpandButton={false} defaultExpand />
     </section>
   );
 }
@@ -108,5 +117,10 @@ const properties = [
     instruct:
       '文件预览功能，注意组件本身就就自带预览的功能，如果自带的预览功能无法满足开发者需求可以通过 onPreview 方法自定义',
     type: '(file: UploadFile) => void',
+  },
+  {
+    key: 'customRequest',
+    instruct: '通过覆盖默认的上传行为，可以自定义自己的上传实现',
+    type: 'function',
   },
 ];

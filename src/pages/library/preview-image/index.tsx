@@ -24,6 +24,11 @@ const notes = `
   当用户进行操作时及时响应用户操作，待高清图展示完成后再切换成高清图
 `;
 
+const updateText = `
+  ### 更新内容
+  * 修复原先预览图片拖拽后，切换一下张图片时，图片没有复位的问题；
+`;
+
 function Page() {
   return (
     <section style={{ padding: '20px 20px 20px 60px' }}>
@@ -42,6 +47,9 @@ function Page() {
       <Table bordered columns={TABLE_HEADER} rowKey="key" dataSource={properties} pagination={false} />
       <h1>SuperPreviewImage API</h1>
       <Table bordered columns={TABLE_HEADER} rowKey="key" dataSource={superProperties} pagination={false} />
+
+      <br />
+      <MarkdownCode code={updateText} hasExpandButton={false} defaultExpand />
     </section>
   );
 }

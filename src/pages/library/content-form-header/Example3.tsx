@@ -1,7 +1,7 @@
 import React, { memo, useMemo, useCallback, useState, useEffect, useRef } from 'react';
 import Template from '@/components/ExampleTemplate';
-import { ContentFormHeader } from '@/lib';
 import { InputNumber, Button } from 'antd';
+import { ContentFormHeader } from '@/lib';
 
 function Page() {
   const queryList = useMemo(
@@ -51,6 +51,7 @@ function Page() {
   // 点击查询和重置按钮后都会触发
   const handleSubmit = useCallback((values: any) => {
     console.log(values);
+    return Promise.resolve();
   }, []);
 
   const extraNodes = useMemo(() => {
@@ -59,7 +60,7 @@ function Page() {
 
   return (
     <Template markdown={code} title="案例三（支持自定义查询表单项）">
-      <ContentFormHeader queryList={queryList} onSubmit={handleSubmit} extraNodes={extraNodes} />
+      <ContentFormHeader queryList={queryList} onSubmit={handleSubmit} onReset={handleSubmit} extraNodes={extraNodes} />
     </Template>
   );
 }
@@ -160,6 +161,7 @@ function Page() {
   // 点击查询和重置按钮后都会触发
   const handleSubmit = useCallback((values: any) => {
     console.log(values);
+    return Promise.resolve();
   }, []);
 
   const extraNodes = useMemo(() => {
@@ -170,6 +172,7 @@ function Page() {
     <Template markdown={code} title="案例三（支持自定义查询表单项）">
       <ContentFormHeader
         queryList={queryList}
+        onReset={handleSubmit}
         onSubmit={handleSubmit}
         extraNodes={extraNodes}
       />

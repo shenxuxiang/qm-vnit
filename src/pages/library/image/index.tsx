@@ -19,6 +19,12 @@ const notes = `
   开发者可以给组件传递除 name、className、style、onClick 之外的其他任意属性，任意属性应该以 "data-" 作为前缀。
 `;
 
+const updateText = `
+  ### 更新内容
+  * 新增 lazy 属性，支持手动开启图片的惰性加载功能；
+  * 修改 style 属性，支持 string 类型，可以像书写内联样式一样；
+`;
+
 function Page() {
   return (
     <section style={{ padding: '20px 20px 20px 60px' }}>
@@ -35,6 +41,9 @@ function Page() {
 
       <h1>API</h1>
       <Table bordered columns={TABLE_HEADER} rowKey="key" dataSource={properties} pagination={false} />
+
+      <br />
+      <MarkdownCode code={updateText} hasExpandButton={false} defaultExpand />
     </section>
   );
 }
@@ -46,6 +55,12 @@ const properties = [
     key: 'src',
     instruct: '图像的路径',
     type: 'string',
+  },
+  {
+    key: 'lazy',
+    instruct: '是否开启 img 的惰性加载功能',
+    type: 'string',
+    default: 'true',
   },
   {
     key: 'alt',
@@ -60,7 +75,7 @@ const properties = [
   {
     key: 'style',
     instruct: '添加的样式',
-    type: 'React.CSSProperties',
+    type: 'React.CSSProperties | string',
   },
   {
     key: 'onClick',

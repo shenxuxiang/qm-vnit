@@ -87,13 +87,13 @@ function UploadVideo(props) {
     },
     onClick: handleClosePreview,
     className: "qm-vnit-upload-audio-previewe".concat(showPreview ? ' show' : '')
-  }, audioURL ? /*#__PURE__*/React.createElement("audio", {
+  }, audioURL ? ( /*#__PURE__*/React.createElement("audio", {
     controls: true,
     ref: audioPreviewRef,
     className: "qm-vnit-upload-audio-preview-content"
   }, /*#__PURE__*/React.createElement("source", {
     src: audioURL
-  })) : null, /*#__PURE__*/React.createElement(Icon, {
+  }))) : null, /*#__PURE__*/React.createElement(Icon, {
     name: "close",
     onClick: handleClosePreview,
     className: "qm-vnit-upload-audio-preview-close-icon"

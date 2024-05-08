@@ -3,9 +3,9 @@ import '../assets/font/iconfont.css';
 type IconProps = {
     name: string;
     className?: string;
-    style?: React.CSSProperties;
-    onClick?: (event: any) => void;
     [propName: string]: any;
+    onClick?: (event: any) => void;
+    style?: string | React.CSSProperties;
 };
 declare function Icon(props: IconProps): React.JSX.Element;
 declare const _default: React.MemoExoticComponent<typeof Icon>;

@@ -1,5 +1,5 @@
 .qm-content-form-head {
-  margin: 0 0 24px 0;
+  margin: 0;
   padding: 24px 24px 0;
   background: #fff;
   border-radius: 6px;
@@ -19,9 +19,9 @@
   align-items: flex-start;
   margin-bottom: 24px;
 }
-.qm-content-form-head .icon {
+.qm-content-form-head .qm-expand-icon {
   transition: transform 0.3s ease !important;
 }
-.qm-content-form-head .icon.expand {
+.qm-content-form-head .qm-expand-icon.expand {
   transform: rotate(180deg);
 }

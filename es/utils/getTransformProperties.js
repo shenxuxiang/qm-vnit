@@ -1,8 +1,8 @@
-import 'core-js/modules/es.regexp.exec.js';
-import 'core-js/modules/es.regexp.test.js';
 import 'core-js/modules/es.regexp.constructor.js';
 import 'core-js/modules/es.regexp.dot-all.js';
+import 'core-js/modules/es.regexp.exec.js';
 import 'core-js/modules/es.regexp.sticky.js';
+import 'core-js/modules/es.regexp.test.js';
 import 'core-js/modules/es.regexp.to-string.js';
 
 // 获取 transform 属性的 scale 值： scaleX、scaleY

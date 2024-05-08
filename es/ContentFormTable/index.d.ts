@@ -8,17 +8,16 @@ type TableColumnsType = QueryListItem & {
 interface ContentFormPageProps {
     cols?: number;
     immediate?: boolean;
-    tableTitle?: string;
+    tableTitle?: React.ReactNode;
     defaultExpand?: boolean;
     extra?: React.ReactNode;
-    exportFileName?: string;
-    exportTableList?: Function;
     submitButtonText?: string;
     showResetButton?: boolean;
     showExportButton?: boolean;
     extraNodesInsertHeader?: React.ReactNode;
+    exportTableList?: (query: any) => Promise<any>;
     beforeQueryAction?: (query: any) => boolean;
-    requestDataSource: (query: any) => Promise<any>;
+    queryTableList: (query: any) => Promise<any>;
     customResponse?: (data: any) => {
         tableList: any[];
         total: number;

@@ -36,7 +36,7 @@ function RenderItem(props) {
   useEffect(function () {
     var _itemRef$current;
     // 在元素刚刚挂载到 DOM 节点时，添加一个渐入式的动画。
-    (_itemRef$current = itemRef.current) === null || _itemRef$current === void 0 ? void 0 : _itemRef$current.classList.add('enter-from');
+    (_itemRef$current = itemRef.current) === null || _itemRef$current === void 0 || _itemRef$current.classList.add('enter-from');
     requestAnimationFrame(function () {
       var _itemRef$current2;
       return (_itemRef$current2 = itemRef.current) === null || _itemRef$current2 === void 0 ? void 0 : _itemRef$current2.classList.remove('enter-from');
@@ -77,8 +77,10 @@ function RenderItem(props) {
       var isUploadStart = true;
       // 更新上传进度
       upload.onProgress(function (progress) {
-        // 如果一开始上传的时候，progress 就大于等于 1，说明网速足够快上传图片瞬间就完成了，
-        // 此时，我们使用动画完成进度条，否则就是每次 onProgress 事件触发 updateProgressBar
+        /**
+         * 如果刚开始上传时，progress 就大于等于 1，说明网速足够快上传图片瞬间就完成了。此时使用动画自动完成进度条更新。
+         * 否则只能通过 http response 的 onProgress 回调函数触发 updateProgressBar。
+         */
         if (isUploadStart && progress >= 1) {
           progressBarAnimation();
         } else {
@@ -92,9 +94,9 @@ function RenderItem(props) {
           return _regeneratorRuntime.wrap(function _callee$(_context) {
             while (1) switch (_context.prev = _context.next) {
               case 0:
-                fadeInAnimation();
-                onSuccess === null || onSuccess === void 0 ? void 0 : onSuccess(uid, res);
                 uploadInstance.current = null;
+                onSuccess === null || onSuccess === void 0 || onSuccess(uid, res);
+                fadeInAnimation();
               case 3:
               case "end":
                 return _context.stop();
@@ -107,7 +109,7 @@ function RenderItem(props) {
       }());
       // 上传失败
       upload.onError(function (err) {
-        onError === null || onError === void 0 ? void 0 : onError(uid, err);
+        onError === null || onError === void 0 || onError(uid, err);
         uploadInstance.current = null;
       });
       // 将 xhr 实例对象赋值给 uploadInstance，在组件卸载时如果请求还没有完成将会取消请求。
@@ -177,18 +179,18 @@ function RenderItem(props) {
   function handleRemove() {
     var _itemRef$current3;
     // 添加离开时的动画效果
-    (_itemRef$current3 = itemRef.current) === null || _itemRef$current3 === void 0 ? void 0 : _itemRef$current3.classList.add('leave-from');
+    (_itemRef$current3 = itemRef.current) === null || _itemRef$current3 === void 0 || _itemRef$current3.classList.add('leave-from');
     requestAnimationFrame(function () {
       var _itemRef$current4, _itemRef$current5;
-      (_itemRef$current4 = itemRef.current) === null || _itemRef$current4 === void 0 ? void 0 : _itemRef$current4.classList.remove('leave-from');
-      (_itemRef$current5 = itemRef.current) === null || _itemRef$current5 === void 0 ? void 0 : _itemRef$current5.classList.add('leave-active');
+      (_itemRef$current4 = itemRef.current) === null || _itemRef$current4 === void 0 || _itemRef$current4.classList.remove('leave-from');
+      (_itemRef$current5 = itemRef.current) === null || _itemRef$current5 === void 0 || _itemRef$current5.classList.add('leave-active');
     });
     setTimeout(function () {
       return onRemove === null || onRemove === void 0 ? void 0 : onRemove(uid);
     }, 300);
   }
   function handlePreview() {
-    onPreview === null || onPreview === void 0 ? void 0 : onPreview(imgURL, rawResource);
+    onPreview === null || onPreview === void 0 || onPreview(imgURL, rawResource);
   }
   return /*#__PURE__*/React.createElement("li", {
     ref: itemRef,
@@ -204,23 +206,23 @@ function RenderItem(props) {
       width: 84,
       height: 84
     }
-  })), status === 'error' ? /*#__PURE__*/React.createElement("div", {
+  })), status === 'error' ? ( /*#__PURE__*/React.createElement("div", {
     className: "qm-vnit-upload-image-item-error"
   }, /*#__PURE__*/React.createElement(PictureOutlined, {
     style: {
       fontSize: 36,
       color: '#ff4d4f'
     }
-  }), /*#__PURE__*/React.createElement("p", null, name)) : null, status === 'done' ? /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("p", null, name))) : null, status === 'done' ? ( /*#__PURE__*/React.createElement("div", {
     className: "qm-vnit-upload-image-item-preview"
   }, renderItem ? renderItem({
     url: imgURL,
     uid: uid,
     name: name
-  }) : /*#__PURE__*/React.createElement("img", {
+  }) : ( /*#__PURE__*/React.createElement("img", {
     src: imgURL,
     className: "qm-vnit-upload-image-item-preview-content"
-  })) : null, /*#__PURE__*/React.createElement("div", {
+  })))) : null, /*#__PURE__*/React.createElement("div", {
     className: "qm-vnit-upload-image-item-mask"
   }, /*#__PURE__*/React.createElement(DeleteOutlined, {
     onClick: handleRemove,

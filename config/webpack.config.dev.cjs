@@ -9,7 +9,8 @@ const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 
 if (fs.existsSync(path.resolve('env.development.json'))) Object.assign(env, require('../env.development.json'));
-const { PUBLIC_PATH } = env;
+// const { PUBLIC_PATH } = env;
+const PUBLIC_PATH = '/';
 
 module.exports = {
   cache: true,
@@ -223,7 +224,7 @@ module.exports = {
   devServer: {
     hot: true,
     port: 8888,
-    open: true,
+    open: PUBLIC_PATH,
     compress: true,
     host: 'localhost',
     historyApiFallback: true,

@@ -6,23 +6,21 @@ import _Object$getOwnPropertyDescriptors from '@babel/runtime-corejs3/core-js-st
 import _defineProperty from '@babel/runtime-corejs3/helpers/defineProperty';
 import _asyncToGenerator from '@babel/runtime-corejs3/helpers/asyncToGenerator';
 import _slicedToArray from '@babel/runtime-corejs3/helpers/slicedToArray';
+import 'core-js/modules/es.array.push.js';
 import 'core-js/modules/es.object.to-string.js';
 import 'core-js/modules/es.promise.js';
 import 'core-js/modules/es.promise.finally.js';
-import 'core-js/modules/es.array.push.js';
 import _regeneratorRuntime from '@babel/runtime-corejs3/regenerator';
 import _filterInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/filter';
-import _includesInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/includes';
 import _Object$assign from '@babel/runtime-corejs3/core-js-stable/object/assign';
 import React, { forwardRef, useRef, useMemo, useCallback, useImperativeHandle, useEffect } from 'react';
-import { message, Card, Table, Pagination } from 'antd';
 import ContentFormHead from '../ContentFormHeader/index.js';
+import { Card, Table, Pagination } from 'antd';
 import useReducer from '../utils/useReducer.js';
-import { downloadFile } from '../utils/index.js';
 import './index.css';
 
-function ownKeys(object, enumerableOnly) { var keys = _Object$keys(object); if (_Object$getOwnPropertySymbols) { var symbols = _Object$getOwnPropertySymbols(object); enumerableOnly && (symbols = _filterInstanceProperty(symbols).call(symbols, function (sym) { return _Object$getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : _Object$getOwnPropertyDescriptors ? Object.defineProperties(target, _Object$getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, _Object$getOwnPropertyDescriptor(source, key)); }); } return target; }
+function ownKeys(e, r) { var t = _Object$keys(e); if (_Object$getOwnPropertySymbols) { var o = _Object$getOwnPropertySymbols(e); r && (o = _filterInstanceProperty(o).call(o, function (r) { return _Object$getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : _Object$getOwnPropertyDescriptors ? Object.defineProperties(e, _Object$getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, _Object$getOwnPropertyDescriptor(t, r)); }); } return e; }
 function ContentFormPage(props, ref) {
   var _useReducer = useReducer(initialState),
     _useReducer2 = _slicedToArray(_useReducer, 2),
@@ -32,8 +30,7 @@ function ContentFormPage(props, ref) {
     pageNum = state.pageNum,
     loading = state.loading,
     pageSize = state.pageSize,
-    tableList = state.tableList,
-    searchContent = state.searchContent;
+    tableList = state.tableList;
   var cols = props.cols,
     extra = props.extra,
     rowKey = props.rowKey,
@@ -43,8 +40,8 @@ function ContentFormPage(props, ref) {
     tableTitle = props.tableTitle,
     tableScroll = props.tableScroll,
     rowSelection = props.rowSelection,
-    exportFileName = props.exportFileName,
     paginationSize = props.paginationSize,
+    queryTableList = props.queryTableList,
     exportTableList = props.exportTableList,
     showResetButton = props.showResetButton,
     _props$immediate = props.immediate,
@@ -52,7 +49,6 @@ function ContentFormPage(props, ref) {
     submitButtonText = props.submitButtonText,
     showExportButton = props.showExportButton,
     beforeQueryAction = props.beforeQueryAction,
-    requestDataSource = props.requestDataSource,
     onPaginationChange = props.onPaginationChange,
     _props$defaultExpand = props.defaultExpand,
     defaultExpand = _props$defaultExpand === void 0 ? true : _props$defaultExpand,
@@ -61,6 +57,7 @@ function ContentFormPage(props, ref) {
     showTotal = _props$showTotal === void 0 ? defaultShowTotal : _props$showTotal,
     _props$customResponse = props.customResponse,
     customResponse = _props$customResponse === void 0 ? handleResponse : _props$customResponse;
+  var searchContentRef = useRef({});
   // immediate 表示是否在页面初始化的时候请求后台接口。默认 true
   var immediateRef = useRef(immediate);
   // 表单查询条件（初始化的值）。Form 表单不会更新初始化值，所以我们使用 ref。
@@ -89,9 +86,7 @@ function ContentFormPage(props, ref) {
       if (initialValue) initialValues[name] = initialValue;
     }
     initialSearchCondition.current = initialValues;
-    setState({
-      searchContent: formatFormModel(queryList, initialValues)
-    });
+    searchContentRef.current = formatFormModel(queryList, initialValues);
   }
   // 请求数据
   var sendRequestTableList = useCallback( /*#__PURE__*/function () {
@@ -114,7 +109,7 @@ function ContentFormPage(props, ref) {
             });
             _context.prev = 4;
             _context.next = 7;
-            return requestDataSource(action);
+            return queryTableList(action);
           case 7:
             response = _context.sent;
             setState(_objectSpread({}, customResponse(response)));
@@ -142,13 +137,13 @@ function ContentFormPage(props, ref) {
         var query = _objectSpread(_objectSpread({
           pageSize: pageSize,
           pageNum: pageNum
-        }, searchContent), opts);
+        }, searchContentRef.current), opts);
         sendRequestTableList(query).finally(function () {
           return callback === null || callback === void 0 ? void 0 : callback();
         });
       }
     };
-  }, [pageSize, pageNum, searchContent]);
+  }, [pageSize, pageNum]);
   // 页面初始化。
   // 之后，每当 deps 变化都会触发 sendRequestTableList() 重新请求数据
   useEffect(function () {
@@ -160,74 +155,93 @@ function ContentFormPage(props, ref) {
     sendRequestTableList(_objectSpread({
       pageSize: pageSize,
       pageNum: pageNum
-    }, searchContent));
-  }, [pageSize, pageNum, searchContent]);
+    }, searchContentRef.current));
+  }, []);
   useEffect(function () {
-    onPaginationChange === null || onPaginationChange === void 0 ? void 0 : onPaginationChange(pageNum, pageSize);
+    onPaginationChange === null || onPaginationChange === void 0 || onPaginationChange(pageNum, pageSize);
   }, [pageSize, pageNum]);
   var onPageNumChange = useCallback(function (pageNum, pageSize) {
     setState({
       pageSize: pageSize,
       pageNum: pageNum
     });
+    sendRequestTableList(_objectSpread({
+      pageSize: pageSize,
+      pageNum: pageNum
+    }, searchContentRef.current));
   }, []);
   // 点击查询按钮
-  var handleSubmit = useCallback(function (values) {
-    return setState({
-      searchContent: values,
-      pageNum: 1
-    });
-  }, []);
-  // 点击重置按钮
-  var handleReset = useCallback(function (values) {
-    return setState({
-      searchContent: values,
-      pageNum: 1
-    });
-  }, []);
-  // 导出数据
-  var handleExport = useCallback( /*#__PURE__*/function () {
-    var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee2(query) {
-      var _beforeQueryAction2;
-      var action, response;
+  var handleSubmit = useCallback( /*#__PURE__*/function () {
+    var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee2(values) {
       return _regeneratorRuntime.wrap(function _callee2$(_context2) {
         while (1) switch (_context2.prev = _context2.next) {
           case 0:
-            // 如果 action 返回 false， 则行为终止，否则将返回的内容作为 request body。
-            action = (_beforeQueryAction2 = beforeQueryAction === null || beforeQueryAction === void 0 ? void 0 : beforeQueryAction(query)) !== null && _beforeQueryAction2 !== void 0 ? _beforeQueryAction2 : query;
-            if (!(action === false)) {
-              _context2.next = 3;
-              break;
-            }
-            return _context2.abrupt("return");
+            setState({
+              pageNum: 1
+            });
+            searchContentRef.current = values;
+            return _context2.abrupt("return", sendRequestTableList(_objectSpread({
+              pageSize: pageSize,
+              pageNum: 1
+            }, values)));
           case 3:
-            _context2.prev = 3;
-            _context2.next = 6;
-            return exportTableList(_objectSpread({
-              pageNum: pageNum,
-              pageSize: pageSize
-            }, action));
-          case 6:
-            response = _context2.sent;
-            downloadFile(exportFileName || '_default_file', response.data);
-            _context2.next = 13;
-            break;
-          case 10:
-            _context2.prev = 10;
-            _context2.t0 = _context2["catch"](3);
-            message.warning('文件下载失败');
-          case 13:
           case "end":
             return _context2.stop();
         }
-      }, _callee2, null, [[3, 10]]);
+      }, _callee2);
     }));
     return function (_x2) {
       return _ref2.apply(this, arguments);
     };
-  }(), [exportTableList, exportFileName, queryList, pageNum, pageSize]);
+  }(), [pageSize]);
+  // 点击重置按钮
+  var handleReset = useCallback(function (values) {
+    setState({
+      pageNum: 1
+    });
+    searchContentRef.current = values;
+    return sendRequestTableList(_objectSpread({
+      pageSize: pageSize,
+      pageNum: 1
+    }, values));
+  }, [pageSize]);
+  // 导出数据
+  var handleExport = useCallback( /*#__PURE__*/function () {
+    var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime.mark(function _callee3(query) {
+      var _beforeQueryAction2;
+      var action;
+      return _regeneratorRuntime.wrap(function _callee3$(_context3) {
+        while (1) switch (_context3.prev = _context3.next) {
+          case 0:
+            // 如果 action 返回 false， 则行为终止，否则将返回的内容作为 request body。
+            action = (_beforeQueryAction2 = beforeQueryAction === null || beforeQueryAction === void 0 ? void 0 : beforeQueryAction(query)) !== null && _beforeQueryAction2 !== void 0 ? _beforeQueryAction2 : query;
+            if (!(action === false)) {
+              _context3.next = 3;
+              break;
+            }
+            return _context3.abrupt("return");
+          case 3:
+            _context3.next = 5;
+            return exportTableList(_objectSpread({
+              pageNum: pageNum,
+              pageSize: pageSize
+            }, action));
+          case 5:
+          case "end":
+            return _context3.stop();
+        }
+      }, _callee3);
+    }));
+    return function (_x3) {
+      return _ref3.apply(this, arguments);
+    };
+  }(), [exportTableList, pageNum, pageSize]);
   // 当 columns 中的某一项设置了 sorter 时，可以设置【倒叙/正序】 查询。
-  var handleTableChange = useCallback(function (_, __, sorter) {
+  var handleTableChange = useCallback(function () {
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+    var sorter = args[2];
     var orderList = [];
     // sorter 可能是对象，也可能是数组。分开处理
     if (sorter instanceof Array) {
@@ -236,33 +250,35 @@ function ContentFormPage(props, ref) {
           field = _sorter$_i.field,
           order = _sorter$_i.order;
         // 如果 order 字段不存在则说明没有排序
-        // 正序-true、倒叙-false，
+        // 正序-ascend、倒叙-descend，
         if (order) orderList.push({
           field: field,
-          direction: _includesInstanceProperty(order).call(order, 'asc')
+          order: order
         });
       }
     } else {
       var _field = sorter.field,
         _order = sorter.order;
       // 如果 order 字段不存在则说明没有排序
-      // 正序-true、倒叙-false，
+      // 正序-ascend、倒叙-descend，
       if (_order) orderList.push({
         field: _field,
-        direction: _includesInstanceProperty(_order).call(_order, 'asc')
+        order: _order
       });
     }
-    var newSearchCondition = _objectSpread(_objectSpread({}, searchContent), {}, {
+    var newSearchCondition = _objectSpread(_objectSpread({}, searchContentRef.current), {}, {
       order: orderList
     });
     if (orderList.length <= 0) delete newSearchCondition.order;
-    setState({
-      searchContent: newSearchCondition
-    });
-  }, [searchContent]);
+    searchContentRef.current = newSearchCondition;
+    return sendRequestTableList(_objectSpread({
+      pageSize: pageSize,
+      pageNum: pageNum
+    }, newSearchCondition));
+  }, [pageSize, pageNum]);
   return /*#__PURE__*/React.createElement("div", {
     className: "qm-content-form-page"
-  }, (queryList === null || queryList === void 0 ? void 0 : queryList.length) > 0 && /*#__PURE__*/React.createElement(ContentFormHead, {
+  }, (queryList === null || queryList === void 0 ? void 0 : queryList.length) > 0 && ( /*#__PURE__*/React.createElement(ContentFormHead, {
     cols: cols,
     queryList: queryList,
     onReset: handleReset,
@@ -274,12 +290,18 @@ function ContentFormPage(props, ref) {
     showExportButton: showExportButton,
     extraNodes: extraNodesInsertHeader,
     initialValues: initialSearchCondition.current
-  }), /*#__PURE__*/React.createElement(Card, {
-    bodyStyle: {
-      padding: '0 24px'
-    }
+  })), /*#__PURE__*/React.createElement(Card, {
+    styles: {
+      body: {
+        padding: '0 24px'
+      }
+    },
+    style: {
+      marginTop: 24
+    },
+    bordered: false
   }, /*#__PURE__*/React.createElement("div", {
-    className: "qm-content-form-page-table-head "
+    className: "qm-content-form-page-table-head"
   }, /*#__PURE__*/React.createElement("div", {
     className: "qm-content-form-page-table-head-title"
   }, tableTitle || '查询表格'), extra ? /*#__PURE__*/React.createElement("div", null, extra) : null), /*#__PURE__*/React.createElement(Table, {
@@ -293,7 +315,7 @@ function ContentFormPage(props, ref) {
     columns: tableColumns,
     rowSelection: rowSelection,
     onChange: handleTableChange
-  }), total > 0 ? /*#__PURE__*/React.createElement(Pagination, {
+  }), total > 0 ? ( /*#__PURE__*/React.createElement(Pagination, {
     total: total,
     showSizeChanger: true,
     current: pageNum,
@@ -302,7 +324,12 @@ function ContentFormPage(props, ref) {
     showTotal: showTotal,
     onChange: onPageNumChange,
     className: "qm-content-form-page-pagination"
-  }) : null));
+  })) : /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 0,
+      height: 24
+    }
+  })));
 }
 var index = /*#__PURE__*/forwardRef(ContentFormPage);
 function initialState() {
@@ -318,8 +345,8 @@ function initialState() {
 function defaultShowTotal(total) {
   return "\u5171 ".concat(total, " \u6761\u6570\u636E");
 }
-function handleResponse(_ref3) {
-  var data = _ref3.data;
+function handleResponse(_ref4) {
+  var data = _ref4.data;
   var tableList = data.list,
     total = data.total;
   return {
