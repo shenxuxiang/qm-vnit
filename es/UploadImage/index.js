@@ -1,9 +1,9 @@
 import _defineProperty from '@babel/runtime-corejs3/helpers/defineProperty';
 import _toConsumableArray from '@babel/runtime-corejs3/helpers/toConsumableArray';
 import _slicedToArray from '@babel/runtime-corejs3/helpers/slicedToArray';
+import 'core-js/modules/es.array.push.js';
 import 'core-js/modules/es.object.to-string.js';
 import 'core-js/modules/es.regexp.to-string.js';
-import 'core-js/modules/es.array.push.js';
 import 'core-js/modules/web.dom-collections.for-each.js';
 import _Array$from from '@babel/runtime-corejs3/core-js-stable/array/from';
 import _spliceInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/splice';
@@ -25,8 +25,8 @@ import Portal from '../utils/portal.js';
 import { message } from 'antd';
 import './index.css';
 
-function ownKeys(object, enumerableOnly) { var keys = _Object$keys(object); if (_Object$getOwnPropertySymbols) { var symbols = _Object$getOwnPropertySymbols(object); enumerableOnly && (symbols = _filterInstanceProperty(symbols).call(symbols, function (sym) { return _Object$getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : _Object$getOwnPropertyDescriptors ? Object.defineProperties(target, _Object$getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, _Object$getOwnPropertyDescriptor(source, key)); }); } return target; }
+function ownKeys(e, r) { var t = _Object$keys(e); if (_Object$getOwnPropertySymbols) { var o = _Object$getOwnPropertySymbols(e); r && (o = _filterInstanceProperty(o).call(o, function (r) { return _Object$getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : _Object$getOwnPropertyDescriptors ? Object.defineProperties(e, _Object$getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, _Object$getOwnPropertyDescriptor(t, r)); }); } return e; }
 function initialState() {
   return {
     showPreviewImage: false,
@@ -52,19 +52,19 @@ function UploadImage(props) {
     accept = _props$accept === void 0 ? 'image/*' : _props$accept;
   var _useReducer = useReducer(initialState),
     _useReducer2 = _slicedToArray(_useReducer, 2),
-    state = _useReducer2[0],
+    _useReducer2$ = _useReducer2[0],
+    fileList = _useReducer2$.fileList,
+    previewImgs = _useReducer2$.previewImgs,
+    showPreviewImage = _useReducer2$.showPreviewImage,
     setState = _useReducer2[1];
-  var fileList = state.fileList,
-    previewImgs = state.previewImgs,
-    showPreviewImage = state.showPreviewImage;
   var _inputRef = useRef();
   var _uploadButtonRef = useRef();
-  var _isInternalChange = useRef(false);
+  var _isInternalModified = useRef(false);
   useEffect(function () {
     if (typeof value === 'undefined') {
       return;
-    } else if (_isInternalChange.current) {
-      _isInternalChange.current = false;
+    } else if (_isInternalModified.current) {
+      _isInternalModified.current = false;
       return;
     } else {
       setState({
@@ -76,11 +76,11 @@ function UploadImage(props) {
     var newFiles = _Array$from(event.target.files);
     // 需要每次都将 input.value 给清空，这样用户再次上传时就可以选择相同的文件了。
     _inputRef.current.value = '';
-    // 判断当前文件数量是否已经超出 maxCount
-    if (maxCount && fileList.length >= maxCount) {
-      message.warning("\u6700\u591A\u53EA\u80FD\u4E0A\u4F20".concat(maxCount, "\u4E2A\u6587\u4EF6\uFF01"));
-      return;
-    }
+    // // 判断当前文件数量是否已经超出 maxCount
+    // if (maxCount && fileList.length >= maxCount) {
+    //   message.warning(`最多只能上传${maxCount}个文件！`);
+    //   return;
+    // }
     if (maxSize) {
       var length = newFiles.length;
       while (length--) {
@@ -109,11 +109,11 @@ function UploadImage(props) {
       };
     });
     newFileList = _concatInstanceProperty(fileList).call(fileList, newFileList);
-    _isInternalChange.current = true;
+    _isInternalModified.current = true;
     setState({
       fileList: newFileList
     });
-    onChange === null || onChange === void 0 ? void 0 : onChange(newFileList);
+    onChange === null || onChange === void 0 || onChange(newFileList);
     if (!maxCount || newFileList.length < maxCount) {
       // 每次上传时，给上传按钮一个向右移动的动效。
       _uploadButtonRef.current.classList.add('enter-from');
@@ -132,27 +132,27 @@ function UploadImage(props) {
       target.status = 'done';
       target.percent = 100;
       target.response = res;
-      _isInternalChange.current = true;
+      _isInternalModified.current = true;
       setState({
         fileList: newFileList
       });
-      onChange === null || onChange === void 0 ? void 0 : onChange(newFileList);
+      onChange === null || onChange === void 0 || onChange(newFileList);
     }
   }
   // 图片上传失败
   function handleUploadError(uid, error) {
-    onError === null || onError === void 0 ? void 0 : onError(error);
+    onError === null || onError === void 0 || onError(error);
     var newFileList = _toConsumableArray(fileList);
     var target = _findInstanceProperty(newFileList).call(newFileList, function (file) {
       return file.uid === uid;
     });
     if (target) {
       target.status = 'error';
-      _isInternalChange.current = true;
+      _isInternalModified.current = true;
       setState({
         fileList: newFileList
       });
-      onChange === null || onChange === void 0 ? void 0 : onChange(newFileList);
+      onChange === null || onChange === void 0 || onChange(newFileList);
     }
   }
   // 移除
@@ -160,11 +160,11 @@ function UploadImage(props) {
     var newFileList = _filterInstanceProperty(fileList).call(fileList, function (file) {
       return file.uid !== uid;
     });
-    _isInternalChange.current = true;
+    _isInternalModified.current = true;
     setState({
       fileList: newFileList
     });
-    onChange === null || onChange === void 0 ? void 0 : onChange(newFileList);
+    onChange === null || onChange === void 0 || onChange(newFileList);
   }
   function handlePreviewImage(url, rawResource) {
     if (typeof onPreview === 'function') {
@@ -193,14 +193,14 @@ function UploadImage(props) {
       onPreview: handlePreviewImage,
       onSuccess: handleUploadSuccess
     }));
-  }), !maxCount || fileList.length < maxCount ? /*#__PURE__*/React.createElement("li", {
+  }), !maxCount || fileList.length < maxCount ? ( /*#__PURE__*/React.createElement("li", {
     ref: _uploadButtonRef,
     onClick: function onClick() {
       var _inputRef$current;
       return (_inputRef$current = _inputRef.current) === null || _inputRef$current === void 0 ? void 0 : _inputRef$current.click();
     },
     className: "qm-vnit-upload-image-label".concat(disabled ? ' disabled' : '')
-  }, children ? children : /*#__PURE__*/React.createElement("div", {
+  }, children ? children : ( /*#__PURE__*/React.createElement("div", {
     className: "qm-vnit-upload-image-slot"
   }, /*#__PURE__*/React.createElement(PlusOutlined, {
     style: {
@@ -208,7 +208,7 @@ function UploadImage(props) {
       marginBottom: 10,
       color: 'rgba(0, 0, 0, 0.8)'
     }
-  }), /*#__PURE__*/React.createElement("div", null, "\u4E0A\u4F20\u56FE\u7247")), /*#__PURE__*/React.createElement("input", {
+  }), /*#__PURE__*/React.createElement("div", null, "\u4E0A\u4F20\u56FE\u7247"))), /*#__PURE__*/React.createElement("input", {
     type: "file",
     ref: _inputRef,
     accept: accept,
@@ -218,7 +218,7 @@ function UploadImage(props) {
       display: 'none'
     },
     onChange: handleFileChange
-  })) : null)), typeof onPreview !== 'function' ? /*#__PURE__*/React.createElement(Portal, null, /*#__PURE__*/React.createElement(PreviewImage, {
+  }))) : null)), typeof onPreview !== 'function' ? ( /*#__PURE__*/React.createElement(Portal, null, /*#__PURE__*/React.createElement(PreviewImage, {
     imgs: previewImgs,
     index: 0,
     open: showPreviewImage,
@@ -227,7 +227,7 @@ function UploadImage(props) {
         showPreviewImage: false
       });
     }
-  })) : null);
+  }))) : null);
 }
 var UploadImage$1 = /*#__PURE__*/memo(UploadImage);
 

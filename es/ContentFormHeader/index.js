@@ -1,15 +1,17 @@
 import _Object$keys from '@babel/runtime-corejs3/core-js-stable/object/keys';
 import _Object$getOwnPropertySymbols from '@babel/runtime-corejs3/core-js-stable/object/get-own-property-symbols';
+import _filterInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/filter';
 import _Object$getOwnPropertyDescriptor from '@babel/runtime-corejs3/core-js-stable/object/get-own-property-descriptor';
 import _Object$getOwnPropertyDescriptors from '@babel/runtime-corejs3/core-js-stable/object/get-own-property-descriptors';
 import _defineProperty from '@babel/runtime-corejs3/helpers/defineProperty';
 import _slicedToArray from '@babel/runtime-corejs3/helpers/slicedToArray';
-import 'core-js/modules/es.object.to-string.js';
-import 'core-js/modules/es.regexp.to-string.js';
 import 'core-js/modules/es.array.push.js';
+import 'core-js/modules/es.object.to-string.js';
+import 'core-js/modules/es.promise.js';
+import 'core-js/modules/es.promise.finally.js';
+import 'core-js/modules/es.regexp.to-string.js';
 import 'core-js/modules/web.dom-collections.for-each.js';
 import _sliceInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/slice';
-import _filterInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/filter';
 import _concatInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/concat';
 import _mapInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/map';
 import _Object$assign from '@babel/runtime-corejs3/core-js-stable/object/assign';
@@ -19,8 +21,8 @@ import { DownOutlined } from '@ant-design/icons';
 import { throttle } from '../utils/index.js';
 import './index.css';
 
-function ownKeys(object, enumerableOnly) { var keys = _Object$keys(object); if (_Object$getOwnPropertySymbols) { var symbols = _Object$getOwnPropertySymbols(object); enumerableOnly && (symbols = _filterInstanceProperty(symbols).call(symbols, function (sym) { return _Object$getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : _Object$getOwnPropertyDescriptors ? Object.defineProperties(target, _Object$getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, _Object$getOwnPropertyDescriptor(source, key)); }); } return target; }
+function ownKeys(e, r) { var t = _Object$keys(e); if (_Object$getOwnPropertySymbols) { var o = _Object$getOwnPropertySymbols(e); r && (o = _filterInstanceProperty(o).call(o, function (r) { return _Object$getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : _Object$getOwnPropertyDescriptors ? Object.defineProperties(e, _Object$getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, _Object$getOwnPropertyDescriptor(t, r)); }); } return e; }
 var useForm = Form.useForm,
   FormItem = Form.Item;
 var SelectOption = Select.Option;
@@ -47,65 +49,78 @@ function ContentFormHeader(props) {
     showResetButton = _props$showResetButto === void 0 ? true : _props$showResetButto,
     _props$submitButtonTe = props.submitButtonText,
     submitButtonText = _props$submitButtonTe === void 0 ? '查询' : _props$submitButtonTe;
+  var _useState = useState(false),
+    _useState2 = _slicedToArray(_useState, 2),
+    loadingReset = _useState2[0],
+    updateLoadingReset = _useState2[1];
+  var _useState3 = useState(false),
+    _useState4 = _slicedToArray(_useState3, 2),
+    loadingSubmit = _useState4[0],
+    updateLoadingSubmit = _useState4[1];
+  var _useState5 = useState(false),
+    _useState6 = _slicedToArray(_useState5, 2),
+    loadingExport = _useState6[0],
+    updateLoadingExport = _useState6[1];
   var _useForm = useForm(),
     _useForm2 = _slicedToArray(_useForm, 1),
     form = _useForm2[0];
-  var _useState = useState(6),
-    _useState2 = _slicedToArray(_useState, 2),
-    colSpan = _useState2[0],
-    setColSpan = _useState2[1];
-  var _useState3 = useState(defaultExpand),
-    _useState4 = _slicedToArray(_useState3, 2),
-    expand = _useState4[0],
-    setExpand = _useState4[1];
-  var _useState5 = useState(function () {
+  var _useState7 = useState(6),
+    _useState8 = _slicedToArray(_useState7, 2),
+    colSpan = _useState8[0],
+    setColSpan = _useState8[1];
+  var _useState9 = useState(defaultExpand),
+    _useState10 = _slicedToArray(_useState9, 2),
+    expand = _useState10[0],
+    setExpand = _useState10[1];
+  var _useState11 = useState(function () {
       var _context;
       return 'qm-vnit-form-' + _sliceInstanceProperty(_context = Math.random().toString(32)).call(_context, 2);
     }),
-    _useState6 = _slicedToArray(_useState5, 1),
-    formName = _useState6[0];
+    _useState12 = _slicedToArray(_useState11, 1),
+    formName = _useState12[0];
   var xRef = useRef();
   var containerRef = useRef();
+  // 它是 expand 的 ref 形式（与 expand 保持同步），他将在第二个 useEffect hooks 中发挥作用；
+  var expandRef = useRef(defaultExpand);
+  // 查询表单项的长度
+  var queryFormItemLength = useRef(queryList.length);
   useEffect(function () {
     function resize() {
       var colSpan = propCols ? 24 / propCols : computeColSpan(xRef.current);
       setColSpan(function () {
         return colSpan;
       });
-      if (expand) {
+      if (expandRef.current) {
         var cols = 24 / colSpan;
-        // 计算表单查询项一共是多少列。
-        var length = _filterInstanceProperty(queryList).call(queryList, function (item) {
-          return item.component || item.formType;
-        }).length;
+        var length = queryFormItemLength.current;
         //  length + 1 是因为 【查询、重置、导出】这些功能按钮需要占一列。
         var rows = Math.ceil((length + 1) / cols);
-        containerRef.current.style.height = expand ? "".concat(rows * 64, "px") : '64px';
+        containerRef.current.style.height = expandRef.current ? "".concat(rows * 64, "px") : '64px';
       } else {
         containerRef.current.style.height = '64px';
       }
     }
     resize();
     if (propCols) return;
-    // 如果没有设置 props.cols，则组件会根据 pagesize 事件自动计算
+    // 如果没有设置 props.cols，则组件会根据 window resize 事件自动计算
     var hanleResize = throttle(resize, 200);
     window.addEventListener('resize', hanleResize, false);
     return function () {
       window.removeEventListener('resize', hanleResize, false);
     };
-  }, [queryList, expand, propCols]);
+  }, [propCols]);
   // 计算【展开项】所在的 Col 组件的 offsetSpan 数
   var offsetSpan = useMemo(function () {
     // 一行可以盛放几个 Col 组件
     var cols = 24 / colSpan;
-    var length = queryList.length;
+    var length = queryFormItemLength.current;
     if (length < cols) return (cols - length - 1) * colSpan;
     // 取模，表示最后一行会有几个 Col 组件
-    var reset = length % cols;
+    var mode = length % cols;
     // 注意 cols - 1 是因为 【展开项】自身要占一列
-    var offset = (cols - 1 - reset) * colSpan;
+    var offset = (cols - 1 - mode) * colSpan;
     return expand ? offset : 0;
-  }, [queryList, colSpan, expand]);
+  }, [colSpan, expand]);
   var renderFormContent = useMemo(function () {
     var cols = 24 / colSpan;
     var context = [];
@@ -134,7 +149,7 @@ function ContentFormHeader(props) {
         return watch.apply(void 0, _concatInstanceProperty(args).call(args, [form]));
       } : undefined;
       // 如果条件满足，则不渲染该项
-      if (!component && !formType) return "continue";
+      if (!component && !formType) return 1; // continue
       if (component) {
         contextItem = /*#__PURE__*/React.cloneElement(component, _objectSpread({
           onChange: handleWatch
@@ -198,35 +213,56 @@ function ContentFormHeader(props) {
       }, contextItem)));
     };
     for (var i = 0; i < queryList.length; i++) {
-      var _ret = _loop();
-      if (_ret === "continue") continue;
+      if (_loop()) continue;
     }
     return context;
   }, [queryList, colSpan, expand, propCols]);
   var handleFinish = useCallback(function (values) {
+    updateLoadingSubmit(function () {
+      return true;
+    });
     var query = formatFormModel(queryList, values);
-    onSubmit === null || onSubmit === void 0 ? void 0 : onSubmit(query);
+    onSubmit === null || onSubmit === void 0 || onSubmit(query).finally(function () {
+      return updateLoadingSubmit(function () {
+        return false;
+      });
+    });
   }, [onSubmit, queryList]);
   var handleReset = useCallback(function () {
+    updateLoadingReset(function () {
+      return true;
+    });
     var query = formatFormModel(queryList, initialValues);
-    onReset === null || onReset === void 0 ? void 0 : onReset(query);
+    onReset === null || onReset === void 0 || onReset(query).finally(function () {
+      return updateLoadingReset(function () {
+        return false;
+      });
+    });
   }, [queryList]);
   var handleExport = useCallback(function () {
+    updateLoadingExport(function () {
+      return true;
+    });
     var query = formatFormModel(queryList, form.getFieldsValue());
-    onExport === null || onExport === void 0 ? void 0 : onExport(query);
+    onExport === null || onExport === void 0 || onExport(query).finally(function () {
+      return updateLoadingExport(function () {
+        return false;
+      });
+    });
   }, [onExport, queryList]);
   // 展开/收起
   var handleChangeExpand = useCallback(function () {
     var newNewExpand = !expand;
+    expandRef.current = newNewExpand;
     setExpand(newNewExpand);
     if (newNewExpand) {
       var cols = 24 / colSpan;
-      var rows = Math.ceil((renderFormContent.length + 1) / cols);
+      var rows = Math.ceil((queryFormItemLength.current + 1) / cols);
       containerRef.current.style.height = newNewExpand ? "".concat(rows * 64, "px") : '64px';
     } else {
       containerRef.current.style.height = '64px';
     }
-  }, [expand, colSpan, renderFormContent.length]);
+  }, [expand, colSpan]);
   return /*#__PURE__*/React.createElement("section", {
     className: "qm-content-form-head",
     ref: xRef
@@ -245,23 +281,26 @@ function ContentFormHeader(props) {
     className: "qm-content-form-head-button-group"
   }, /*#__PURE__*/React.createElement(Button, {
     type: "primary",
-    htmlType: "submit"
-  }, submitButtonText), showResetButton && /*#__PURE__*/React.createElement(Button, {
+    htmlType: "submit",
+    loading: loadingSubmit
+  }, submitButtonText), showResetButton && ( /*#__PURE__*/React.createElement(Button, {
     htmlType: "reset",
     style: {
       marginLeft: '8px'
-    }
-  }, "\u91CD\u7F6E"), showExportButton && /*#__PURE__*/React.createElement(Button, {
+    },
+    loading: loadingReset
+  }, "\u91CD\u7F6E")), showExportButton && ( /*#__PURE__*/React.createElement(Button, {
     style: {
       marginLeft: '8px'
     },
-    onClick: handleExport
-  }, "\u5BFC\u51FA"), extraNodes ? extraNodes : null, queryList.length >= 24 / colSpan && /*#__PURE__*/React.createElement(Button, {
+    onClick: handleExport,
+    loading: loadingExport
+  }, "\u5BFC\u51FA")), extraNodes ? extraNodes : null, queryList.length >= 24 / colSpan && ( /*#__PURE__*/React.createElement(Button, {
     type: "link",
     onClick: handleChangeExpand
   }, expand ? '收起' : '展开', /*#__PURE__*/React.createElement(DownOutlined, {
-    className: "icon".concat(expand ? ' expand' : '')
-  }))))));
+    className: "qm-expand-icon".concat(expand ? ' expand' : '')
+  })))))));
 }
 var ContentFormHead = /*#__PURE__*/memo(ContentFormHeader);
 // 格式化表单数据

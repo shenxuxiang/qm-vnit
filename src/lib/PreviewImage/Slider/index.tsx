@@ -16,10 +16,9 @@ function initialState() {
 const ITEM_WIDTH = 120;
 
 function Slider(props: any) {
-  const { imgs, indictor, onChange, pageSize } = props;
-  const [state, setState] = useReducer(initialState);
-  const { isFirstPage, isLastPage } = state;
   const sliderRef = useRef<any>();
+  const { imgs, indictor, onChange, pageSize } = props;
+  const [{ isFirstPage, isLastPage }, setState] = useReducer(initialState);
 
   useEffect(() => {
     sliderAnimation(indictor, 300);
@@ -91,7 +90,6 @@ function Slider(props: any) {
     const { translateX } = getTransformProperties(sliderRef.current);
     const maxOffsetX = (imgs.length - pageSize) * ITEM_WIDTH;
     let offsetX = translateX - pageSize * ITEM_WIDTH;
-    console.log(translateX, offsetX, maxOffsetX);
 
     if (offsetX <= -maxOffsetX) {
       offsetX = -maxOffsetX;

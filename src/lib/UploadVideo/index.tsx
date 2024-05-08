@@ -71,7 +71,7 @@ function UploadVideo(props: UploadVideoProps) {
     } else {
       if (videoHeight > maxHeight) {
         height = maxHeight;
-        width = height / ratio;
+        width = height * ratio;
       } else {
         width = videoWidth;
         height = videoHeight;

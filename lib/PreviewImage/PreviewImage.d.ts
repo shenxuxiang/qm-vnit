@@ -5,7 +5,6 @@ export type PreviewImageProps = {
     imgs: string[];
     index?: number;
     pageSize?: number;
-    previewImgs?: string[];
     hasPerformance?: boolean;
     onClose: (indictor: number) => void;
 };

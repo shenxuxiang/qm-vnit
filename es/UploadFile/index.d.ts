@@ -1,6 +1,6 @@
 import React from 'react';
 import { UploadFile } from 'antd';
-type UploadImageProps = {
+type UploadFileProps = {
     action: string;
     accept?: string;
     maxSize?: number;
@@ -9,6 +9,7 @@ type UploadImageProps = {
     disabled?: boolean;
     value?: UploadFile[];
     uploadButtonText?: string;
+    customRequest?: (options: any) => void;
     onPreview?: (file: UploadFile) => void;
     headers?: {
         [propName: string]: string;
@@ -30,7 +31,8 @@ type UploadImageProps = {
  * @param uploadButtonText 上传按钮的文案
  * @param listType         上传列表的内建样式，支持四种基本样式 text, picture, picture-card 和 picture-circle
  * @param onPreview        预览功能
+ * @param customRequest    通过覆盖默认的上传行为，可以自定义自己的上传实现
  */
-declare function UploadImage(props: UploadImageProps): React.JSX.Element;
-declare const _default: React.MemoExoticComponent<typeof UploadImage>;
+declare function UploadFileComp(props: UploadFileProps): React.JSX.Element;
+declare const _default: React.MemoExoticComponent<typeof UploadFileComp>;
 export default _default;

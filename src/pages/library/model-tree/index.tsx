@@ -23,6 +23,12 @@ const notes = `
   如果 treeData 的数据结构不是这种类型，组件提供了 formatData 属性来定义具体的数据格式转换方法。
 `;
 
+const updateText = `
+  ### 更新内容
+  * 将原先的 onChange 事件改为 onCheck、onSelect；
+  * 新增 fieldNames 属性
+`;
+
 function Page() {
   return (
     <section style={{ padding: '20px 20px 20px 60px' }}>
@@ -40,6 +46,9 @@ function Page() {
 
       <h1>API</h1>
       <Table bordered columns={TABLE_HEADER} rowKey="key" dataSource={properties} pagination={false} />
+
+      <br />
+      <MarkdownCode code={updateText} hasExpandButton={false} defaultExpand />
     </section>
   );
 }
@@ -64,8 +73,18 @@ const properties = [
     type: 'Key[]',
   },
   {
-    key: 'onChange',
+    key: 'selectedKeys',
+    instruct: '（受控）设置选中的树节点，多选需设置 multiple 为 true',
+    type: 'Key[]',
+  },
+  {
+    key: 'onCheck',
     instruct: '点击复选框触发、或者选中树节点时触发',
+    type: '(keys: Key[], allKeys: Key[]) => void',
+  },
+  {
+    key: 'onSelect',
+    instruct: '选中树节点时触发',
     type: '(keys: Key[], allKeys: Key[]) => void',
   },
   {
@@ -90,14 +109,9 @@ const properties = [
     type: '(expandeKeys: Key[]) => void;',
   },
   {
-    key: 'selectedKeys',
-    instruct: '（受控）设置选中的树节点，多选需设置 multiple 为 true',
-    type: 'Key[]',
-  },
-  {
-    key: 'onExpand',
-    instruct: '点击组合节点时触发的回调函数',
-    type: '(expandeKeys: Key[]) => void;',
+    key: 'fieldNames',
+    instruct: '自定义节点 title、key、children、parentKey 的字段',
+    type: '{ title: title, key: key, children: children, parentKey: parentKey }',
   },
   {
     key: '其他',

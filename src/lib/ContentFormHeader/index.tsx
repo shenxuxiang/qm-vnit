@@ -51,11 +51,11 @@ type ContentFormHeaderProps = {
   // 需要展示的额外内容
   extraNodes?: React.ReactNode;
   // 表单重置
-  onReset?: (values: any) => void;
+  onReset?: (values: any) => Promise<any>;
   // 表单提交回调函数
-  onSubmit: (values: any) => void;
+  onSubmit: (values: any) => Promise<any>;
   // 导出功能回调函数
-  onExport?: (values: any) => void;
+  onExport?: (values: any) => Promise<any>;
 };
 
 function ContentFormHeader(props: ContentFormHeaderProps) {
@@ -72,6 +72,11 @@ function ContentFormHeader(props: ContentFormHeaderProps) {
     showResetButton = true,
     submitButtonText = '查询',
   } = props;
+
+  const [loadingReset, updateLoadingReset] = useState(false);
+  const [loadingSubmit, updateLoadingSubmit] = useState(false);
+  const [loadingExport, updateLoadingExport] = useState(false);
+
   const [form] = useForm();
   const [colSpan, setColSpan] = useState(6);
   const [expand, setExpand] = useState(defaultExpand);
@@ -79,19 +84,22 @@ function ContentFormHeader(props: ContentFormHeaderProps) {
 
   const xRef = useRef<any>();
   const containerRef = useRef<any>();
+  // 它是 expand 的 ref 形式（与 expand 保持同步），他将在第二个 useEffect hooks 中发挥作用；
+  const expandRef = useRef(defaultExpand);
+  // 查询表单项的长度
+  const queryFormItemLength = useRef(queryList.length);
 
   useEffect(() => {
     function resize() {
       const colSpan = propCols ? 24 / propCols : computeColSpan(xRef.current);
       setColSpan(() => colSpan);
 
-      if (expand) {
+      if (expandRef.current) {
         const cols = 24 / colSpan;
-        // 计算表单查询项一共是多少列。
-        const length = queryList.filter((item) => item.component || item.formType).length;
+        const length = queryFormItemLength.current;
         //  length + 1 是因为 【查询、重置、导出】这些功能按钮需要占一列。
         const rows = Math.ceil((length + 1) / cols);
-        containerRef.current.style.height = expand ? `${rows * 64}px` : '64px';
+        containerRef.current.style.height = expandRef.current ? `${rows * 64}px` : '64px';
       } else {
         containerRef.current.style.height = '64px';
       }
@@ -101,27 +109,27 @@ function ContentFormHeader(props: ContentFormHeaderProps) {
 
     if (propCols) return;
 
-    // 如果没有设置 props.cols，则组件会根据 pagesize 事件自动计算
+    // 如果没有设置 props.cols，则组件会根据 window resize 事件自动计算
     const hanleResize = throttle(resize, 200);
     window.addEventListener('resize', hanleResize, false);
     return () => {
       window.removeEventListener('resize', hanleResize, false);
     };
-  }, [queryList, expand, propCols]);
+  }, [propCols]);
 
   // 计算【展开项】所在的 Col 组件的 offsetSpan 数
   const offsetSpan = useMemo(() => {
     // 一行可以盛放几个 Col 组件
     const cols = 24 / colSpan;
-    const { length } = queryList;
+    const length = queryFormItemLength.current;
     if (length < cols) return (cols - length - 1) * colSpan;
 
     // 取模，表示最后一行会有几个 Col 组件
-    const reset = length % cols;
+    const mode = length % cols;
     // 注意 cols - 1 是因为 【展开项】自身要占一列
-    const offset = (cols - 1 - reset) * colSpan;
+    const offset = (cols - 1 - mode) * colSpan;
     return expand ? offset : 0;
-  }, [queryList, colSpan, expand]);
+  }, [colSpan, expand]);
 
   const renderFormContent = useMemo(() => {
     const cols = 24 / colSpan;
@@ -226,35 +234,40 @@ function ContentFormHeader(props: ContentFormHeaderProps) {
 
   const handleFinish = useCallback(
     (values: any) => {
+      updateLoadingSubmit(() => true);
       const query = formatFormModel(queryList, values);
-      onSubmit?.(query);
+      onSubmit?.(query).finally(() => updateLoadingSubmit(() => false));
     },
     [onSubmit, queryList],
   );
 
   const handleReset = useCallback(() => {
+    updateLoadingReset(() => true);
     const query = formatFormModel(queryList, initialValues as any);
-    onReset?.(query);
+    onReset?.(query).finally(() => updateLoadingReset(() => false));
   }, [queryList]);
 
   const handleExport = useCallback(() => {
+    updateLoadingExport(() => true);
     const query = formatFormModel(queryList, form.getFieldsValue());
-    onExport?.(query);
+    onExport?.(query).finally(() => updateLoadingExport(() => false));
   }, [onExport, queryList]);
 
   // 展开/收起
   const handleChangeExpand = useCallback(() => {
     const newNewExpand = !expand;
+    expandRef.current = newNewExpand;
     setExpand(newNewExpand);
+
     if (newNewExpand) {
       const cols = 24 / colSpan;
 
-      const rows = Math.ceil((renderFormContent.length + 1) / cols);
+      const rows = Math.ceil((queryFormItemLength.current + 1) / cols);
       containerRef.current.style.height = newNewExpand ? `${rows * 64}px` : '64px';
     } else {
       containerRef.current.style.height = '64px';
     }
-  }, [expand, colSpan, renderFormContent.length]);
+  }, [expand, colSpan]);
 
   return (
     <section className="qm-content-form-head" ref={xRef}>
@@ -262,16 +275,16 @@ function ContentFormHeader(props: ContentFormHeaderProps) {
         <Row className="qm-content-form-head-row" ref={containerRef}>
           {renderFormContent}
           <Col span={colSpan} offset={offsetSpan} className="qm-content-form-head-button-group">
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" loading={loadingSubmit}>
               {submitButtonText}
             </Button>
             {showResetButton && (
-              <Button htmlType="reset" style={{ marginLeft: '8px' }}>
+              <Button htmlType="reset" style={{ marginLeft: '8px' }} loading={loadingReset}>
                 重置
               </Button>
             )}
             {showExportButton && (
-              <Button style={{ marginLeft: '8px' }} onClick={handleExport}>
+              <Button style={{ marginLeft: '8px' }} onClick={handleExport} loading={loadingExport}>
                 导出
               </Button>
             )}
@@ -280,7 +293,7 @@ function ContentFormHeader(props: ContentFormHeaderProps) {
             {queryList.length >= 24 / colSpan && (
               <Button type="link" onClick={handleChangeExpand}>
                 {expand ? '收起' : '展开'}
-                <DownOutlined className={`icon${expand ? ' expand' : ''}`} />
+                <DownOutlined className={`qm-expand-icon${expand ? ' expand' : ''}`} />
               </Button>
             )}
           </Col>

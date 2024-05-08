@@ -1,10 +1,10 @@
 import React, { memo, useCallback, useMemo, useState } from 'react';
 import Template from '@/components/ExampleTemplate';
-import type { TreeData } from '@/lib/ModelTree';
-import type { Key } from 'react';
 import { ModelTree } from '@/lib';
+import type { Key } from 'react';
 
 function Example() {
+  const [expandedKeys] = useState<Key[]>(['1-1', '1-1-1']);
   const [checkedKeys, setCheckedKeys] = useState<Key[]>(['1-1-1-1']);
   const treeData = useMemo(
     () => [
@@ -16,6 +16,8 @@ function Example() {
             id: '1-1-1',
             parentId: '1-1',
             name: '1-1-1',
+            // 当前节点上不展示 checkbox，所以无法展示选中状态
+            checkable: false,
             children: [
               {
                 id: '1-1-1-1',
@@ -60,11 +62,13 @@ function Example() {
                 id: '1-2-2-1',
                 parentId: '1-2-2',
                 name: '1-2-2-1',
+                disabled: true,
               },
               {
                 id: '1-2-2-2',
                 parentId: '1-2-2',
                 name: '1-2-2-2',
+                disabled: true,
               },
             ],
           },
@@ -91,29 +95,21 @@ function Example() {
     setCheckedKeys(keys);
   }, []);
 
-  function formatTreeData(sourceList: any[]): TreeData[] {
-    return (
-      sourceList?.map((item) => {
-        const { id, parentId, name, children, ...props } = item;
-        return {
-          key: id,
-          title: name,
-          parentKey: parentId,
-          children: children ? formatTreeData(children) : undefined,
-          ...props,
-        };
-      }) ?? []
-    );
-  }
-
   return (
     <Template markdown={code} title="案例一">
       <ModelTree
+        multiple
         checkable
         treeData={treeData}
-        onChange={handleChange}
+        onCheck={handleChange}
         checkedKeys={checkedKeys}
-        formatTreeData={formatTreeData}
+        expandedKeys={expandedKeys}
+        fieldNames={{
+          key: 'id',
+          title: 'name',
+          children: 'children',
+          parentKey: 'parentId',
+        }}
       />
     </Template>
   );
@@ -130,6 +126,7 @@ import type { Key } from 'react';
 import { ModelTree } from '@/lib';
 
 function Example() {
+  const [expandedKeys] = useState<Key[]>(['1-1', '1-1-1']);
   const [checkedKeys, setCheckedKeys] = useState<Key[]>(['1-1-1-1']);
   const treeData = useMemo(
     () => [
@@ -141,6 +138,8 @@ function Example() {
             id: '1-1-1',
             parentId: '1-1',
             name: '1-1-1',
+            // 当前节点上不展示 checkbox，所以无法展示选中状态
+            checkable: false,
             children: [
               {
                 id: '1-1-1-1',
@@ -185,11 +184,13 @@ function Example() {
                 id: '1-2-2-1',
                 parentId: '1-2-2',
                 name: '1-2-2-1',
+                disabled: true,
               },
               {
                 id: '1-2-2-2',
                 parentId: '1-2-2',
                 name: '1-2-2-2',
+                disabled: true,
               },
             ],
           },
@@ -216,29 +217,21 @@ function Example() {
     setCheckedKeys(keys);
   }, []);
 
-  function formatTreeData(sourceList: any[]): TreeData[] {
-    return (
-      sourceList?.map((item) => {
-        const { id, parentId, name, children, ...props } = item;
-        return {
-          key: id,
-          title: name,
-          parentKey: parentId,
-          children: children ? formatTreeData(children) : undefined,
-          ...props,
-        };
-      }) ?? []
-    );
-  }
-
   return (
     <Template markdown={code} title="案例一">
       <ModelTree
+        multiple
         checkable
         treeData={treeData}
-        onChange={handleChange}
+        onCheck={handleChange}
         checkedKeys={checkedKeys}
-        formatTreeData={formatTreeData}
+        expandedKeys={expandedKeys}
+        fieldNames={{
+          key: 'id',
+          title: 'name',
+          children: 'children',
+          parentKey: 'parentId',
+        }}
       />
     </Template>
   );

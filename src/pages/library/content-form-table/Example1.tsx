@@ -5,7 +5,7 @@ import { Button, message } from 'antd';
 import dayjs from 'dayjs';
 
 // 模拟异步数据请求。
-function getTableList(query?: any) {
+function getTableList() {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({
@@ -44,7 +44,7 @@ function getTableList(query?: any) {
               time: '1990-02-23',
             },
           ],
-          total: 100,
+          total: 4,
         },
       });
     }, 1000);
@@ -122,16 +122,17 @@ function Example() {
   return (
     <Template
       markdown={code}
-      title="案例一（支持表单验证，发送请求之前修改 request body，指定列数）"
+      title="案例一（支持表单验证、可指定表单布局列数、可控制页面初始化是否加载表格数据）"
       bodyStyle={{ padding: '0 0 20px' }}
     >
       <ContentFormTable
         cols={2}
+        bordered
         rowKey="id"
         immediate={false}
         columns={columns}
         defaultExpand={false}
-        requestDataSource={getTableList}
+        queryTableList={getTableList}
         beforeQueryAction={handleBefore}
         extraNodesInsertHeader={extraNodesInsertHeader}
       />
@@ -189,7 +190,7 @@ function getTableList(query?: any) {
               time: '1990-02-23',
             },
           ],
-          total: 100,
+          total: 4,
         }
       });
     }, 1000);
@@ -268,12 +269,13 @@ function Example() {
   return (
     <Template markdown={code} title="案例一（支持表单验证，发送请求之前修改 request body，指定列数）"  bodyStyle={{ padding: '0 0 20px' }}>
       <ContentFormTable
-        cols={2}s
+        cols={2}
+        bordered
         rowKey="id"
         immediate={false}
         columns={columns}
         defaultExpand={false}
-        requestDataSource={getTableList}
+        queryTableList={getTableList}
         beforeQueryAction={handleBefore}
         extraNodesInsertHeader={extraNodesInsertHeader}
       />

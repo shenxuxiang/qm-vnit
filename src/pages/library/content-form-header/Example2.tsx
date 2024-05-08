@@ -53,11 +53,14 @@ function Page() {
   // 点击查询和重置按钮后都会触发
   const handleSubmit = useCallback((values: any) => {
     console.log(values);
+    return Promise.resolve();
   }, []);
 
   // 导出功能
   const handleExport = useCallback((values: any) => {
-    console.log(values);
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(values), 1000);
+    });
   }, []);
 
   return (
@@ -79,6 +82,7 @@ function Page() {
         showExportButton
         queryList={queryList}
         defaultExpand={false}
+        onReset={handleSubmit}
         onExport={handleExport}
         onSubmit={handleSubmit}
       />
@@ -145,11 +149,14 @@ function Page() {
   // 点击查询和重置按钮后都会触发
   const handleSubmit = useCallback((values: any) => {
     console.log(values);
+    return Promise.resolve();
   }, []);
 
   // 导出功能
   const handleExport = useCallback((values: any) => {
-    console.log(values);
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(values), 1000);
+    });
   }, []);
 
   return (
@@ -171,6 +178,7 @@ function Page() {
         showExportButton
         queryList={queryList}
         defaultExpand={false}
+        onReset={handleSubmit}
         onExport={handleExport}
         onSubmit={handleSubmit}
       />

@@ -1,15 +1,7 @@
-import React, {
-  useRef,
-  useMemo,
-  useEffect,
-  forwardRef,
-  useCallback,
-  useDeferredValue,
-  useImperativeHandle,
-} from 'react';
+import React, { useMemo, useEffect, forwardRef, useCallback, useDeferredValue, useImperativeHandle } from 'react';
 import useReducer from '@/utils/useReducer';
-import { Input, Tree } from 'antd';
 import { isArray, objectIs } from '@/utils';
+import { Input, Tree } from 'antd';
 import type { Key } from 'react';
 import './index.less';
 
@@ -31,9 +23,16 @@ interface ModelTreeProps {
   expandedKeys?: Key[];
   showFilter?: boolean;
   onExpand?: (expandeKeys: Key[]) => void;
-  onChange?: (checkedKeys: Key[], allKeys: Key[]) => void;
+  onCheck?: (checkedKeys: Key[], allKeys: Key[]) => void;
+  onSelect?: (selectedKeys: Key[], allKeys: Key[]) => void;
   // 格式化数据，在数据需要进行转换时可以是使用
   formatTreeData?: ((treeData: any[]) => TreeData[]) | null;
+  fieldNames?: {
+    key: string;
+    title: string;
+    children: string;
+    parentKey: string;
+  };
   [propName: string]: any;
 }
 
@@ -53,19 +52,27 @@ function initialState() {
 
 /**
  * 二次封装的 Tree 组件
- * @param treeData     组件的数据源，数据格式为：TreeData。
- * @param checkedKeys  受控，被选中的子节点集合。
- * @param checkable    是否展示复选框。
- * @param onChange     事件回调函数，当修改被选中的子节点时触发。
+ * @param treeData       组件的数据源，数据格式为：TreeData
+ * @param onLine         是否展示连接线
+ * @param multiple       支持点选多个节点（节点本身）
+ * @param formatTreeData treeData 格式化函数，将 treeData 转化成 TreeData[] 格式
+ * @param fieldNames     自定义节点 title、key、children、parentKey 的字段
+ * @param checkedKeys    受控，被选中的子节点集合
+ * @param selectedKeys   受控，被选中的子节点集合
+ * @param checkable      是否展示复选框
+ * @param onCheck        事件回调函数
+ * @param onSelect       事件回调函数
  */
 function ModelTree(props: ModelTreeProps, ref: any) {
   const [state, setState] = useReducer(initialState);
   const { searchValue, checkedKeys, expandedKeys, selectedKeys, flatTreeData } = state;
 
   const {
-    onChange,
+    onCheck,
+    onSelect,
     onExpand,
     checkable,
+    fieldNames,
     formatTreeData,
     showFilter = true,
     treeData: propTreeData,
@@ -119,18 +126,24 @@ function ModelTree(props: ModelTreeProps, ref: any) {
     }
   }, [propsExpandeKeys]);
 
-  const treeData = useMemo(() => {
-    // 如果 formatTreeData 不是一个函数，那表示 propTreeData 数据类型就是 TreeData[], 所以无需再进行格式化处理了。
-    const treeData = typeof formatTreeData === 'function' ? formatTreeData(propTreeData) : propTreeData;
+  // 将 treeData 转换成 TreeData 格式
+  const rawTreeData = useMemo(() => {
+    let treeData = propTreeData;
+
+    if (typeof formatTreeData === 'function') {
+      treeData = formatTreeData(propTreeData);
+    } else if (fieldNames) {
+      treeData = computedTreeData(propTreeData, fieldNames);
+    }
 
     setState({ flatTreeData: computedFlatTreeData(treeData) });
-    return treeData;
+    return treeData as TreeData[];
   }, [propTreeData]);
 
   // 实时计算 Tree 组件的数据源
-  const computeTreeData = useMemo(() => {
-    return filterTreeData(treeData, deferSearchValue);
-  }, [treeData, deferSearchValue]);
+  const treeDataSource = useMemo(() => {
+    return filterTreeData(rawTreeData, deferSearchValue);
+  }, [rawTreeData, deferSearchValue]);
 
   useEffect(() => {
     if (!deferSearchValue) return;
@@ -143,7 +156,7 @@ function ModelTree(props: ModelTreeProps, ref: any) {
       }
     });
     // 无需去重，Tree 组件内部会进行处理
-    setState({ expandedKeys: newExpandedKeys });
+    setState({ expandedKeys: [...new Set(newExpandedKeys)] });
   }, [flatTreeData, deferSearchValue]);
 
   useImperativeHandle(
@@ -167,33 +180,30 @@ function ModelTree(props: ModelTreeProps, ref: any) {
   // 点击 Tree 组件的复选框时触发
   const handleTreeCheck = useCallback(
     (checkedKeys: any) => {
-      // isInternalModifiedCheckedKeys.current = true;
-      setState({ checkedKeys });
+      setState({ checkedKeys, selectedKeys: checkedKeys });
 
       const allKeys: Key[] = [];
       checkedKeys.forEach((key: Key) => allKeys.push(...getParentKeys(key, flatTreeData)));
 
-      onChange?.(checkedKeys, [...new Set(allKeys)]);
+      onCheck?.(checkedKeys, [...new Set(allKeys)]);
     },
     [flatTreeData],
   );
 
   const handleTreeSelect = useCallback(
     (selectedKeys: Key[]) => {
-      // isInternalModifiedSelectedKeys.current = true;
       setState({ selectedKeys });
 
       const allKeys: Key[] = [];
       selectedKeys.forEach((key: Key) => allKeys.push(...getParentKeys(key, flatTreeData)));
 
-      onChange?.(selectedKeys, [...new Set(allKeys)]);
+      onSelect?.(selectedKeys, [...new Set(allKeys)]);
     },
     [flatTreeData],
   );
 
   // 手动展开/折叠 Tree 组件。
   const handleTreeExpand = useCallback((newExpandedKeys: React.Key[]) => {
-    // isInternalModifiedExpandeKeys.current = false;
     setState({ expandedKeys: newExpandedKeys });
     onExpand?.(newExpandedKeys);
   }, []);
@@ -212,7 +222,7 @@ function ModelTree(props: ModelTreeProps, ref: any) {
           checkable={checkable}
           onCheck={handleTreeCheck}
           checkedKeys={checkedKeys}
-          treeData={computeTreeData}
+          treeData={treeDataSource}
           selectedKeys={selectedKeys}
           onSelect={handleTreeSelect}
           onExpand={handleTreeExpand}
@@ -226,51 +236,93 @@ function ModelTree(props: ModelTreeProps, ref: any) {
 
 export default forwardRef(ModelTree);
 
-/**
- * 过滤、筛选出目标节点，匹配的内容将被标注为红色
- * @param treeData    Tree 组件的 treeData
- * @param searchValue 查询条件
- */
-function filterTreeData(treeData: TreeData[], searchValue: string): TreeData[] {
-  return treeData.map((item) => {
-    const { title, key, parentKey, children, renderDOM, ...props } = item;
+// 对匹配的文本进行着色
+function computedTitle(title: string, filterText: string) {
+  let newTitle: any = title;
 
-    let newTitle: any = title;
+  if (!filterText) {
+    return newTitle;
+  } else if (title.indexOf(filterText) >= 0) {
+    newTitle = [];
+    const ary = title.split(filterText);
+    const length = ary.length;
 
-    if (title.indexOf(searchValue) >= 0) {
-      newTitle = [];
-      const ary = title.split(searchValue);
-      const length = ary.length;
-
-      for (let i = 0; i < length; i++) {
-        ary[i] && newTitle.push(ary[i]);
-        if (i < length - 1) {
-          // 相邻的两个元素之间才会添加
-          newTitle.push(
-            <span className="qm-model-tree-node-rich" key={i}>
-              {searchValue}
-            </span>,
-          );
-        }
+    for (let i = 0; i < length; i++) {
+      ary[i] && newTitle.push(ary[i]);
+      if (i < length - 1) {
+        // 相邻的两个元素之间才会添加
+        newTitle.push(
+          <span className="qm-model-tree-node-rich" key={i}>
+            {filterText}
+          </span>,
+        );
       }
-
-      newTitle = <span>{newTitle}</span>;
     }
 
-    if (typeof renderDOM === 'function') newTitle = renderDOM(newTitle, item);
+    newTitle = <span>{newTitle}</span>;
+  }
 
-    if (children?.length) {
-      return {
-        key,
-        parentKey,
-        title: newTitle,
-        children: filterTreeData(children, searchValue),
-        ...props,
-      };
+  return newTitle as React.ReactNode;
+}
+
+/**
+ * 遍历所有节点，如果节点的 title 与 filterText 匹配，则将匹配的部分进行着色渲染
+ * @param tree       Tree 组件的 treeData
+ * @param filterText 查询条件
+ */
+function filterTreeData(tree: TreeData | TreeData[], filterText: string) {
+  const root = [];
+  const parentNodes = [];
+  const stack = isArray(tree) ? [...tree] : [tree];
+
+  /**
+   * 使用深度优先遍历的方法进行遍历
+   * 每次遍历节点时，都需要对 parentNodes 集合的最后一项 last 进行验证，是否为当前节点的 parentNode；
+   * 如果 last 不是当前节点的 parentNode，那么就 pop() 掉 last，直到满足条件；
+   * 这种情况一般出现在一条分支遍历结束后，并开始遍历其他分支的节点（例如：祖先节点是同一个节点，如图一中 B ==> C）时才会出现。
+   * 找到当前节点的父节点，并将当前节点的副本添加到其父节点的 children 集合中的。
+   */
+  while (stack.length) {
+    let currentParent = null;
+    const { title, key, parentKey, renderItem, children = [], ...resetProps } = stack.shift()!;
+
+    while (parentNodes.length) {
+      const last = parentNodes.slice(-1)[0];
+      if (last.key === parentKey) {
+        currentParent = last;
+        break;
+      } else {
+        parentNodes.pop();
+      }
+    }
+
+    const item: TreeData = {
+      ...resetProps,
+      key,
+      parentKey,
+      title: computedTitle(title as string, filterText),
+    };
+
+    if (typeof renderItem === 'function') item.title = renderItem(item.title, item);
+
+    // 如果 currentParent 不存在，说明当前节点就是根节点，此时我们只要将节点添加到 root 集合中即可。
+    if (currentParent) {
+      if (!currentParent.children) currentParent.children = [];
+      currentParent.children.push(item);
     } else {
-      return { title: newTitle, key, parentKey, ...props };
+      root.push(item);
     }
-  });
+
+    let length = children.length;
+
+    if (length > 0) parentNodes.push(item);
+
+    while (length--) {
+      stack.unshift(children[length]);
+    }
+  }
+
+  return root;
 }
 
 /**
@@ -305,4 +357,54 @@ function computedFlatTreeData(tree: TreeData | TreeData[]): FlatTreeData {
     }
   }
   return result;
+}
+
+function computedTreeData(tree: any, fieldNames: any) {
+  const root = [];
+  const parentNodes = [];
+  const stack = isArray(tree) ? [...tree] : [tree];
+  const { key: keyLabel, title: titleLabel, children: childrenLabel, parentKey: parentKeyLabel } = fieldNames;
+
+  while (stack.length) {
+    let currentParent = null;
+    const item = stack.shift()!;
+
+    while (parentNodes.length) {
+      const last = parentNodes.slice(-1)[0];
+      if (last.key === item[parentKeyLabel]) {
+        currentParent = last;
+        break;
+      } else {
+        parentNodes.pop();
+      }
+    }
+
+    const node: TreeData = {
+      ...item,
+      key: item[keyLabel],
+      title: item[titleLabel],
+      parentKey: item[parentKeyLabel],
+    };
+
+    delete node[childrenLabel];
+
+    // 如果 currentParent 不存在，说明当前节点就是根节点，此时我们只要将节点添加到 root 集合中即可。
+    if (currentParent) {
+      if (!currentParent.children) currentParent.children = [];
+      currentParent.children.push(node);
+    } else {
+      root.push(node);
+    }
+
+    const children = item[childrenLabel] || [];
+    let length = children.length;
+
+    if (length > 0) parentNodes.push(node);
+
+    while (length--) {
+      stack.unshift(children[length]);
+    }
+  }
+
+  return root;
 }

@@ -24,7 +24,6 @@ export type PreviewImageProps = {
   imgs: string[];
   index?: number;
   pageSize?: number;
-  previewImgs?: string[];
   hasPerformance?: boolean;
   onClose: (indictor: number) => void;
 };
@@ -38,9 +37,8 @@ export type PreviewImageProps = {
  * @param { pageSize }       指定缩略图展示列表一页展示多少张图片
  */
 function PreviewImage(props: PreviewImageProps) {
-  const [state, setState] = useReducer(initialState);
-  const { indictor, imageURL, spinning } = state;
   const { onClose, open, imgs, index = 0, pageSize = 9 } = props;
+  const [{ indictor, imageURL, spinning }, setState] = useReducer(initialState);
 
   const imgRef = useRef<any>();
   const isMounted = useRef(false);
@@ -88,10 +86,10 @@ function PreviewImage(props: PreviewImageProps) {
     };
 
     const handleMouseWheel = throttle(onMouseWheel, 100);
-    imgRef.current.parentNode.addEventListener('mousewheel', handleMouseWheel);
+    imgRef.current?.parentNode?.addEventListener?.('mousewheel', handleMouseWheel);
 
     return () => {
-      imgRef.current.parentNode.removeEventListener('mousewheel', handleMouseWheel);
+      imgRef.current?.parentNode?.removeEventListener?.('mousewheel', handleMouseWheel);
     };
   }, [open]);
 
@@ -124,18 +122,21 @@ function PreviewImage(props: PreviewImageProps) {
   const handlePrevItem = () => {
     if (indictor <= 0) return;
     imgRef.current.style.transform = `scale(1, 1) rotate(0deg)`;
+    imgRef.current.parentNode.style.cssText = `transform: translate3d(0px, 0px, 0px )`;
     setState((prev) => ({ indictor: prev.indictor - 1 }));
   };
 
   const handleNextItem = () => {
     if (indictor >= imgs.length - 1) return;
     imgRef.current.style.transform = `scale(1, 1) rotate(0deg)`;
+    imgRef.current.parentNode.style.cssText = `transform: translate3d(0px, 0px, 0px )`;
     setState((prev) => ({ indictor: prev.indictor + 1 }));
   };
 
   const handleChangeIndex = (index: number) => {
     if (indictor === index) return;
     imgRef.current.style.transform = `scale(1, 1) rotate(0deg)`;
+    imgRef.current.parentNode.style.cssText = `transform: translate3d(0px, 0px, 0px )`;
     setState({ indictor: index });
   };
 
@@ -149,7 +150,7 @@ function PreviewImage(props: PreviewImageProps) {
     originalLocation.current = { x: translateX, y: translateY };
   };
 
-  // 当鼠标在屏幕上滑动时，图片跟随移动（前提是要先）
+  // 模拟鼠标拖拽完成时（mouseup），图片的实际位置
   const handleMouseUp = () => {
     originalMousePoint.current = null;
     originalLocation.current = null;
@@ -160,16 +161,25 @@ function PreviewImage(props: PreviewImageProps) {
 
     const width = offsetWidth * scaleX;
     const height = offsetHeight * scaleY;
-    // 当图像的宽高小于屏幕可视区的宽高时，图像回到最初的位置。
+
+    /**
+     * 当图像的宽高小于等于屏幕可视区时，图像回到最初的位置。
+     * 当图像的宽高大于屏幕可视区时，就按照最后一次移动的位置放置。
+     */
     if (width <= SW || height <= SH) {
       element.style.cssText = `
         transform: translate3d(0px, 0px, 0px);
         transition: transform .3s ease
       `;
     } else {
-      const restX = (width - SW) / 2;
-      const restY = (height - SH) / 2;
+      const restX = Math.floor((width - SW) / 2);
+      const restY = Math.floor((height - SH) / 2);
       let { translateX, translateY } = getTransformProperties(element);
+
+      /**
+       * translateXY 不应该大于 restXY；
+       * translateXY 不应该小于 restXY；
+       */
       if (translateX > restX) {
         translateX = restX;
       } else if (translateX < -restX) {
@@ -189,6 +199,7 @@ function PreviewImage(props: PreviewImageProps) {
     }
   };
 
+  // 模拟鼠标拖拽功能，img 实际是没有动的，移动的是 img 的父节点。
   const handleMouseMove = useMemo(() => {
     return throttle(mousemove, 50);
 
@@ -199,6 +210,7 @@ function PreviewImage(props: PreviewImageProps) {
       const distanceX = clientX - originalMousePoint.current.x;
       const distanceY = clientY - originalMousePoint.current.y;
       const element = imgRef.current.parentNode;
+
       element.style.cssText = `
         transform: translate3d(
           ${originalLocation.current.x + distanceX}px,
@@ -236,6 +248,7 @@ function PreviewImage(props: PreviewImageProps) {
               alt="预览图片"
               src={imageURL}
               key={imageURL}
+              aria-label="preview-image"
               onMouseDown={onMouseDown}
               onMouseUp={handleMouseUp}
               className="qm-preview-image-preview-img"

@@ -19,6 +19,11 @@ const notes = `
   对于一般无需用户登录凭证的可以直接使用，如需登陆凭证可以通过 headers 传递给组件
 `;
 
+const updateText = `
+  ### 更新内容
+  * 修复视频预览时 video 不居中的问题；
+`;
+
 function Page() {
   return (
     <section style={{ padding: '20px 20px 20px 60px' }}>
@@ -34,6 +39,9 @@ function Page() {
 
       <h1>API</h1>
       <Table bordered columns={TABLE_HEADER} rowKey="key" dataSource={properties} pagination={false} />
+
+      <br />
+      <MarkdownCode code={updateText} hasExpandButton={false} defaultExpand />
     </section>
   );
 }

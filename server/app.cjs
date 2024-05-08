@@ -23,6 +23,6 @@ app.use(renderStatic(path.resolve(__dirname, '../build')));
 
 app.use(router.routes());
 
-app.listen(3333, function() {
-  process.stdout.write('hello world localhost:3333\n');
+app.listen(3000, function() {
+  process.stdout.write('hello world localhost:3000\n');
 });

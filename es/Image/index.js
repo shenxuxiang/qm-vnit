@@ -8,34 +8,44 @@ import _Object$getOwnPropertyDescriptor from '@babel/runtime-corejs3/core-js-sta
 import _Object$getOwnPropertyDescriptors from '@babel/runtime-corejs3/core-js-stable/object/get-own-property-descriptors';
 import _defineProperty from '@babel/runtime-corejs3/helpers/defineProperty';
 import _objectWithoutProperties from '@babel/runtime-corejs3/helpers/objectWithoutProperties';
-import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle, useMemo } from 'react';
 import img from '../assets/images/default.svg.js';
 import intersectionImage from './intersection.js';
+import { parseStyle } from '../utils/index.js';
 
-var _excluded = ["src", "alt", "className", "style"];
-function ownKeys(object, enumerableOnly) { var keys = _Object$keys(object); if (_Object$getOwnPropertySymbols) { var symbols = _Object$getOwnPropertySymbols(object); enumerableOnly && (symbols = _filterInstanceProperty(symbols).call(symbols, function (sym) { return _Object$getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : _Object$getOwnPropertyDescriptors ? Object.defineProperties(target, _Object$getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, _Object$getOwnPropertyDescriptor(source, key)); }); } return target; }
+var _excluded = ["src", "alt", "className", "style", "lazy"];
+function ownKeys(e, r) { var t = _Object$keys(e); if (_Object$getOwnPropertySymbols) { var o = _Object$getOwnPropertySymbols(e); r && (o = _filterInstanceProperty(o).call(o, function (r) { return _Object$getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : _Object$getOwnPropertyDescriptors ? Object.defineProperties(e, _Object$getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, _Object$getOwnPropertyDescriptor(t, r)); }); } return e; }
 function Image(props, ref) {
   var src = props.src,
     alt = props.alt,
     className = props.className,
     style = props.style,
+    _props$lazy = props.lazy,
+    lazy = _props$lazy === void 0 ? true : _props$lazy,
     restProps = _objectWithoutProperties(props, _excluded);
   var imageRef = useRef();
   useEffect(function () {
-    intersectionImage.addElement(imageRef.current, src);
+    lazy && intersectionImage.addElement(imageRef.current, src);
   }, []);
   useImperativeHandle(ref, function () {
     return {
       instance: imageRef.current
     };
   }, []);
+  var styleObj = useMemo(function () {
+    if (typeof style === 'string') {
+      return parseStyle(style);
+    } else {
+      return style;
+    }
+  }, [style]);
   return /*#__PURE__*/React.createElement("img", _objectSpread(_objectSpread({}, restProps), {}, {
-    src: img,
-    style: style,
     ref: imageRef,
+    style: styleObj,
     alt: alt || '图片',
-    className: className
+    className: className,
+    src: lazy ? img : src
   }));
 }
 var Img = /*#__PURE__*/forwardRef(Image);

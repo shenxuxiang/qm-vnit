@@ -16,8 +16,15 @@ interface ModelTreeProps {
     expandedKeys?: Key[];
     showFilter?: boolean;
     onExpand?: (expandeKeys: Key[]) => void;
-    onChange?: (checkedKeys: Key[], allKeys: Key[]) => void;
+    onCheck?: (checkedKeys: Key[], allKeys: Key[]) => void;
+    onSelect?: (selectedKeys: Key[], allKeys: Key[]) => void;
     formatTreeData?: ((treeData: any[]) => TreeData[]) | null;
+    fieldNames?: {
+        key: string;
+        title: string;
+        children: string;
+        parentKey: string;
+    };
     [propName: string]: any;
 }
 declare const _default: React.ForwardRefExoticComponent<Omit<ModelTreeProps, "ref"> & React.RefAttributes<unknown>>;

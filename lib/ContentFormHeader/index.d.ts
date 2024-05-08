@@ -24,9 +24,9 @@ type ContentFormHeaderProps = {
     showExportButton?: boolean;
     queryList: QueryListItem[];
     extraNodes?: React.ReactNode;
-    onReset?: (values: any) => void;
-    onSubmit: (values: any) => void;
-    onExport?: (values: any) => void;
+    onReset?: (values: any) => Promise<any>;
+    onSubmit: (values: any) => Promise<any>;
+    onExport?: (values: any) => Promise<any>;
 };
 declare function ContentFormHeader(props: ContentFormHeaderProps): React.JSX.Element;
 declare const _default: React.MemoExoticComponent<typeof ContentFormHeader>;

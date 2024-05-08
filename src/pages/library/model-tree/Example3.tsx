@@ -3,16 +3,15 @@ import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 import Template from '@/components/ExampleTemplate';
 import type { TreeData } from '@/lib/ModelTree';
 import { ModelTree } from '@/lib';
-import { isEmpty } from '@/utils';
 import type { Key } from 'react';
 
 function Example() {
-  const [checkedKeys, setCheckedKeys] = useState<Key[]>([]);
+  const [selectedKeys, setSelectedKeys] = useState<Key[]>([]);
   const [expandedKeys, setExpandedKeys] = useState<Key[]>([]);
 
   useEffect(() => {
-    setCheckedKeys(() => ['1-1-1-1']);
-    setExpandedKeys(() => ['1-1', '1-1-1', '1-1-1-1']);
+    setSelectedKeys(() => ['1-1-1-1']);
+    setExpandedKeys(() => ['1-1', '1-1-1']);
   }, []);
 
   const treeData = useMemo(
@@ -95,15 +94,9 @@ function Example() {
    * @param keys 表示当前选中的节点的 key
    * @param allKeys 表示当前选中的节点的 key，以及包含它们的所有父级（祖先）节点的key。
    */
-  const handleChangeCheckedKeys = useCallback((keys: Key[], allKeys: Key[]) => {
+  const handleChangeSelectedKeys = useCallback((keys: Key[], allKeys: Key[]) => {
     console.log(keys, allKeys);
-    setCheckedKeys((prevKeys) => {
-      if (isEmpty(keys)) {
-        return prevKeys;
-      } else {
-        return keys;
-      }
-    });
+    setSelectedKeys(keys);
   }, []);
 
   const handleChangeExpandedKeys = useCallback((keys: Key[]) => {
@@ -112,6 +105,7 @@ function Example() {
   }, []);
 
   const handleAdd = useCallback((event: any) => {
+    event.stopPropagation();
     let target = event.target;
     let key = null;
     do {
@@ -124,6 +118,7 @@ function Example() {
   }, []);
 
   const handleEdit = useCallback((event: any) => {
+    event.stopPropagation();
     let target = event.target;
     let key = null;
     do {
@@ -141,7 +136,7 @@ function Example() {
         return {
           key: item.id,
           title: item.name,
-          renderDOM: (context: React.ReactNode, record: TreeData) => (
+          renderItem: (context: React.ReactNode, record: TreeData) => (
             <div
               data-key={record.key}
               style={{
@@ -180,12 +175,13 @@ function Example() {
     <Template markdown={code} title="案例三">
       <ModelTree
         showLine
+        multiple
         treeData={treeData}
-        selectedKeys={checkedKeys}
-        formatTreeData={formatTreeData}
+        selectedKeys={selectedKeys}
         expandedKeys={expandedKeys}
+        formatTreeData={formatTreeData}
+        onSelect={handleChangeSelectedKeys}
         onExpand={handleChangeExpandedKeys}
-        onChange={handleChangeCheckedKeys}
       />
     </Template>
   );
@@ -204,13 +200,13 @@ import { isEmpty } from '@/utils';
 import type { Key } from 'react';
 
 function Example() {
-  const [checkedKeys, setCheckedKeys] = useState<Key[]>([]);
+  const [selectedKeys, setSelectedKeys] = useState<Key[]>([]);
   const [expandedKeys, setExpandedKeys] = useState<Key[]>([]);
 
   useEffect(() => {
-    setCheckedKeys(() => ['1-1-1-1']);
-    setExpandedKeys(() => ['1-1', '1-1-1', '1-1-1-1']);
-  }, [])
+    setSelectedKeys(() => ['1-1-1-1']);
+    setExpandedKeys(() => ['1-1', '1-1-1']);
+  }, []);
 
   const treeData = useMemo(
     () => [
@@ -292,97 +288,94 @@ function Example() {
    * @param keys 表示当前选中的节点的 key
    * @param allKeys 表示当前选中的节点的 key，以及包含它们的所有父级（祖先）节点的key。
    */
-  const handleChangeCheckedKeys = useCallback((keys: Key[], allKeys: Key[]) => {
-    console.log(keys, allKeys)
-    setCheckedKeys((prevKeys) => {
-      if (isEmpty(keys)) {
-        return prevKeys;
-      } else {
-        return keys;
-      }
-    });
+  const handleChangeSelectedKeys = useCallback((keys: Key[], allKeys: Key[]) => {
+    console.log(keys, allKeys);
+    setSelectedKeys(keys);
   }, []);
 
   const handleChangeExpandedKeys = useCallback((keys: Key[]) => {
-    console.log(keys)
+    console.log(keys);
     setExpandedKeys(() => keys);
-  }, [])
+  }, []);
 
   const handleAdd = useCallback((event: any) => {
+    event.stopPropagation();
     let target = event.target;
     let key = null;
     do {
       target = target.parentNode;
       key = target.getAttribute('data-key');
       if (key) break;
-    } while (target.parentNode)
+    } while (target.parentNode);
 
     console.log(key, target);
   }, []);
 
   const handleEdit = useCallback((event: any) => {
+    event.stopPropagation();
     let target = event.target;
     let key = null;
     do {
       target = target.parentNode;
       key = target.getAttribute('data-key');
       if (key) break;
-    } while (target.parentNode)
+    } while (target.parentNode);
 
     console.log(key, target);
   }, []);
 
-
-
-  const formatTreeData = useCallback((treeData: any[]): TreeData[] => {
-    return treeData.map((item: any) => {
+  const formatTreeData = useCallback(
+    (treeData: any[]): TreeData[] => {
+      return treeData.map((item: any) => {
         return {
-            key: item.id,
-            title: item.name,
-            renderDOM: (context: React.ReactNode, record: TreeData) => (
-                <div
-                    data-key={record.key}
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'flex-start',
-                        whiteSpace: 'nowrap',
-                    }}
-                >
-                    <div style={{ flex: 1 }}>{context}</div>
+          key: item.id,
+          title: item.name,
+          renderItem: (context: React.ReactNode, record: TreeData) => (
+            <div
+              data-key={record.key}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-start',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <div style={{ flex: 1 }}>{context}</div>
 
-                    <PlusOutlined
-                        title="新增"
-                        onClick={handleAdd}
-                        className="data-manage-page-icon"
-                        style={{ fontSize: 14, marginLeft: 20, color: '#1890ff' }}
-                    />
+              <PlusOutlined
+                title="新增"
+                onClick={handleAdd}
+                className="data-manage-page-icon"
+                style={{ fontSize: 14, marginLeft: 20, color: '#1890ff' }}
+              />
 
-                    <EditOutlined
-                        title="编辑"
-                        onClick={handleEdit}
-                        className="data-manage-page-icon"
-                        style={{ fontSize: 14, marginLeft: 20, color: '#1890ff' }}
-                    />
-                </div>
-            ),
-            parentKey: item.parentId,
-            children: !item.children || item.children.length <= 0 ? undefined : formatTreeData(item.children),
-        }
-    });
-  }, [handleAdd, handleEdit]);
-
+              <EditOutlined
+                title="编辑"
+                onClick={handleEdit}
+                className="data-manage-page-icon"
+                style={{ fontSize: 14, marginLeft: 20, color: '#1890ff' }}
+              />
+            </div>
+          ),
+          parentKey: item.parentId,
+          children: !item.children || item.children.length <= 0 ? undefined : formatTreeData(item.children),
+        };
+      });
+    },
+    [handleAdd, handleEdit],
+  );
 
   return (
     <Template markdown={code} title="案例三">
       <ModelTree
-          showLine
-          treeData={treeData}
-          selectedKeys={checkedKeys}
-          formatTreeData={formatTreeData}
-          expandedKeys={expandedKeys}
-          onExpand={handleChangeExpandedKeys}
-          onChange={handleChangeCheckedKeys}
+        showLine
+        multiple
+        treeData={treeData}
+        selectedKeys={selectedKeys}
+        expandedKeys={expandedKeys}
+        formatTreeData={formatTreeData}
+        onSelect={handleChangeSelectedKeys}
+        onExpand={handleChangeExpandedKeys}
       />
     </Template>
   );

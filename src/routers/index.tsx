@@ -1,8 +1,8 @@
 import React, { memo } from 'react';
-import { useRoutes, Navigate } from 'react-router-dom';
+import Library from '@/pages/library';
 import MainLayout from '@/components/MainLayout';
 import LazyLoader from '@/components/LazyLoader';
-import Library from '@/pages/library';
+import { useRoutes, Navigate } from 'react-router-dom';
 
 export const menuItems = [
   {

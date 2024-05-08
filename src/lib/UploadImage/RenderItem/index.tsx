@@ -86,8 +86,10 @@ function RenderItem(props: RenderItemProps) {
 
       // 更新上传进度
       upload.onProgress((progress: number) => {
-        // 如果一开始上传的时候，progress 就大于等于 1，说明网速足够快上传图片瞬间就完成了，
-        // 此时，我们使用动画完成进度条，否则就是每次 onProgress 事件触发 updateProgressBar
+        /**
+         * 如果刚开始上传时，progress 就大于等于 1，说明网速足够快上传图片瞬间就完成了。此时使用动画自动完成进度条更新。
+         * 否则只能通过 http response 的 onProgress 回调函数触发 updateProgressBar。
+         */
         if (isUploadStart && progress >= 1) {
           progressBarAnimation();
         } else {
@@ -99,9 +101,9 @@ function RenderItem(props: RenderItemProps) {
 
       // 上传成功
       upload.onSuccess(async (res: any) => {
-        fadeInAnimation();
-        onSuccess?.(uid, res);
         uploadInstance.current = null;
+        onSuccess?.(uid, res);
+        fadeInAnimation();
       });
 
       // 上传失败

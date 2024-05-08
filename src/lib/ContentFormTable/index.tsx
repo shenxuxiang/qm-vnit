@@ -1,31 +1,25 @@
 import React, { useCallback, useEffect, forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
 import type { QueryListItem } from '../ContentFormHeader';
-import { Card, Table, Pagination, message } from 'antd';
 import ContentFormHead from '../ContentFormHeader';
+import { Card, Table, Pagination } from 'antd';
 import useReducer from '@/utils/useReducer';
-import { downloadFile } from '@/utils';
 import './index.less';
 
 type TableColumnsType = QueryListItem & {
   visibleInTable?: boolean;
   initialValue?: any;
 };
-
 interface ContentFormPageProps {
   // 查询表单要展示的列数
   cols?: number;
   // 是否再页面初始化时就请求数据接口
   immediate?: boolean;
   // 表格左上角展示的标题
-  tableTitle?: string;
+  tableTitle?: React.ReactNode;
   // 是否展开所有查询的表单，默认 true
   defaultExpand?: boolean;
   // 表格右上角展示自定义内容
   extra?: React.ReactNode;
-  // 导出的文件名
-  exportFileName?: string;
-  // 数据导出功能
-  exportTableList?: Function;
   // 表单查询按钮内容自定义
   submitButtonText?: string;
   // 是否显示表单重置按钮
@@ -34,10 +28,13 @@ interface ContentFormPageProps {
   showExportButton?: boolean;
   // 插入到查询表单的自定义内容
   extraNodesInsertHeader?: React.ReactNode;
+  // 数据导出功能
+  exportTableList?: (query: any) => Promise<any>;
   // 在正式请求表格数据之前，会触发 beforeQueryAction 行为，返回 false 将中断请求。此行为中可以对表单进行校验
   beforeQueryAction?: (query: any) => boolean;
   // 请求页面数据的
-  requestDataSource: (query: any) => Promise<any>;
+  queryTableList: (query: any) => Promise<any>;
+  // requestDataSource: (query: any) => Promise<any>;
   customResponse?: (data: any) => { tableList: any[]; total: number };
   // 同 Table 组件的 scroll
   tableScroll?: any;
@@ -60,7 +57,7 @@ interface ContentFormPageProps {
 
 type OrderListItem = {
   field: string;
-  direction: boolean;
+  order: string;
 };
 
 type OrderList = OrderListItem[];
@@ -72,7 +69,7 @@ type SearchCondition = {
 
 function ContentFormPage(props: ContentFormPageProps, ref: any) {
   const [state, setState] = useReducer(initialState);
-  const { total, pageNum, loading, pageSize, tableList, searchContent } = state;
+  const { total, pageNum, loading, pageSize, tableList } = state;
 
   const {
     cols,
@@ -84,21 +81,22 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
     tableTitle,
     tableScroll,
     rowSelection,
-    exportFileName,
     paginationSize,
+    queryTableList,
     exportTableList,
     showResetButton,
     immediate = true,
     submitButtonText,
     showExportButton,
     beforeQueryAction,
-    requestDataSource,
     onPaginationChange,
     defaultExpand = true,
     extraNodesInsertHeader,
     showTotal = defaultShowTotal,
     customResponse = handleResponse,
   } = props;
+
+  const searchContentRef = useRef<SearchCondition>({});
 
   // immediate 表示是否在页面初始化的时候请求后台接口。默认 true
   const immediateRef = useRef(immediate);
@@ -125,7 +123,7 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
     }
 
     initialSearchCondition.current = initialValues;
-    setState({ searchContent: formatFormModel(queryList, initialValues) });
+    searchContentRef.current = formatFormModel(queryList, initialValues);
   }
 
   // 请求数据
@@ -137,7 +135,7 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
 
     setState({ loading: true });
     try {
-      const response = await requestDataSource(action);
+      const response = await queryTableList(action);
       setState({ ...customResponse(response) });
     } finally {
       setState({ loading: false });
@@ -150,11 +148,11 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
     () => ({
       // 强制更新页面数据
       forceUpdate(opts?: any, callback?: Function) {
-        const query = { pageSize, pageNum, ...searchContent, ...opts };
+        const query = { pageSize, pageNum, ...searchContentRef.current, ...opts };
         sendRequestTableList(query).finally(() => callback?.());
       },
     }),
-    [pageSize, pageNum, searchContent],
+    [pageSize, pageNum],
   );
 
   // 页面初始化。
@@ -166,8 +164,8 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
       return;
     }
 
-    sendRequestTableList({ pageSize, pageNum, ...searchContent });
-  }, [pageSize, pageNum, searchContent]);
+    sendRequestTableList({ pageSize, pageNum, ...searchContentRef.current });
+  }, []);
 
   useEffect(() => {
     onPaginationChange?.(pageNum, pageSize);
@@ -175,13 +173,28 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
 
   const onPageNumChange = useCallback((pageNum: number, pageSize: number) => {
     setState({ pageSize, pageNum });
+    sendRequestTableList({ pageSize, pageNum, ...searchContentRef.current });
   }, []);
 
   // 点击查询按钮
-  const handleSubmit = useCallback((values: any) => setState({ searchContent: values, pageNum: 1 }), []);
+  const handleSubmit = useCallback(
+    async (values: any) => {
+      setState({ pageNum: 1 });
+      searchContentRef.current = values;
+      return sendRequestTableList({ pageSize, pageNum: 1, ...values });
+    },
+    [pageSize],
+  );
 
   // 点击重置按钮
-  const handleReset = useCallback((values: any) => setState({ searchContent: values, pageNum: 1 }), []);
+  const handleReset = useCallback(
+    (values: any) => {
+      setState({ pageNum: 1 });
+      searchContentRef.current = values;
+      return sendRequestTableList({ pageSize, pageNum: 1, ...values });
+    },
+    [pageSize],
+  );
 
   // 导出数据
   const handleExport = useCallback(
@@ -190,44 +203,37 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
       const action = beforeQueryAction?.(query) ?? query;
       if (action === false) return;
 
-      try {
-        const response = await exportTableList!({ pageNum, pageSize, ...action });
-
-        downloadFile(exportFileName || '_default_file', response.data);
-      } catch (error) {
-        message.warning('文件下载失败');
-      }
+      await exportTableList!({ pageNum, pageSize, ...action });
     },
-    [exportTableList, exportFileName, queryList, pageNum, pageSize],
+    [exportTableList, pageNum, pageSize],
   );
 
   // 当 columns 中的某一项设置了 sorter 时，可以设置【倒叙/正序】 查询。
   const handleTableChange = useCallback(
-    (_: any, __: any, sorter: any) => {
+    (...args: any[]) => {
+      const [, , sorter] = args;
       const orderList: OrderList = [];
       // sorter 可能是对象，也可能是数组。分开处理
       if (sorter instanceof Array) {
         for (let i = 0; i < sorter.length; i++) {
           const { field, order } = sorter[i];
           // 如果 order 字段不存在则说明没有排序
-          // 正序-true、倒叙-false，
-          if (order) orderList.push({ field, direction: order.includes('asc') });
+          // 正序-ascend、倒叙-descend，
+          if (order) orderList.push({ field, order });
         }
       } else {
         const { field, order } = sorter;
         // 如果 order 字段不存在则说明没有排序
-        // 正序-true、倒叙-false，
-        if (order) orderList.push({ field, direction: order.includes('asc') });
+        // 正序-ascend、倒叙-descend，
+        if (order) orderList.push({ field, order });
       }
-      const newSearchCondition: SearchCondition = {
-        ...searchContent,
-        order: orderList,
-      };
+      const newSearchCondition: SearchCondition = { ...searchContentRef.current, order: orderList };
       if (orderList.length <= 0) delete newSearchCondition.order;
 
-      setState({ searchContent: newSearchCondition });
+      searchContentRef.current = newSearchCondition;
+      return sendRequestTableList({ pageSize, pageNum, ...newSearchCondition });
     },
-    [searchContent],
+    [pageSize, pageNum],
   );
 
   return (
@@ -247,8 +253,8 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
           initialValues={initialSearchCondition.current}
         />
       )}
-      <Card bodyStyle={{ padding: '0 24px' }}>
-        <div className="qm-content-form-page-table-head ">
+      <Card styles={{ body: { padding: '0 24px' } }} style={{ marginTop: 24 }} bordered={false}>
+        <div className="qm-content-form-page-table-head">
           <div className="qm-content-form-page-table-head-title">{tableTitle || '查询表格'}</div>
           {extra ? <div>{extra}</div> : null}
         </div>
@@ -277,7 +283,9 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
             onChange={onPageNumChange}
             className="qm-content-form-page-pagination"
           />
-        ) : null}
+        ) : (
+          <div style={{ width: 0, height: 24 }} />
+        )}
       </Card>
     </div>
   );

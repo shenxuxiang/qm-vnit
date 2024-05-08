@@ -55,7 +55,7 @@ function buildLib () {
       }
     ))
     .pipe(babel({ configFile: './babel.config.lib.cjs' }))
-    .pipe(gulp.src([ 'es/**/*.d.ts' ]))
+    // .pipe(gulp.src([ 'es/**/*.d.ts' ]))
     .pipe(gulp.dest('./lib'));
 }
 

@@ -41,7 +41,7 @@ function Markdown(props: MarkdownProps) {
     return {
       // eslint-disable-next-line
       code(values: any) {
-        const { node, className, children, ...rest } = values;
+        const { className, children, ...rest } = values;
         const match = /language-(\w+)/.exec(className || '');
 
         return match ? (

@@ -42,7 +42,7 @@ function getTableList() {
               time: '1990-02-23',
             },
           ],
-          total: 100,
+          total: 4,
         },
       });
     }, 1000);
@@ -97,12 +97,7 @@ function Example() {
 
   return (
     <Template markdown={code} title="案例三（支持自定义查询表单项，修改 response）" bodyStyle={{ padding: '0 0 20px' }}>
-      <ContentFormTable
-        rowKey="id"
-        columns={columns}
-        customResponse={handleResponse}
-        requestDataSource={getTableList}
-      />
+      <ContentFormTable rowKey="id" columns={columns} queryTableList={getTableList} customResponse={handleResponse} />
     </Template>
   );
 }
@@ -193,7 +188,7 @@ function getTableList() {
               time: '1990-02-23',
             },
           ],
-          total: 100,
+          total: 4,
         }
       });
     }, 1000);
@@ -250,8 +245,8 @@ function Example() {
       <ContentFormTable
         rowKey="id"
         columns={columns}
+        queryTableList={getTableList}
         customResponse={handleResponse}
-        requestDataSource={getTableList}
       />
     </Template>
   );

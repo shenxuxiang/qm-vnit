@@ -21,18 +21,16 @@ function initialState() {
 }
 export type SuperPreviewImageProps = {
   open: boolean;
-  imgs: { url: string; hdUrl: string }[];
   index?: number;
   pageSize?: number;
-  previewImgs?: string[];
-  hasPerformance?: boolean;
   onClose: (indictor: number) => void;
+  imgs: { url: string; hdUrl: string }[];
 };
 
 /**
  * 图片预览功能组件
  * @param { open }           是否展示组件
- * @param { imgs }           图片列表
+ * @param { imgs }           图片列表 { url: 表示普通像素的图像，hdUrl: 表示高清像素的图像 }
  * @param { index }          默认展示第几个图片，默认第一个
  * @param { onClose }        关闭组件的方法
  * @param { pageSize }       指定缩略图展示列表一页展示多少张图片
@@ -88,10 +86,9 @@ function SuperPreviewImage(props: SuperPreviewImageProps) {
     };
 
     const handleMouseWheel = throttle(onMouseWheel, 100);
-    imgRef.current.parentNode.addEventListener('mousewheel', handleMouseWheel);
-
+    imgRef.current?.parentNode?.addEventListener?.('mousewheel', handleMouseWheel);
     return () => {
-      imgRef.current.parentNode.removeEventListener('mousewheel', handleMouseWheel);
+      imgRef.current?.parentNode?.removeEventListener?.('mousewheel', handleMouseWheel);
     };
   }, [open]);
 
@@ -126,18 +123,21 @@ function SuperPreviewImage(props: SuperPreviewImageProps) {
   const handlePrevItem = () => {
     if (indictor <= 0) return;
     imgRef.current.style.transform = `scale(1, 1) rotate(0deg)`;
+    imgRef.current.parentNode.style.cssText = `transform: translate3d(0px, 0px, 0px )`;
     setState((prev) => ({ indictor: prev.indictor - 1 }));
   };
 
   const handleNextItem = () => {
     if (indictor >= imgs.length - 1) return;
     imgRef.current.style.transform = `scale(1, 1) rotate(0deg)`;
+    imgRef.current.parentNode.style.cssText = `transform: translate3d(0px, 0px, 0px )`;
     setState((prev) => ({ indictor: prev.indictor + 1 }));
   };
 
   const handleChangeIndex = (index: number) => {
     if (indictor === index) return;
     imgRef.current.style.transform = `scale(1, 1) rotate(0deg)`;
+    imgRef.current.parentNode.style.cssText = `transform: translate3d(0px, 0px, 0px )`;
     setState({ indictor: index });
   };
 
@@ -169,8 +169,8 @@ function SuperPreviewImage(props: SuperPreviewImageProps) {
         transition: transform .3s ease
       `;
     } else {
-      const restX = (width - SW) / 2;
-      const restY = (height - SH) / 2;
+      const restX = Math.floor((width - SW) / 2);
+      const restY = Math.floor((height - SH) / 2);
       let { translateX, translateY } = getTransformProperties(element);
       if (translateX > restX) {
         translateX = restX;
@@ -240,6 +240,7 @@ function SuperPreviewImage(props: SuperPreviewImageProps) {
               key={imageURL}
               onMouseDown={onMouseDown}
               onMouseUp={handleMouseUp}
+              aria-label="super-preview-image"
               className="qm-preview-image-preview-img"
               style={{ transform: 'scale(1, 1) rotate(0)' }}
             />
