@@ -1,4 +1,12 @@
-import React, { useMemo, useEffect, forwardRef, useCallback, useDeferredValue, useImperativeHandle } from 'react';
+import React, {
+  useMemo,
+  useEffect,
+  forwardRef,
+  useCallback,
+  useDeferredValue,
+  useImperativeHandle,
+  useTransition,
+} from 'react';
 import useReducer from '@/utils/useReducer';
 import { isArray, objectIs } from '@/utils';
 import { Input, Tree } from 'antd';
@@ -82,6 +90,7 @@ function ModelTree(props: ModelTreeProps, ref: any) {
     ...restProps
   } = props;
 
+  const [, startTransition] = useTransition();
   const deferSearchValue = useDeferredValue(searchValue);
 
   useEffect(() => {
@@ -136,7 +145,7 @@ function ModelTree(props: ModelTreeProps, ref: any) {
       treeData = computedTreeData(propTreeData, fieldNames);
     }
 
-    setState({ flatTreeData: computedFlatTreeData(treeData) });
+    startTransition(() => setState({ flatTreeData: computedFlatTreeData(treeData) }));
     return treeData as TreeData[];
   }, [propTreeData]);
 
@@ -155,7 +164,7 @@ function ModelTree(props: ModelTreeProps, ref: any) {
         parentkeys && newExpandedKeys.push(...parentkeys);
       }
     });
-    // 无需去重，Tree 组件内部会进行处理
+
     setState({ expandedKeys: [...new Set(newExpandedKeys)] });
   }, [flatTreeData, deferSearchValue]);
 
