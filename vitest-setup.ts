@@ -1,4 +1,5 @@
-import { vi } from 'vitest';
+import { vi, afterEach } from 'vitest';
+import { cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 
 Object.defineProperty(window, 'matchMedia', {
@@ -13,4 +14,6 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   })),
-})
+});
+
+afterEach(cleanup);

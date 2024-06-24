@@ -144,6 +144,7 @@ export default defineConfig(({ mode }) => {
         // 'test/contentFormTable.browser.test.tsx',
         // 'test/Image.browser.test.tsx',
         // 'test/Icon.browser.test.tsx',
+        // 'test/modelTree.browser.test.tsx',
         // 浏览器模式时只测试 .browser.test.ts(x)? 结尾的文件
         process.env.TEST_ENV !== 'browser' ? 'test/**/*.browser.test.ts(x)?' : '',
       ],
