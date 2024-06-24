@@ -48,7 +48,7 @@ function Page() {
         <div className={classes.backTop}>
           <Icon
             name="backtop"
-            onClick={() => scrollToPosition(0)}
+            onClick={() => scrollToPosition({ position: 0 })}
             style={{ fontSize: 40, color: 'rgba(255, 255, 255, 0.7)' }}
           />
         </div>

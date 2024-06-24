@@ -1,5 +1,6 @@
 export { default as ContentFormHeader } from './ContentFormHeader';
 export { default as ContentFormTable } from './ContentFormTable';
+export { default as NavigationBar } from './NavigationBar';
 export { default as PreviewImage } from './PreviewImage';
 export { default as UploadAudio } from './UploadAudio';
 export { default as UploadImage } from './UploadImage';

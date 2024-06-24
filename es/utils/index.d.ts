@@ -165,4 +165,11 @@ export declare function getViewportSize(): {
  * @returns
  */
 export declare function parseStyle(style: string): CSSProperties | undefined;
+/**
+ * 检测当前 element 是否是目标元素
+ * @param element   要查询的目标元素
+ * @param selector  CSS 选择器
+ * @returns
+ */
+export declare function elementMatches(element: Element, selector: string): any;
 export {};

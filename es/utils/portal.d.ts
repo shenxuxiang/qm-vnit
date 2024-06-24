@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 type ReactPortalProps = {
     className?: string;
     children: React.ReactNode;

@@ -35,6 +35,10 @@ const updateText = `
   * 将原本内置的导出文件功能删除，新版本中开发者通过 exportTableList(query) 方法自定义导出文件；
   * tableTitle 属性类型由原来的 string 类型替换成 React.ReactNode；
   * 组件样式微调；
+  * 添加了组件实例对象 ref，并绑定了三个属性：
+    - form 是表单实例；
+    - getQueryData() 用于获取查询表单的数据；
+    - forceUpdate(opts?: any, callback?: Function) 强制立即更新Table数据；
 `;
 
 function Page() {

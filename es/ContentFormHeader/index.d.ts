@@ -28,6 +28,5 @@ type ContentFormHeaderProps = {
     onSubmit: (values: any) => Promise<any>;
     onExport?: (values: any) => Promise<any>;
 };
-declare function ContentFormHeader(props: ContentFormHeaderProps): React.JSX.Element;
-declare const _default: React.MemoExoticComponent<typeof ContentFormHeader>;
+declare const _default: React.ForwardRefExoticComponent<ContentFormHeaderProps & React.RefAttributes<unknown>>;
 export default _default;

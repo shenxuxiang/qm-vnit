@@ -54,6 +54,34 @@ function objectIs(v1, v2) {
   }
 }
 /**
+ * 防抖
+ * @param func        防抖的方法
+ * @param delay       防抖的时间间隔
+ * @param immediately 是否立即执行 func
+ * @returns
+ */
+function debounce(func, delay) {
+  var immediately = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  var interval = null;
+  return function () {
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+    if (immediately) {
+      if (!interval) func.apply(void 0, args);
+      interval && clearTimeout(interval);
+      interval = setTimeout(function () {
+        return interval = null;
+      }, delay);
+    } else {
+      clearTimeout(interval);
+      interval = setTimeout(function () {
+        return func.apply(void 0, args);
+      }, delay);
+    }
+  };
+}
+/**
  * 节流
  * @param func        节流的方法
  * @param delay       节流的时间间隔
@@ -115,5 +143,28 @@ function parseStyle(style) {
   }
   return result;
 }
+/**
+ * 检测当前 element 是否是目标元素
+ * @param element   要查询的目标元素
+ * @param selector  CSS 选择器
+ * @returns
+ */
+function elementMatches(element, selector) {
+  if (typeof element.matches === 'function') {
+    return element.matches(selector);
+  } else if (typeof element.mozMatchesSelector === 'function') {
+    var _element$mozMatchesSe;
+    return (_element$mozMatchesSe = element.mozMatchesSelector) === null || _element$mozMatchesSe === void 0 ? void 0 : _element$mozMatchesSe.call(element, selector);
+  } else if (typeof element.webkitMatchesSelector === 'function') {
+    return element.webkitMatchesSelector(selector);
+  } else {
+    var matches = document.querySelectorAll(selector);
+    var length = matches.length;
+    while (length--) {
+      if (matches[length] === element) return true;
+    }
+    return false;
+  }
+}
 
-export { getType, getViewportSize, isArray, objectIs, parseStyle, throttle };
+export { debounce, elementMatches, getType, getViewportSize, isArray, objectIs, parseStyle, throttle };

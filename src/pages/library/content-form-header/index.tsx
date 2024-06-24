@@ -30,6 +30,9 @@ const updateText = `
   * 将原本内置的导出文件功能删除，新版本中开发者通过 exportTableList(query) 方法自定义导出文件；
   * 组件内部逻辑优化，组件性能有所提升；
   * 组件样式微调；
+  * 添加了 ref 可获取组件的实例对象，该实例对象上绑定了 form 和 getCurrentFormData 属性：
+    - form 是表单实例；
+    - getCurrentFormData 用于获取格式化后的表单数据；
 `;
 
 function Page() {
@@ -61,6 +64,12 @@ function Page() {
 export default memo(Page);
 
 const properties = [
+  {
+    key: 'ref',
+    instruct:
+      '组件实例对象，该实例对象上绑定了两个属性 { form: FormInstance, getCurrentFormData: () => object }，getCurrentFormData用于获取格式化后的表单数据',
+    type: 'string',
+  },
   {
     key: 'cols',
     instruct: '指定一行放置几列, 指定后布局列数不在随屏幕宽度的大小而变化（这里指的并不是包含的容器）。',

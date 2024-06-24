@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useCallback } from 'react';
+import React, { memo, useMemo, useCallback, useRef } from 'react';
 import Template from '@/components/ExampleTemplate';
 import { ContentFormTable } from '@/lib';
 import { Button, message } from 'antd';
@@ -52,6 +52,7 @@ function getTableList() {
 }
 
 function Example() {
+  const tableRef = useRef<any>();
   const columns = useMemo(
     () => [
       {
@@ -107,7 +108,14 @@ function Example() {
   );
 
   const extraNodesInsertHeader = useMemo(() => {
-    return <Button style={{ marginLeft: 8 }}>自定义</Button>;
+    const getFormData = () => {
+      console.log(tableRef.current.getQueryData(), tableRef.current.form);
+    };
+    return (
+      <Button style={{ marginLeft: 8 }} onClick={getFormData}>
+        自定义
+      </Button>
+    );
   }, []);
 
   const handleBefore = useCallback((query: any) => {
@@ -129,6 +137,7 @@ function Example() {
         cols={2}
         bordered
         rowKey="id"
+        ref={tableRef}
         immediate={false}
         columns={columns}
         defaultExpand={false}

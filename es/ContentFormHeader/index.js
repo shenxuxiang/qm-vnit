@@ -15,7 +15,7 @@ import _sliceInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instan
 import _concatInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/concat';
 import _mapInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/map';
 import _Object$assign from '@babel/runtime-corejs3/core-js-stable/object/assign';
-import React, { memo, useState, useRef, useEffect, useMemo, useCallback } from 'react';
+import React, { forwardRef, useState, useRef, useEffect, useMemo, useCallback, useImperativeHandle } from 'react';
 import { Form, Select, Row, Col, Button, Cascader, DatePicker, Input } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { throttle } from '../utils/index.js';
@@ -34,7 +34,7 @@ var colSpanConfig = {
   sm: 12,
   xs: 12
 };
-function ContentFormHeader(props) {
+function ContentFormHeader(props, ref) {
   var onReset = props.onReset,
     onSubmit = props.onSubmit,
     onExport = props.onExport,
@@ -263,6 +263,14 @@ function ContentFormHeader(props) {
       containerRef.current.style.height = '64px';
     }
   }, [expand, colSpan]);
+  useImperativeHandle(ref, function () {
+    return {
+      form: form,
+      getCurrentFormData: function getCurrentFormData() {
+        return formatFormModel(queryList, form.getFieldsValue());
+      }
+    };
+  }, [queryList]);
   return /*#__PURE__*/React.createElement("section", {
     className: "qm-content-form-head",
     ref: xRef
@@ -302,7 +310,7 @@ function ContentFormHeader(props) {
     className: "qm-expand-icon".concat(expand ? ' expand' : '')
   })))))));
 }
-var ContentFormHead = /*#__PURE__*/memo(ContentFormHeader);
+var ContentFormHead = /*#__PURE__*/forwardRef(ContentFormHeader);
 // 格式化表单数据
 function formatFormModel(queryList) {
   var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
