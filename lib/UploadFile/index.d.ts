@@ -1,5 +1,5 @@
 import React from 'react';
-import { UploadFile } from 'antd';
+import type { UploadFile } from 'antd';
 type UploadFileProps = {
     action: string;
     accept?: string;

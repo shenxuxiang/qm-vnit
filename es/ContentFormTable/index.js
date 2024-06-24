@@ -57,6 +57,7 @@ function ContentFormPage(props, ref) {
     showTotal = _props$showTotal === void 0 ? defaultShowTotal : _props$showTotal,
     _props$customResponse = props.customResponse,
     customResponse = _props$customResponse === void 0 ? handleResponse : _props$customResponse;
+  var contentHeaderRef = useRef();
   var searchContentRef = useRef({});
   // immediate 表示是否在页面初始化的时候请求后台接口。默认 true
   var immediateRef = useRef(immediate);
@@ -141,7 +142,11 @@ function ContentFormPage(props, ref) {
         sendRequestTableList(query).finally(function () {
           return callback === null || callback === void 0 ? void 0 : callback();
         });
-      }
+      },
+      getQueryData: function getQueryData() {
+        return contentHeaderRef.current.getCurrentFormData();
+      },
+      form: contentHeaderRef.current.form
     };
   }, [pageSize, pageNum]);
   // 页面初始化。
@@ -282,6 +287,7 @@ function ContentFormPage(props, ref) {
     cols: cols,
     queryList: queryList,
     onReset: handleReset,
+    ref: contentHeaderRef,
     onSubmit: handleSubmit,
     onExport: handleExport,
     defaultExpand: defaultExpand,
@@ -324,12 +330,12 @@ function ContentFormPage(props, ref) {
     showTotal: showTotal,
     onChange: onPageNumChange,
     className: "qm-content-form-page-pagination"
-  })) : /*#__PURE__*/React.createElement("div", {
+  })) : ( /*#__PURE__*/React.createElement("div", {
     style: {
       width: 0,
       height: 24
     }
-  })));
+  }))));
 }
 var index = /*#__PURE__*/forwardRef(ContentFormPage);
 function initialState() {

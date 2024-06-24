@@ -1,4 +1,4 @@
-import React, { memo, useState, useMemo, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
 import { Button, Col, Row, Form, Input, Select, DatePicker, Cascader } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { throttle } from '@/utils';
@@ -58,7 +58,7 @@ type ContentFormHeaderProps = {
   onExport?: (values: any) => Promise<any>;
 };
 
-function ContentFormHeader(props: ContentFormHeaderProps) {
+function ContentFormHeader(props: ContentFormHeaderProps, ref: any) {
   const {
     onReset,
     onSubmit,
@@ -269,6 +269,15 @@ function ContentFormHeader(props: ContentFormHeaderProps) {
     }
   }, [expand, colSpan]);
 
+  useImperativeHandle(
+    ref,
+    () => ({
+      form,
+      getCurrentFormData: () => formatFormModel(queryList, form.getFieldsValue()),
+    }),
+    [queryList],
+  );
+
   return (
     <section className="qm-content-form-head" ref={xRef}>
       <Form form={form} name={formName} onReset={handleReset} onFinish={handleFinish} initialValues={initialValues}>
@@ -303,7 +312,7 @@ function ContentFormHeader(props: ContentFormHeaderProps) {
   );
 }
 
-export default memo(ContentFormHeader);
+export default forwardRef(ContentFormHeader);
 
 // 格式化表单数据
 function formatFormModel(queryList: QueryListItem[], data: { [propName: string]: any } = {}) {

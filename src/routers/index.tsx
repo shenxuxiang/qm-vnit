@@ -40,6 +40,12 @@ export const menuItems = [
     label: '数据选项',
     children: [{ key: 'model-tree', label: 'ModelTree 模型树' }],
   },
+  { type: 'divider' },
+  {
+    type: 'group',
+    label: '导航',
+    children: [{ key: 'navigation-bar', label: 'NavigationBar 导航栏' }],
+  },
 ];
 
 function Router() {
@@ -103,6 +109,10 @@ function Router() {
             {
               path: `/library/image`,
               element: React.createElement(LazyLoader(() => import('../pages/library/image'))),
+            },
+            {
+              path: `/library/navigation-bar`,
+              element: React.createElement(LazyLoader(() => import('../pages/library/navigation-bar'))),
             },
           ],
         },

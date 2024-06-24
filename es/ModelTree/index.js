@@ -18,7 +18,7 @@ import _Object$getOwnPropertySymbols from '@babel/runtime-corejs3/core-js-stable
 import _filterInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/filter';
 import _Object$getOwnPropertyDescriptor from '@babel/runtime-corejs3/core-js-stable/object/get-own-property-descriptor';
 import _Object$getOwnPropertyDescriptors from '@babel/runtime-corejs3/core-js-stable/object/get-own-property-descriptors';
-import React, { forwardRef, useDeferredValue, useEffect, useMemo, useImperativeHandle, useCallback } from 'react';
+import React, { forwardRef, useTransition, useDeferredValue, useEffect, useMemo, useImperativeHandle, useCallback } from 'react';
 import useReducer from '../utils/useReducer.js';
 import { objectIs, isArray } from '../utils/index.js';
 import { Input, Tree } from 'antd';
@@ -77,6 +77,9 @@ function ModelTree(props, ref) {
     propsExpandeKeys = props.expandedKeys,
     propsSelectedKeys = props.selectedKeys,
     restProps = _objectWithoutProperties(props, _excluded);
+  var _useTransition = useTransition(),
+    _useTransition2 = _slicedToArray(_useTransition, 2),
+    startTransition = _useTransition2[1];
   var deferSearchValue = useDeferredValue(searchValue);
   useEffect(function () {
     if (propCheckedKeys === undefined) {
@@ -131,8 +134,10 @@ function ModelTree(props, ref) {
     } else if (fieldNames) {
       treeData = computedTreeData(propTreeData, fieldNames);
     }
-    setState({
-      flatTreeData: computedFlatTreeData(treeData)
+    startTransition(function () {
+      return setState({
+        flatTreeData: computedFlatTreeData(treeData)
+      });
     });
     return treeData;
   }, [propTreeData]);
@@ -151,7 +156,6 @@ function ModelTree(props, ref) {
         parentkeys && newExpandedKeys.push.apply(newExpandedKeys, _toConsumableArray(parentkeys));
       }
     });
-    // 无需去重，Tree 组件内部会进行处理
     setState({
       expandedKeys: _toConsumableArray(new _Set(newExpandedKeys))
     });

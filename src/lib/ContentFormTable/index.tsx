@@ -96,6 +96,8 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
     customResponse = handleResponse,
   } = props;
 
+  const contentHeaderRef = useRef<any>();
+
   const searchContentRef = useRef<SearchCondition>({});
 
   // immediate 表示是否在页面初始化的时候请求后台接口。默认 true
@@ -151,6 +153,8 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
         const query = { pageSize, pageNum, ...searchContentRef.current, ...opts };
         sendRequestTableList(query).finally(() => callback?.());
       },
+      getQueryData: () => contentHeaderRef.current.getCurrentFormData(),
+      form: contentHeaderRef.current.form,
     }),
     [pageSize, pageNum],
   );
@@ -243,6 +247,7 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
           cols={cols}
           queryList={queryList}
           onReset={handleReset}
+          ref={contentHeaderRef}
           onSubmit={handleSubmit}
           onExport={handleExport}
           defaultExpand={defaultExpand}
