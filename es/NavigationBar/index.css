@@ -56,11 +56,11 @@
 }
 .qm-nav-bar-content-list-item:hover {
   background: #eee;
-  color: #1A72FE;
+  color: #1a72fe;
 }
 .qm-nav-bar-content-list-item.active {
   background: #eee;
-  color: #1A72FE;
+  color: #1a72fe;
   text-shadow: 0 0 0.25px currentcolor;
 }
 /* 删除 icon */
@@ -85,7 +85,7 @@
   transition: all 1s ease;
 }
 .qm-nav-bar-toolbar-appstore:hover {
-  color: #1A72FE;
+  color: #1a72fe;
   transform: rotate(360deg);
 }
 .qm-nav-bar-toolbar-other {
@@ -96,7 +96,7 @@
   transition: all 0.3s ease;
 }
 .qm-nav-bar-toolbar-other:hover {
-  color: #1A72FE;
+  color: #1a72fe;
 }
 .qm-nav-bar-toolbar-other.hide {
   opacity: 0;
@@ -115,7 +115,7 @@
 }
 .qm-nav-bar-indicator {
   height: 2px;
-  background: #1A72FE;
+  background: #1a72fe;
   width: 50px;
   position: absolute;
   bottom: 0px;

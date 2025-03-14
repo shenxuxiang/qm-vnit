@@ -2,7 +2,7 @@ import _slicedToArray from '@babel/runtime-corejs3/helpers/slicedToArray';
 import _concatInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/concat';
 import getTransformProperties from '../utils/getTransformProperties.js';
 import React, { memo, useRef, useEffect, useMemo } from 'react';
-import img from '../assets/images/default.svg.js';
+import defaultURL from '../assets/images/default.svg.js';
 import { throttle, getViewportSize } from '../utils/index.js';
 import useReducer from '../utils/useReducer.js';
 import Toolbar from './Toolbar/index.js';
@@ -18,7 +18,7 @@ function initialState() {
     spinning: false,
     isEndPage: false,
     isStartPage: false,
-    imageURL: img
+    imageURL: defaultURL
   };
 }
 /**
@@ -117,7 +117,7 @@ function PreviewImage(props) {
     if (!open) return;
     setState({
       spinning: true,
-      imageURL: img
+      imageURL: defaultURL
     });
     var url = imgs[indictor];
     var image = new Image();

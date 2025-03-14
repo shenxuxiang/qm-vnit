@@ -11,7 +11,7 @@ import _objectWithoutProperties from '@babel/runtime-corejs3/helpers/objectWitho
 import _concatInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/concat';
 import React, { memo, useMemo } from 'react';
 import { parseStyle } from '../utils/index.js';
-import '../assets/font/iconfont.css';
+import './index.css';
 
 var _excluded = ["name", "className", "style", "onClick"];
 function ownKeys(e, r) { var t = _Object$keys(e); if (_Object$getOwnPropertySymbols) { var o = _Object$getOwnPropertySymbols(e); r && (o = _filterInstanceProperty(o).call(o, function (r) { return _Object$getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }

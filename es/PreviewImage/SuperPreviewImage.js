@@ -3,7 +3,7 @@ import _concatInstanceProperty from '@babel/runtime-corejs3/core-js-stable/insta
 import _mapInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/map';
 import getTransformProperties from '../utils/getTransformProperties.js';
 import React, { memo, useRef, useEffect, useMemo } from 'react';
-import img from '../assets/images/default.svg.js';
+import defaultURL from '../assets/images/default.svg.js';
 import { throttle, getViewportSize } from '../utils/index.js';
 import useReducer from '../utils/useReducer.js';
 import Toolbar from './Toolbar/index.js';
@@ -19,7 +19,7 @@ function initialState() {
     spinning: false,
     isEndPage: false,
     isStartPage: false,
-    imageURL: img
+    imageURL: defaultURL
   };
 }
 /**

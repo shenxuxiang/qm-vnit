@@ -2,14 +2,13 @@ import path from 'path';
 import chalk from 'chalk';
 import { rollup } from 'rollup';
 import { fileURLToPath } from 'url';
+import url from '@rollup/plugin-url';
 import alias from '@rollup/plugin-alias';
 import babel from '@rollup/plugin-babel';
-import image from '@rollup/plugin-image';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import replaceLessToCss from './rollup-plugin-less2css.js';
-// import divisionAntDesignIcons from './rollup-plugin-division-ant-design-icons.js';
 
 const context = fileURLToPath(new URL('../', import.meta.url));
 const extensions = [ '.tsx', '.ts', '.jsx', '.js', '.mjs', '.cjs' ];
@@ -28,10 +27,12 @@ const inputOptions = {
       babelHelpers: 'runtime',
       exclude:/[\\/]node_modules[\\/]/,
     }),
-    // encode image to base64
-    image(),
+    url({
+      limit: 1024 * 10,
+      fileName: '[dirname][name][extname]',
+      sourceDir: path.resolve(context, 'src/lib'),
+    }),
     replaceLessToCss(),
-    // divisionAntDesignIcons(),
   ]
 };
 
