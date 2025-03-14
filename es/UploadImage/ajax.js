@@ -3,9 +3,9 @@ import _Object$getOwnPropertySymbols from '@babel/runtime-corejs3/core-js-stable
 import _filterInstanceProperty from '@babel/runtime-corejs3/core-js-stable/instance/filter';
 import _Object$getOwnPropertyDescriptor from '@babel/runtime-corejs3/core-js-stable/object/get-own-property-descriptor';
 import _Object$getOwnPropertyDescriptors from '@babel/runtime-corejs3/core-js-stable/object/get-own-property-descriptors';
-import _defineProperty from '@babel/runtime-corejs3/helpers/defineProperty';
 import _classCallCheck from '@babel/runtime-corejs3/helpers/classCallCheck';
 import _createClass from '@babel/runtime-corejs3/helpers/createClass';
+import _defineProperty from '@babel/runtime-corejs3/helpers/defineProperty';
 import 'core-js/modules/es.error.cause.js';
 import 'core-js/modules/es.number.constructor.js';
 import 'core-js/modules/es.number.to-fixed.js';
@@ -25,6 +25,11 @@ var Ajax = /*#__PURE__*/function () {
     var _this = this;
     var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     _classCallCheck(this, Ajax);
+    _defineProperty(this, "opts", void 0);
+    _defineProperty(this, "headers", void 0);
+    _defineProperty(this, "handleError", void 0);
+    _defineProperty(this, "handleSuccess", void 0);
+    _defineProperty(this, "handleProgress", void 0);
     this.opts = _objectSpread(_objectSpread({}, defaultOptions), options);
     this.headers = {};
     if (typeof this.opts.headers === 'function') {

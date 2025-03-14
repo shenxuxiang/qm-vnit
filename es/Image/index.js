@@ -9,7 +9,7 @@ import _Object$getOwnPropertyDescriptors from '@babel/runtime-corejs3/core-js-st
 import _defineProperty from '@babel/runtime-corejs3/helpers/defineProperty';
 import _objectWithoutProperties from '@babel/runtime-corejs3/helpers/objectWithoutProperties';
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useMemo } from 'react';
-import img from '../assets/images/default.svg.js';
+import defaultURL from '../assets/images/default.svg.js';
 import intersectionImage from './intersection.js';
 import { parseStyle } from '../utils/index.js';
 
@@ -45,7 +45,7 @@ function Image(props, ref) {
     style: styleObj,
     alt: alt || '图片',
     className: className,
-    src: lazy ? img : src
+    src: lazy ? defaultURL : src
   }));
 }
 var Img = /*#__PURE__*/forwardRef(Image);

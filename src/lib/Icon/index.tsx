@@ -1,6 +1,6 @@
 import React, { memo, useMemo } from 'react';
 import { parseStyle } from '@/utils';
-import '../assets/font/iconfont.css';
+import './index.less';
 
 type IconProps = {
   name: string;

@@ -9,6 +9,7 @@ var IntersectionObserveImage = /*#__PURE__*/function () {
   function IntersectionObserveImage() {
     _classCallCheck(this, IntersectionObserveImage);
     _defineProperty(this, "nodeMap", new _WeakMap());
+    _defineProperty(this, "instance", void 0);
   }
   return _createClass(IntersectionObserveImage, [{
     key: "intersectionCallback",
