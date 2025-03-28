@@ -303,9 +303,9 @@ function ContentFormPage(props, ref) {
       }
     },
     style: {
-      marginTop: 24
-    },
-    bordered: false
+      marginTop: 16,
+      border: '0px'
+    }
   }, /*#__PURE__*/React.createElement("div", {
     className: "qm-content-form-page-table-head"
   }, /*#__PURE__*/React.createElement("div", {

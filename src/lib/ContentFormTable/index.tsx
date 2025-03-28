@@ -258,7 +258,7 @@ function ContentFormPage(props: ContentFormPageProps, ref: any) {
           initialValues={initialSearchCondition.current}
         />
       )}
-      <Card styles={{ body: { padding: '0 24px' } }} style={{ marginTop: 24 }} bordered={false}>
+      <Card styles={{ body: { padding: '0 24px' } }} style={{ marginTop: 16, border: '0px' }}>
         <div className="qm-content-form-page-table-head">
           <div className="qm-content-form-page-table-head-title">{tableTitle || '查询表格'}</div>
           {extra ? <div>{extra}</div> : null}
