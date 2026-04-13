@@ -115,4 +115,10 @@ const properties = [
     instruct: '替换默认的上传按钮',
     type: '({ url, uid, name }) => React.ReactNode',
   },
+  {
+    key: 'uploadButtonText',
+    instruct: '上传按钮文案',
+    type: 'string',
+    default: '上传图像',
+  },
 ];

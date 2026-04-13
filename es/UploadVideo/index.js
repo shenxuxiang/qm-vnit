@@ -24,7 +24,9 @@ function UploadVideo(props) {
     disabled = props.disabled,
     multiple = props.multiple,
     _props$accept = props.accept,
-    accept = _props$accept === void 0 ? 'video/*' : _props$accept;
+    accept = _props$accept === void 0 ? 'video/*' : _props$accept,
+    _props$uploadButtonTe = props.uploadButtonText,
+    uploadButtonText = _props$uploadButtonTe === void 0 ? '上传视频' : _props$uploadButtonTe;
   var _useReducer = useReducer(initialState),
     _useReducer2 = _slicedToArray(_useReducer, 2),
     state = _useReducer2[0],
@@ -109,7 +111,8 @@ function UploadVideo(props) {
     onError: onError,
     onChange: onChange,
     renderItem: renderItem,
-    onPreview: handlePreviewFile
+    onPreview: handlePreviewFile,
+    uploadButtonText: uploadButtonText
   }), /*#__PURE__*/React.createElement(Portal, null, /*#__PURE__*/React.createElement("div", {
     ref: videoPlayer,
     style: {

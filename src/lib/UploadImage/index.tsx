@@ -32,6 +32,7 @@ type UploadImageProps = {
   onChange?: (fileList: FileList) => void;
   onPreview?: (url: string, rawResource?: File) => void;
   renderItem?: (values: { url: string; uid: string; name: string }) => React.ReactNode;
+  uploadButtonText?: string;
 };
 
 function initialState() {
@@ -58,6 +59,7 @@ function UploadImage(props: UploadImageProps) {
     onPreview,
     renderItem,
     accept = 'image/*',
+    uploadButtonText = '上传图片',
   } = props;
 
   const [{ fileList, previewImgs, showPreviewImage }, setState] = useReducer(initialState);
@@ -201,7 +203,7 @@ function UploadImage(props: UploadImageProps) {
               ) : (
                 <div className="qm-vnit-upload-image-slot">
                   <PlusOutlined style={{ fontSize: 16, marginBottom: 10, color: 'rgba(0, 0, 0, 0.8)' }} />
-                  <div>上传图片</div>
+                  <div>{uploadButtonText}</div>
                 </div>
               )}
               <input

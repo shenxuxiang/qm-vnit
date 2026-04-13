@@ -30,6 +30,7 @@ type UploadImageProps = {
         uid: string;
         name: string;
     }) => React.ReactNode;
+    uploadButtonText?: string;
 };
 declare function UploadImage(props: UploadImageProps): React.JSX.Element;
 declare const _default: React.MemoExoticComponent<typeof UploadImage>;

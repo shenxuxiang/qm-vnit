@@ -16,6 +16,7 @@ type UploadVideoProps = {
         [key: string]: any;
     };
     onChange?: (fileList: FileList) => void;
+    uploadButtonText?: string;
 };
 declare function UploadVideo(props: UploadVideoProps): React.JSX.Element;
 declare const _default: React.MemoExoticComponent<typeof UploadVideo>;

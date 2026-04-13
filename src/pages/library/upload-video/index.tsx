@@ -108,4 +108,10 @@ const properties = [
     type: 'boolean',
     default: 'true',
   },
+  {
+    key: 'uploadButtonText',
+    instruct: '上传按钮文案',
+    type: 'string',
+    default: '上传视频',
+  },
 ];
