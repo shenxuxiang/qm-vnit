@@ -19,6 +19,7 @@ type UploadVideoProps = {
   onError?: (error: any) => void;
   headers?: () => { [key: string]: any };
   onChange?: (fileList: FileList) => void;
+  uploadButtonText?: string;
 };
 
 function initialState() {
@@ -41,6 +42,7 @@ function UploadVideo(props: UploadVideoProps) {
     disabled,
     multiple,
     accept = 'video/*',
+    uploadButtonText = '上传视频',
   } = props;
 
   const [state, setState] = useReducer(initialState);
@@ -123,6 +125,7 @@ function UploadVideo(props: UploadVideoProps) {
         onChange={onChange}
         renderItem={renderItem}
         onPreview={handlePreviewFile}
+        uploadButtonText={uploadButtonText}
       />
       <Portal>
         <div
