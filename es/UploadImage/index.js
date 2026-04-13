@@ -49,7 +49,9 @@ function UploadImage(props) {
     onPreview = props.onPreview,
     renderItem = props.renderItem,
     _props$accept = props.accept,
-    accept = _props$accept === void 0 ? 'image/*' : _props$accept;
+    accept = _props$accept === void 0 ? 'image/*' : _props$accept,
+    _props$uploadButtonTe = props.uploadButtonText,
+    uploadButtonText = _props$uploadButtonTe === void 0 ? '上传图片' : _props$uploadButtonTe;
   var _useReducer = useReducer(initialState),
     _useReducer2 = _slicedToArray(_useReducer, 2),
     _useReducer2$ = _useReducer2[0],
@@ -208,7 +210,7 @@ function UploadImage(props) {
       marginBottom: 10,
       color: 'rgba(0, 0, 0, 0.8)'
     }
-  }), /*#__PURE__*/React.createElement("div", null, "\u4E0A\u4F20\u56FE\u7247"))), /*#__PURE__*/React.createElement("input", {
+  }), /*#__PURE__*/React.createElement("div", null, uploadButtonText))), /*#__PURE__*/React.createElement("input", {
     type: "file",
     ref: _inputRef,
     accept: accept,
